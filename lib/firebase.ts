@@ -1,97 +1,43 @@
 // Firebase Realtime Database の設定と関数
 
-import {initializeApp} from 'firebase/app'
-import {getAnalytics} from 'firebase/analytics'
-import {getDatabase, ref, get, query, orderByChild, limitToLast, set, serverTimestamp} from 'firebase/database'
+import { initializeApp, getApp, getApps } from "firebase/app";
+import { getDatabase } from "firebase/database";
 
-// Firebaseの設定
-// 注: 実際の値は.envファイルに保存し、環境変数として使用することをお勧めします
+// .env.local ファイルなどから読み込む想定 (Next.js)
+// クライアントサイドで使うため NEXT_PUBLIC_ プレフィックスが必要
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+};
+
+// apiKey など必須項目がない場合はエラーを投げるか、デフォルト値を設定するなど考慮が必要
+// 今回はサンプルなので、環境変数が設定されている前提で進めるのだ
+if (!firebaseConfig.apiKey || !firebaseConfig.databaseURL || !firebaseConfig.projectId) {
+  console.error("Firebase の設定が環境変数に正しく設定されていません。");
+  // ここで処理を中断するか、デフォルトの動作を決める必要があるのだ
 }
 
-// Firebase初期化
-let app
-let database
-let analytics
-
-// サーバーサイドレンダリング対応のための初期化
-if (typeof window !== 'undefined') {
-  try {
-    app = initializeApp(firebaseConfig)
-    database = getDatabase(app)
-    analytics = getAnalytics(app)
-  } catch (error) {
-    console.error('Firebase initialization error:', error)
+// Firebase App の重複初期化を防ぐ
+let app;
+if (!getApps().length) {
+  // 必須項目が設定されている場合のみ初期化する
+  if (firebaseConfig.apiKey && firebaseConfig.databaseURL && firebaseConfig.projectId) {
+    app = initializeApp(firebaseConfig);
+  } else {
+    // 設定がない場合のフォールバック処理（例：エラー表示や何もしない）
+    console.error("Firebase アプリを初期化できませんでした。設定を確認してください。");
   }
+} else {
+  app = getApp();
 }
 
-// ランキングデータを取得する関数
-export async function getLeaderboardData(limit = 10) {
-  if (!database) {
-    // テスト用のダミーデータを返す（Firebase未設定時）
-    return [
-      {id: '1', username: 'プレイヤー1', score: 9850, rank: 1},
-      {id: '2', username: 'プレイヤー2', score: 8720, rank: 2},
-      {id: '3', username: 'プレイヤー3', score: 7650, rank: 3},
-      {id: '4', username: 'プレイヤー4', score: 6540, rank: 4},
-      {id: '5', username: 'プレイヤー5', score: 5430, rank: 5},
-    ]
-  }
+// db も app が正常に初期化された場合のみ取得する
+const db = app ? getDatabase(app) : null;
 
-  try {
-    const leaderboardRef = ref(database, 'leaderboard')
-    const leaderboardQuery = query(leaderboardRef, orderByChild('score'), limitToLast(limit))
-
-    const snapshot = await get(leaderboardQuery)
-
-    if (snapshot.exists()) {
-      const data = snapshot.val()
-
-      // オブジェクトを配列に変換し、スコアでソート
-      const leaderboardArray = Object.keys(data).map((key) => ({
-        id: key,
-        ...data[key],
-      }))
-
-      // スコアの降順でソート
-      leaderboardArray.sort((a, b) => b.score - a.score)
-
-      // ランク付け
-      return leaderboardArray.map((entry, index) => ({
-        ...entry,
-        rank: index + 1,
-      }))
-    }
-
-    return []
-  } catch (error) {
-    console.error('Error fetching leaderboard data:', error)
-    throw error
-  }
-}
-
-// ゲームデータを保存する関数
-export async function saveGameScore(userId, username, score) {
-  if (!database) return false
-
-  try {
-    const userScoreRef = ref(database, `leaderboard/${userId}`)
-    await set(userScoreRef, {
-      username,
-      score,
-      timestamp: serverTimestamp(),
-    })
-    return true
-  } catch (error) {
-    console.error('Error saving game score:', error)
-    return false
-  }
-}
-
-export default {getLeaderboardData, saveGameScore}
+// db が null の可能性があるので、利用側でチェックが必要なのだ
+export { db };
