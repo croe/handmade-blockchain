@@ -5,6 +5,7 @@ import { useAtomValue } from 'jotai'
 import { currentUserState } from '@/stores/users'
 import * as fabric from 'fabric'
 import { Eraser } from 'lucide-react'
+import Link from 'next/link'
 
 const TxCreatePage = () => {
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null)
@@ -50,6 +51,7 @@ const TxCreatePage = () => {
           <span className="text-gray-500">{currentUser?.id}</span>
         </p>
       </div>
+      <p className="text-center mt-10"><Link href={`/`}>HOME</Link></p>
     </div>
   )
 }
