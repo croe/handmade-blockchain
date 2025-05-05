@@ -11,8 +11,9 @@ const CreateWalletView = () => {
   const [currentUser, setCurrentUser] = useAtom(currentUserState)
 
   const handleCreateWallet = async () => {
+    // FIXME: ここタイムスタンプの持ち方がサーバーとクライアントで違うので考える
     const timestamp = getUnixTime(new Date())
-    const user = await addNewUser(timestamp)
+    const user = await addNewUser()
     console.log(user)
     if (user?.key) {
       setCurrentUser({

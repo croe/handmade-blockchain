@@ -1,7 +1,12 @@
 // Firebase Realtime Database の設定と関数
 
-import { initializeApp, getApp, getApps } from "firebase/app";
-import { getDatabase } from "firebase/database";
+import { initializeApp, getApp, getApps } from "firebase/app"
+import { getDatabase } from "firebase/database"
+import { getStorage } from 'firebase/storage'
+
+export const DB_USER = 'users'
+export const DB_TRANSACTION = 'txs'
+export const DB_BLOCK = 'blocks'
 
 // .env.local ファイルなどから読み込む想定 (Next.js)
 // クライアントサイドで使うため NEXT_PUBLIC_ プレフィックスが必要
@@ -13,6 +18,7 @@ const firebaseConfig = {
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
 // apiKey など必須項目がない場合はエラーを投げるか、デフォルト値を設定するなど考慮が必要
@@ -39,5 +45,8 @@ if (!getApps().length) {
 // db も app が正常に初期化された場合のみ取得する
 const db = app ? getDatabase(app) : null;
 
+// Storage の初期化
+const storage = getStorage()
+
 // db が null の可能性があるので、利用側でチェックが必要なのだ
-export { db };
+export { db, storage };

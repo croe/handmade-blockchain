@@ -1,14 +1,14 @@
 import {db} from '@/lib/firebase'
-import {push, ref} from 'firebase/database'
+import {push, ref, serverTimestamp} from 'firebase/database'
 
-export const addNewUser = async (timestamp: number) => {
+export const addNewUser = async () => {
   try {
     if (!db) return
     // ここでユーザーを追加
     // ユーザー名はあるとテンション上がるけど、ない方がコンセプトに合うかも
     const usersRef = ref(db, 'users')
     return await push(usersRef, {
-      t: timestamp,
+      t: serverTimestamp(),
     })
   } catch (error) {
     console.error('Error adding new user:', error)

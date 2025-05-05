@@ -2,7 +2,6 @@ import { useAtom } from 'jotai'
 import { currentUserState } from '@/stores/users'
 import { addNewUser } from '@/api/user'
 import { useEffect } from 'react'
-import { getUnixTime } from 'date-fns'
 
 export const useCurrentUser = () => {
   // 雑だけどここでuserがなければ作成しちゃうか
@@ -10,8 +9,7 @@ export const useCurrentUser = () => {
   useEffect(() => {
     console.log(currentUser)
     const createMyWallet = async () => {
-      const timestamp = getUnixTime(new Date())
-      const user = await addNewUser(timestamp)
+      const user = await addNewUser()
       console.log(user)
       if (user?.key) {
         setCurrentUser({

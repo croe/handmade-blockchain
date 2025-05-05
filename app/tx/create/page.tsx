@@ -6,6 +6,9 @@ import { currentUserState } from '@/stores/users'
 import * as fabric from 'fabric'
 import { Eraser } from 'lucide-react'
 import Link from 'next/link'
+import { storage } from '@/lib/firebase'
+import { ref, uploadString } from 'firebase/storage'
+import { makeTransaction } from '@/api/transaction'
 
 const TxCreatePage = () => {
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null)
@@ -27,6 +30,23 @@ const TxCreatePage = () => {
   }, [])
 
   const handleEraserClick = () => canvas?.clear()
+  const handleSaveClick = async () => {
+    if (!currentUser) return
+    if (!canvas) return
+    const tx = await makeTransaction(currentUser.id, 'test')
+    if (!tx) return
+    const dataUrl = canvas.toDataURL({
+      format: 'png',
+      quality: 0.5,
+      multiplier: 2,
+    });
+    const storageRef = ref(storage, `tx_amounts/${tx.key}.png`)
+    uploadString(storageRef, dataUrl, 'data_url').then((snapshot) => {
+      console.log('Uploaded a base64 string!')
+    }).catch((error) => {
+      console.error(error)
+    })
+  }
 
   return (
     <div className="w-full h-screen text-black">
@@ -51,6 +71,7 @@ const TxCreatePage = () => {
           <span className="text-gray-500">{currentUser?.id}</span>
         </p>
       </div>
+      <button onClick={handleSaveClick}>SAVE</button>
       <p className="text-center mt-10"><Link href={`/`}>HOME</Link></p>
     </div>
   )
