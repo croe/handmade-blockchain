@@ -3,6 +3,7 @@ import "./globals.css"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { Providers } from "@/components/providers"
+import WalletViewer from '@/components/walletViewer'
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -17,9 +18,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ja" className="scroll-smooth">
-      <body className={inter.className}>
-        <Providers>{children}</Providers>
+    <html lang="ja" className="scroll-smooth" suppressHydrationWarning>
+      <body className={inter.className} suppressHydrationWarning>
+        <Providers>
+          <WalletViewer />
+          {children}
+        </Providers>
       </body>
     </html>
   )

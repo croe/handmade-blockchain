@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { db } from "@/lib/firebase";
 import { ref, onValue, push, remove, off, DataSnapshot, serverTimestamp, set } from "firebase/database";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Trash2, Play, Send } from 'lucide-react'
-import {useCurrentUser} from '@/hooks/useCurrentUser'
+import { Trash2, Play } from 'lucide-react'
+import CreateWalletView from '@/components/CreateWalletView'
 
 interface TestDataItemFromDB {
   text: string;
@@ -23,16 +24,6 @@ export default function Home() {
   const [data, setData] = useState<TestDataItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
-  // State for the transaction form
-  const [transactionFrom, setTransactionFrom] = useState<string>("");
-  const [transactionTo, setTransactionTo] = useState<string>("");
-  const [transactionAmount, setTransactionAmount] = useState<string>("");
-  const [transactionError, setTransactionError] = useState<string | null>(null);
-  const [transactionLoading, setTransactionLoading] = useState<boolean>(false);
-
-  const currentUser = useCurrentUser()
-  console.log(currentUser)
 
   // データ取得と監視
   useEffect(() => {
@@ -142,49 +133,12 @@ export default function Home() {
     }
   };
 
-  // Transaction data add process
-  const handleAddTransaction = async () => {
-    // Basic validation
-    const amount = parseFloat(transactionAmount);
-    if (!transactionFrom.trim() || !transactionTo.trim() || isNaN(amount) || amount <= 0) {
-      setTransactionError("Please fill in all fields with valid data (amount must be positive).");
-      return;
-    }
-    if (!db) {
-        setTransactionError("Firebase is not configured correctly.");
-        return;
-    }
-
-    setTransactionLoading(true); // Start loading
-    setTransactionError(null); // Clear previous errors
-
-    const transactionRef = ref(db, 'transactions'); // Path for transactions
-    // Save in TransactionFromDB format
-    const newTransaction = {
-      f: transactionFrom.trim(),
-      t: transactionTo.trim(),
-      m: amount,
-      s: serverTimestamp() // Use Firebase server timestamp
-    };
-
-    try {
-      await push(transactionRef, newTransaction);
-      // Clear the form
-      setTransactionFrom("");
-      setTransactionTo("");
-      setTransactionAmount("");
-      setTransactionError(null); // Clear error on success
-    } catch (err) {
-      console.error("Firebase write error (transaction):", err);
-      setTransactionError("Failed to add transaction to Firebase.");
-    } finally {
-      setTransactionLoading(false); // End loading
-    }
-  };
-
   return (
     <main className="flex min-h-screen flex-col items-center space-y-8 py-8">
-      {/* Firebase RTDB サンプルセクション */}
+
+      <Card>
+        <CreateWalletView />
+      </Card>
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Firebase RTDB Sample</CardTitle>
@@ -234,100 +188,7 @@ export default function Home() {
            {!db && !loading && <p className="text-orange-500">Firebase is not configured correctly.</p>}
         </CardContent>
       </Card>
-
-      {/* Transaction Form Section */}
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Add New Transaction</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Input
-              type="text"
-              placeholder="From Address"
-              value={transactionFrom}
-              onChange={(e) => setTransactionFrom(e.target.value)}
-              disabled={!db || transactionLoading}
-            />
-            <Input
-              type="text"
-              placeholder="To Address"
-              value={transactionTo}
-              onChange={(e) => setTransactionTo(e.target.value)}
-              disabled={!db || transactionLoading}
-            />
-            <Input
-              type="number"
-              placeholder="Amount"
-              value={transactionAmount}
-              onChange={(e) => setTransactionAmount(e.target.value)}
-              disabled={!db || transactionLoading}
-              min="0"
-              step="any"
-            />
-          </div>
-          {transactionError && <p className="text-red-500 text-sm">{transactionError}</p>}
-          <Button
-            onClick={handleAddTransaction}
-            disabled={!transactionFrom.trim() || !transactionTo.trim() || !transactionAmount || !db || transactionLoading}
-            className="w-full"
-          >
-            {transactionLoading ? "Adding..." : <> <Send className="mr-2 h-4 w-4" /> Add Transaction </>}
-          </Button>
-           {!db && <p className="text-orange-500 text-sm">Firebase is not configured correctly.</p>}
-        </CardContent>
-      </Card>
-
-      {/* Keep the existing TestData Card */}
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Test Data List</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Data addition form for TestData (keeping it separate for now) */}
-          <div className="flex space-x-2">
-            <Input
-              type="text"
-              placeholder="Enter text for TestData"
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              disabled={!db || loading}
-              onKeyDown={(e) => e.key === 'Enter' && handleAddItem()}
-            />
-            <Button onClick={handleAddItem} disabled={!inputText.trim() || !db || loading}>
-              Add Test Data
-            </Button>
-          </div>
-
-           {/* Initial data button for TestData */}
-           <Button variant="outline" onClick={handleAddInitialData} disabled={!db || loading}>
-             <Play className="mr-2 h-4 w-4" /> Add/Reset Initial Test Data
-           </Button>
-
-          {/* Data display area for TestData */}
-          {loading && <p>Loading data...</p>}
-          {error && <p className="text-red-500">{error}</p>}
-          {!loading && !error && db && (
-            <ul className="space-y-2 max-h-60 overflow-y-auto pr-2">
-              {data.length === 0 ? (
-                 <p className="text-gray-500">No test data yet.</p>
-              ) : (
-                data.map((item) => (
-                  <li key={item.id} className="flex items-center justify-between p-2 border rounded bg-white dark:bg-gray-800">
-                    <span className="flex-1 mr-2 break-words">{item.text}
-                       <span className="block text-xs text-gray-400">({new Date(item.timestamp).toLocaleString()})</span>
-                    </span>
-                    <Button variant="ghost" size="icon" onClick={() => handleDeleteItem(item.id)} disabled={loading}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </li>
-                ))
-              )}
-            </ul>
-          )}
-           {!db && !loading && <p className="text-orange-500">Firebase is not configured correctly.</p>}
-        </CardContent>
-      </Card>
+      <p><Link href={`/tx/create`}>CREATE TX</Link></p>
     </main>
   )
 }
