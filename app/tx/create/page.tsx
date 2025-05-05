@@ -11,7 +11,7 @@ const TxCreatePage = () => {
     const canvas = new fabric.Canvas(canvasRef.current)
     const pencil = new fabric.PencilBrush(canvas);
     pencil.color = "#000000";
-    pencil.width = 10;
+    pencil.width = 3
     canvas.freeDrawingBrush = pencil;
     canvas.isDrawingMode = true;
     return () => {
@@ -23,7 +23,7 @@ const TxCreatePage = () => {
     <div className="flex flex-col items-center justify-center w-full h-screen text-black">
       <h1 className="text-2xl font-bold">Create Transaction</h1>
       <p className="mt-4 text-lg">This page is under construction.</p>
-      <canvas width="1000" height="1000" ref={canvasRef} />
+      <canvas className="border" width="300" height="100" ref={canvasRef} />
     </div>
   )
 }
