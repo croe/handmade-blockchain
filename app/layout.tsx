@@ -2,13 +2,13 @@ import type React from "react"
 import "./globals.css"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
+import { Providers } from "@/components/providers"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "モバイルゲーム公式サイト",
-  description: "最高のモバイルゲーム体験をお届けします。",
-    generator: 'v0.dev'
+  title: "HANDMADE BLOCKCHAIN",
+  description: "手作りでブロックチェーンを作る",
 }
 
 export default function RootLayout({
@@ -19,9 +19,7 @@ export default function RootLayout({
   return (
     <html lang="ja" className="scroll-smooth">
       <body className={inter.className}>
-        <header>Header</header>
-        {children}
-        <footer>Footer</footer>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )
