@@ -2,17 +2,19 @@
 
 import {useState, useEffect} from 'react'
 import Link from 'next/link'
-import {db, storage, DB_TRANSACTION, PUBLIC_BUCKET, TX_AMOUNT_BUCKET} from '@/lib/firebase'
+import {db, DB_TRANSACTION, TX_AMOUNT_BUCKET} from '@/lib/firebase'
 import {ref, onValue, remove, off, DataSnapshot} from 'firebase/database'
-import {ref as storageRef, getDownloadURL} from 'firebase/storage'
 import {Button} from '@/components/ui/button'
 import {Card, CardHeader, CardTitle, CardContent} from '@/components/ui/card'
 import {Trash2} from 'lucide-react'
 import CreateWalletView from '@/components/CreateWalletView'
-import {convertTransaction, Transaction} from '@/models/transaction'
+import {convertTransactions, Transaction} from '@/models/transaction'
 import {getBucketImage} from '@/utils/getBucketImage'
+import UsersViewer from '@/components/UsersViewer'
 
 export default function Home() {
+  // FIXME: transactionの一覧から送信先を作成する？
+  // TODO: 同期処理を考える
   const [data, setData] = useState<Transaction[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
@@ -31,7 +33,7 @@ export default function Home() {
 
     // データ変更時のコールバック
     const handleValueChange = async (snapshot: DataSnapshot) => {
-      const txs = convertTransaction(snapshot)
+      const txs = convertTransactions(snapshot)
       // タイムスタンプで降順（新しい順）にソート
       txs.sort((a, b) => b.timestamp - a.timestamp)
       console.log(txs)
@@ -114,6 +116,11 @@ export default function Home() {
             </ul>
           )}
           {!db && !loading && <p className="text-orange-500">Firebase is not configured correctly.</p>}
+        </CardContent>
+      </Card>
+      <Card>
+        <CardContent className="space-y-4">
+          <UsersViewer />
         </CardContent>
       </Card>
       <p><Link href={`/tx/create`}>CREATE TX</Link></p>

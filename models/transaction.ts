@@ -18,7 +18,7 @@ export type Transaction = {
   image?: string;
 }
 
-export const convertTransaction = (
+export const convertTransactions = (
   db: DataSnapshot
 ): Transaction[] => {
   const rawData = db.val();
@@ -26,10 +26,10 @@ export const convertTransaction = (
     id: key, // Firebaseのキーをidとして保持
     ...rawData[key] as TransactionFromDB
   }));
-  return convertTransactionFromDB(dataArray)
+  return convertTransactionsFromDB(dataArray)
 }
 
-const convertTransactionFromDB = (
+const convertTransactionsFromDB = (
   db: TransactionWithIdFromDB[]
 ): Transaction[] => {
   return db.map(key => ({
