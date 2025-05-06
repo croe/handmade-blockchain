@@ -2,7 +2,7 @@
 
 import {useState, useEffect} from 'react'
 import Link from 'next/link'
-import {db, storage, DB_TRANSACTION} from '@/lib/firebase'
+import {db, storage, DB_TRANSACTION, PUBLIC_BUCKET, TX_AMOUNT_BUCKET} from '@/lib/firebase'
 import {ref, onValue, remove, off, DataSnapshot} from 'firebase/database'
 import {ref as storageRef, getDownloadURL} from 'firebase/storage'
 import {Button} from '@/components/ui/button'
@@ -10,6 +10,7 @@ import {Card, CardHeader, CardTitle, CardContent} from '@/components/ui/card'
 import {Trash2} from 'lucide-react'
 import CreateWalletView from '@/components/CreateWalletView'
 import {convertTransaction, Transaction} from '@/models/transaction'
+import {getBucketImage} from '@/utils/getBucketImage'
 
 export default function Home() {
   const [data, setData] = useState<Transaction[]>([])
@@ -30,18 +31,9 @@ export default function Home() {
 
     // データ変更時のコールバック
     const handleValueChange = async (snapshot: DataSnapshot) => {
-      const _txs = convertTransaction(snapshot)
+      const txs = convertTransaction(snapshot)
       // タイムスタンプで降順（新しい順）にソート
-      _txs.sort((a, b) => b.timestamp - a.timestamp)
-      const promises = _txs.map(async (tx) => {
-        const imageRef = storageRef(storage, `tx_amounts/${tx.id}.png`)
-        const imageUrl = await getDownloadURL(imageRef)
-        return {
-          ...tx,
-          image: imageUrl,
-        }
-      })
-      const txs = await Promise.all(promises)
+      txs.sort((a, b) => b.timestamp - a.timestamp)
       console.log(txs)
       setData(txs)
       setError(null) // エラーをクリア
@@ -106,11 +98,11 @@ export default function Home() {
                 data.map((item) => (
                   <li key={item.id}
                       className="flex items-center justify-between p-2 border rounded bg-white dark:bg-gray-800">
-                    <span className="flex-1 mr-2 break-words">{item.id}
+                    <span className="flex-1 mr-2 break-words">
                       <span className="block text-xs text-gray-400">From: {item.from}</span>
                       <span className="block text-xs text-gray-400">To: {item.to}</span>
                       <span className="block text-xs text-gray-400">({new Date(item.timestamp).toLocaleString()})</span>
-                      <img src={item.image} alt=""/>
+                      <img src={getBucketImage(TX_AMOUNT_BUCKET, item.id, 'png')} alt=""/>
                     </span>
                     <Button variant="ghost" size="icon" onClick={() => handleDeleteItem(item.id)}
                             disabled={loading}> {/* handleDeleteItemを呼び出す */}

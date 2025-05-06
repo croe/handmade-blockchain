@@ -8,6 +8,9 @@ export const DB_USER = 'users'
 export const DB_TRANSACTION = 'txs'
 export const DB_BLOCK = 'blocks'
 
+export const PUBLIC_BUCKET = 'https://storage.googleapis.com/handmade-blockchain.firebasestorage.app/'
+export const TX_AMOUNT_BUCKET = 'tx_amounts'
+
 // .env.local ファイルなどから読み込む想定 (Next.js)
 // クライアントサイドで使うため NEXT_PUBLIC_ プレフィックスが必要
 const firebaseConfig = {

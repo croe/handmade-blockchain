@@ -4,13 +4,16 @@ import { useEffect, useRef, useState } from 'react'
 import { useAtomValue } from 'jotai'
 import { currentUserState } from '@/stores/users'
 import * as fabric from 'fabric'
-import { Eraser } from 'lucide-react'
+import { Eraser, LoaderCircle } from 'lucide-react'
 import Link from 'next/link'
 import { storage } from '@/lib/firebase'
 import { ref, uploadString } from 'firebase/storage'
 import { makeTransaction } from '@/api/transaction'
 
 const TxCreatePage = () => {
+  // FIXME: 手数料を入れないと無限に作られてしまう問題？（ミスったら入れられないからいいか）
+  // 意外と👆の問題が根深そう、っていうか作るもの多いな...
+  const [loading, setLoading] = useState<boolean>(false)
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null)
   const currentUser = useAtomValue(currentUserState)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -43,6 +46,7 @@ const TxCreatePage = () => {
     const storageRef = ref(storage, `tx_amounts/${tx.key}.png`)
     uploadString(storageRef, dataUrl, 'data_url').then((snapshot) => {
       console.log('Uploaded a base64 string!')
+      canvas.clear()
     }).catch((error) => {
       console.error(error)
     })
@@ -71,7 +75,15 @@ const TxCreatePage = () => {
           <span className="text-gray-500">{currentUser?.id}</span>
         </p>
       </div>
-      <button onClick={handleSaveClick}>SAVE</button>
+      <div className="w-full flex justify-center mt-10">
+        <button onClick={handleSaveClick}>
+          {loading ? (
+            <LoaderCircle className="animate-spin" size={20} />
+          ) : (
+            <span>SAVE</span>
+          )}
+        </button>
+      </div>
       <p className="text-center mt-10"><Link href={`/`}>HOME</Link></p>
     </div>
   )
