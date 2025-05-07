@@ -16,30 +16,32 @@ export const syncedTxsState = atom<Transaction[]>(
   // 降順でソート
   txs.sort((a, b) => b.timestamp - a.timestamp)
   if (latestTimestampUser) {
-    if (isValidTimestamp(latestTimestampUser.timestamp)) {
-      /**
-       * 1. 最新の他のユーザーのタイムスタンプが現在から10秒以内の場合 ＝ 全てのトランザクションの中で最新である
-       * 最新のトランザクションを返却する
-       */
-      return txs
-    } else if (currentUser.timestamp > latestTimestampUser.timestamp) {
-      /**
-       * 2. 自分のタイムスタンプが最新のタイムスタンプよりも新しい場合 = 自分が最新である
-       * 自分のタイムスタンプよりも前のトランザクションを返却する
-       */
+    // 自分以外のユーザーがいる場合
+    // 自分と相手を比較する → オンラインかどうかを比較する→判断
+    if (currentUser.timestamp > latestTimestampUser.timestamp) {
+      // 自分の方が新しい場合
+      if (isValidTimestamp(currentUser.timestamp)) {
+        // オンラインである場合 → 自分のTxで自分のタイムスタンプ以前のTxを返却する
+        console.log('pattern 1-1')
+        return txs.filter((tx) => tx.timestamp <= currentUser.timestamp)
+      }
+      // オフラインの場合
+      console.log('pattern 1-2')
       return txs.filter((tx) => tx.timestamp <= currentUser.timestamp)
     } else {
-      /**
-       * 3. 最新の他のユーザーのタイムスタンプが自分のタイムスタンプよりも新しい場合 ＝ 他のユーザーの最新が最新である
-       * 他の最新ユーザーのタイムスタンプよりも前のトランザクションを返却する
-       */
-      return txs.filter((tx) => tx.timestamp <= latestTimestampUser.timestamp)
+      // 他の方が新しい場合
+      if (isValidTimestamp(latestTimestampUser.timestamp)) {
+        // オンラインである場合 → Txで他のユーザーのタイムスタンプ以前のTxを返却する
+        console.log('pattern 2-1')
+        return txs.filter((tx) => tx.timestamp <= latestTimestampUser.timestamp)
+      }
+      // オフラインの場合
+      console.log('pattern 2-2')
+      return txs.filter((tx) => tx.timestamp <= currentUser.timestamp)
     }
   } else {
-    /**
-     * 4. 最新の他のユーザーがいない場合 = 自分が最新である
-     * 自分のタイムスタンプよりも前のトランザクションを返却する
-     */
+    // 自分だけしかいない場合（多分ない）
+    console.log('pattern 3')
     return txs.filter((tx) => tx.timestamp <= currentUser.timestamp)
   }
 })
