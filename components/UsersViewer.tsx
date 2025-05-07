@@ -4,19 +4,21 @@ import { useEffect } from 'react'
 import { db, DB_USER } from '@/lib/firebase'
 import { DataSnapshot, off, onValue, ref } from 'firebase/database'
 import { convertUsers } from '@/models/user'
-import {useAtom} from 'jotai'
-import {usersState} from '@/stores/users'
+import { useAtom } from 'jotai'
+import { usersState, latestTimestampUserState } from '@/stores/users'
 import { MonitorCheck, MonitorX } from 'lucide-react'
-import {isValidTimestamp} from '@/utils/isValidTimestamp'
+import { isValidTimestamp } from '@/utils/isValidTimestamp'
 
 const UsersViewer = () => {
   const [users, setUsers] = useAtom(usersState)
+  const [latestTimestampUser] = useAtom(latestTimestampUserState)
 
   useEffect(() => {
     if (!db) return
     const usersRef = ref(db, DB_USER)
     const handleValueChange = (snapshot: DataSnapshot) => {
       const users = convertUsers(snapshot)
+      users.sort((a, b) => b.timestamp - a.timestamp)
       console.log(users)
       setUsers(users)
     }
@@ -51,6 +53,12 @@ const UsersViewer = () => {
           </li>
         ))}
       </ul>
+      {latestTimestampUser && (
+        <p className="mt-4 text-sm text-gray-500">
+          <span>Latest Synced: </span>
+          <span>{new Date(latestTimestampUser.timestamp).toLocaleString()}</span>
+        </p>
+      )}
     </div>
   )
 }
