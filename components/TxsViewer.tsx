@@ -4,14 +4,14 @@ import { useEffect } from 'react'
 import {db, DB_TRANSACTION, TX_AMOUNT_BUCKET} from '@/lib/firebase'
 import { convertTransactions } from '@/models/transaction'
 import { useAtom } from 'jotai'
-import { txsState, syncedTxsState } from '@/stores/transactions'
+import {txsState, syncedTxsState, syncedTimestampState} from '@/stores/transactions'
 import {DataSnapshot, off, onValue, ref, remove} from 'firebase/database'
 import {getBucketImage} from '@/utils/getBucketImage'
 import {Button} from '@/components/ui/button'
 import {Trash2} from 'lucide-react'
 
 const TxsViewer = () => {
-  const [txs, setTxs] = useAtom(txsState)
+  const [_, setTxs] = useAtom(txsState)
   const [syncedTxs] = useAtom(syncedTxsState)
 
   useEffect(() => {
@@ -20,7 +20,7 @@ const TxsViewer = () => {
 
     const handleValueChange = (snapshot: DataSnapshot) => {
       const txs = convertTransactions(snapshot)
-      console.log(txs)
+      txs.sort((a, b) => b.timestamp - a.timestamp)
       setTxs(txs)
     }
 
