@@ -1,15 +1,17 @@
 'use client'
 
 import {useAtom, useSetAtom} from 'jotai'
-import {currentUserState, usersState} from '@/stores/users'
-import {useEffect} from 'react'
-import {getUser, updateUserOnline} from '@/api/user'
+import {currentUserState, latestTimestampUserState} from '@/stores/users'
+import { getUser, updateUserOnline } from '@/api/user'
 import { useInterval } from 'react-use'
-
-const USER_SIGNAL_INTERVAL = 10000 // 10 seconds
+import { USER_SIGNAL_INTERVAL } from '@/lib/const'
+import {isValidTimestamp} from '@/utils/isValidTimestamp'
+import {syncedTimestampState} from '@/stores/transactions'
 
 const UserSignal = () => {
   const [currentUser, setCurrentUser] = useAtom(currentUserState)
+  const [latestTimestampUser] = useAtom(latestTimestampUserState)
+  const setSyncedTimestamp = useSetAtom(syncedTimestampState)
   useInterval(
     async () => {
       if (currentUser) {
@@ -18,7 +20,15 @@ const UserSignal = () => {
         const me = await getUser(currentUser.id)
         if (!me) return
         setCurrentUser(me)
-        console.log(me)
+        if (latestTimestampUser) {
+          if (!(me.timestamp > latestTimestampUser.timestamp)) {
+            if (isValidTimestamp(latestTimestampUser.timestamp)) {
+              // 最新のタイムスタンプを持つユーザーがオンラインの場合
+              console.log(latestTimestampUser.timestamp)
+              setSyncedTimestamp(latestTimestampUser.timestamp)
+            }
+          }
+        }
       }
     },
     USER_SIGNAL_INTERVAL

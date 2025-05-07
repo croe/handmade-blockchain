@@ -5,7 +5,7 @@ import { db, DB_USER } from '@/lib/firebase'
 import { DataSnapshot, off, onValue, ref } from 'firebase/database'
 import { convertUsers } from '@/models/user'
 import { useAtom } from 'jotai'
-import { usersState, latestTimestampUserState } from '@/stores/users'
+import {usersState, latestTimestampUserState} from '@/stores/users'
 import { MonitorCheck, MonitorX } from 'lucide-react'
 import { isValidTimestamp } from '@/utils/isValidTimestamp'
 
