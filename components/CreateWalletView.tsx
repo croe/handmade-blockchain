@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { useAtom } from 'jotai'
 import { currentUserState } from '@/stores/users'
 import { addNewUser } from '@/api/user'
@@ -19,6 +18,7 @@ const CreateWalletView = () => {
       setCurrentUser({
         id: user.key,
         timestamp: timestamp,
+        status: true,
       })
     }
   }
@@ -26,7 +26,7 @@ const CreateWalletView = () => {
   return (
     <div className="px-4 py-2 text-black border-2" >
       {currentUser ? (
-        <button className="text-green-500" onClick={handleCreateWallet}><CheckCircle /></button>
+        <button className="text-green-500"><CheckCircle /></button>
       ) : (
         <button onClick={handleCreateWallet}><Hammer /></button>
       )}

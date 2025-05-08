@@ -3,7 +3,7 @@ import { atomWithStorage } from 'jotai/utils'
 import { User } from '@/models/user'
 
 const options = {
-  getOnInit: false,
+  getOnInit: true,
 }
 
 export const usersState　= atomWithStorage<User[]>('users', [])

@@ -15,8 +15,6 @@ export const getMyBlockPath = (userId: string) => `${userId}/${DB_BLOCK}`
 export const PUBLIC_BUCKET = 'https://storage.googleapis.com/handmade-blockchain.firebasestorage.app/'
 export const TX_AMOUNT_BUCKET = 'tx_amounts'
 
-// .env.local ファイルなどから読み込む想定 (Next.js)
-// クライアントサイドで使うため NEXT_PUBLIC_ プレフィックスが必要
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,

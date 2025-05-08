@@ -6,6 +6,7 @@ import { Providers } from "@/components/providers"
 import WalletViewer from '@/components/WalletViewer'
 import TxsViewer from '@/components/TxsViewer'
 import UserSignal from '@/components/UserSignal'
+import RenderMounted from '@/components/ClientRender'
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -22,12 +23,14 @@ export default function RootLayout({
   return (
     <html lang="ja" className="scroll-smooth" suppressHydrationWarning>
       <body className={inter.className} suppressHydrationWarning>
-        <Providers>
-          <UserSignal />
-          <WalletViewer />
-          <TxsViewer />
-          {children}
-        </Providers>
+        <RenderMounted>
+          <Providers>
+            <UserSignal />
+            <WalletViewer />
+            <TxsViewer />
+            {children}
+          </Providers>
+        </RenderMounted>
       </body>
     </html>
   )
