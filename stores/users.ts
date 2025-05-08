@@ -24,3 +24,5 @@ export const latestTimestampUserState = atom<User | null>(
       .sort((a, b) => b.timestamp - a.timestamp)
     return filteredUsers[0]
 })
+
+// export const syncedUserState = atom()

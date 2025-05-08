@@ -2,6 +2,7 @@ import {DataSnapshot} from 'firebase/database'
 
 interface UserFromDB {
   t: number;
+  s: number;
 }
 
 interface UserWithIdFromDB extends UserFromDB {
@@ -11,6 +12,7 @@ interface UserWithIdFromDB extends UserFromDB {
 export type User = {
   id: string;
   timestamp: number;
+  status: boolean;
 }
 
 export const convertUsers = (
@@ -30,6 +32,7 @@ export const convertUsersFromDB = (
   return db.map(key => ({
     id: key.id,
     timestamp: key.t,
+    status: !!key.s
   }))
 }
 
@@ -40,5 +43,6 @@ export const convertUser = (
   return {
     id: db.key || '',
     timestamp: rawData.t,
+    status: !!rawData.s,
   }
 }

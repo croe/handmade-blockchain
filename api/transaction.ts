@@ -1,12 +1,11 @@
 import { db } from '@/lib/firebase'
 import { push, ref, serverTimestamp } from 'firebase/database'
-import { getUnixTime } from 'date-fns'
-import { DB_TRANSACTION } from '@/lib/firebase'
+import { getMyTxPath } from '@/lib/firebase'
 
-export const makeTransaction = async (from: string, to: string)=> {
+export const makeTransaction = async (userId: string, from: string, to: string)=> {
   try {
     if (!db) return
-    const transactionsRef = ref(db, DB_TRANSACTION)
+    const transactionsRef = ref(db, getMyTxPath(userId))
     return await push(transactionsRef, {
       f: from,
       t: to,

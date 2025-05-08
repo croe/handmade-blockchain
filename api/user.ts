@@ -1,4 +1,4 @@
-import { db, DB_USER } from '@/lib/firebase'
+import {db, DB_USER, getMyUserPath} from '@/lib/firebase'
 import { get, push, ref, serverTimestamp, update } from 'firebase/database'
 import { convertUser } from '@/models/user'
 
@@ -19,8 +19,8 @@ export const addNewUser = async () => {
 export const getUser = async (userId: string) => {
   try {
     if (!db) return null
-    const userRef = ref(db, `${DB_USER}/${userId}`)
-    const userSnapshot = await get(userRef)
+    const meRef = ref(db, getMyUserPath(userId))
+    const userSnapshot = await get(meRef)
     if (userSnapshot.exists()) {
       return convertUser(userSnapshot)
     } else {
@@ -32,19 +32,12 @@ export const getUser = async (userId: string) => {
 }
 
 export const updateUserOnline = async (userId: string) => {
-  // 10秒に一度呼ばれる。最終タイムスタンプを更新する
   try {
     if (!db) return
-    const userRef = ref(db, `${DB_USER}/${userId}`)
-    const user = await update(userRef, {
-      t: serverTimestamp(),
-    })
+    const meRef = ref(db, getMyUserPath(userId))
+    await update(meRef, { t: serverTimestamp(), s: 1 })
     return true
   } catch (error) {
     console.error('Error updating user status:', error)
   }
-}
-
-const getUsersStatus = async (userId: string) => {
-  // いらないかも
 }

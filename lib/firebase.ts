@@ -5,8 +5,12 @@ import { getDatabase } from "firebase/database"
 import { getStorage } from 'firebase/storage'
 
 export const DB_USER = 'users'
-export const DB_TRANSACTION = 'txs'
-export const DB_BLOCK = 'blocks'
+export const DB_TRANSACTION = 'tx'
+export const DB_BLOCK = 'block'
+
+export const getMyUserPath = (userId: string) => `${DB_USER}/${userId}`
+export const getMyTxPath = (userId: string) => `${userId}/${DB_TRANSACTION}`
+export const getMyBlockPath = (userId: string) => `${userId}/${DB_BLOCK}`
 
 export const PUBLIC_BUCKET = 'https://storage.googleapis.com/handmade-blockchain.firebasestorage.app/'
 export const TX_AMOUNT_BUCKET = 'tx_amounts'

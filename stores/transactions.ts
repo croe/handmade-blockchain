@@ -1,8 +1,6 @@
 import {atom} from 'jotai'
 import {atomWithStorage} from 'jotai/utils'
-import {latestTimestampUserState, currentUserState} from '@/stores/users'
 import {Transaction} from '@/models/transaction'
-import {isValidTimestamp} from '@/utils/isValidTimestamp'
 
 export const txsState = atomWithStorage<Transaction[]>('txs', [])
 

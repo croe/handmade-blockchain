@@ -7,43 +7,33 @@ import { useInterval } from 'react-use'
 import { USER_SIGNAL_INTERVAL } from '@/lib/const'
 import {isValidTimestamp} from '@/utils/isValidTimestamp'
 import {syncedTimestampState} from '@/stores/transactions'
+import {db, DB_USER, getMyUserPath} from '@/lib/firebase'
+import {DataSnapshot, off, onDisconnect, onValue, ref, serverTimestamp} from 'firebase/database'
+import {useEffect} from 'react'
 
 const UserSignal = () => {
   const [currentUser, setCurrentUser] = useAtom(currentUserState)
-  const [latestTimestampUser] = useAtom(latestTimestampUserState)
-  const setSyncedTimestamp = useSetAtom(syncedTimestampState)
-  const [syncedTimestamp] = useAtom(syncedTimestampState)
+  const handleUpdateUserOnline = async () => {
+    if (!currentUser) return
+    await updateUserOnline(currentUser.id)
+  }
 
-  useInterval(
-    async () => {
-      if (currentUser) {
-        /**
-         * ユーザーのオンライン状態を更新する
-         * currentUserのタイムスタンプを更新する
-         */
-        const result = await updateUserOnline(currentUser.id)
-        if (!result) return
-        const me = await getUser(currentUser.id)
-        if (!me) return
-        setCurrentUser(me)
-
-        /**
-         * Txsの同期処理
-         */
-        if (latestTimestampUser) {
-          if (!(syncedTimestamp > latestTimestampUser.timestamp)) {
-            if (isValidTimestamp(latestTimestampUser.timestamp)) {
-              // 最新のタイムスタンプを持つユーザーがオンラインであれば
-              // そのユーザーのタイムスタンプを基準に同期する
-              setSyncedTimestamp(latestTimestampUser.timestamp)
-              return
-            }
-          }
-        }
+  const connectedRef = (db && currentUser) && ref(db, ".info/connected");
+  const meRef = (db && currentUser) && ref(db, getMyUserPath(currentUser.id))
+  if (connectedRef && meRef) {
+    onValue(connectedRef, (snap) => {
+      if (snap.val() === true) {
+        console.log("connected")
+        handleUpdateUserOnline()
+      } else {
+        console.log("not connected")
       }
-    },
-    USER_SIGNAL_INTERVAL
-  );
+    });
+    onDisconnect(meRef).set({
+      t: serverTimestamp(),
+      s: 0
+    });
+  }
 
   return (
     <div className="flex flex-col items-center justify-center py-10">

@@ -36,7 +36,7 @@ const TxCreatePage = () => {
   const handleSaveClick = async () => {
     if (!currentUser) return
     if (!canvas) return
-    const tx = await makeTransaction(currentUser.id, 'test')
+    const tx = await makeTransaction(currentUser.id, currentUser.id, 'test')
     if (!tx) return
     const dataUrl = canvas.toDataURL({
       format: 'png',

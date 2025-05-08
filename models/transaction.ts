@@ -22,6 +22,7 @@ export const convertTransactions = (
   db: DataSnapshot
 ): Transaction[] => {
   const rawData = db.val();
+  console.log(rawData)
   const dataArray: TransactionWithIdFromDB[] = Object.keys(rawData).map(key => ({
     id: key, // Firebaseのキーをidとして保持
     ...rawData[key] as TransactionFromDB

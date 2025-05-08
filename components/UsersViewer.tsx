@@ -1,32 +1,44 @@
 'use client'
 
 import { useEffect } from 'react'
-import { db, DB_USER } from '@/lib/firebase'
-import { DataSnapshot, off, onValue, ref } from 'firebase/database'
+import { db, DB_USER, getMyUserPath } from '@/lib/firebase'
+import { DataSnapshot, off, onValue, ref, onDisconnect, child, serverTimestamp, set } from 'firebase/database'
 import { convertUsers } from '@/models/user'
 import { useAtom } from 'jotai'
-import {usersState, latestTimestampUserState} from '@/stores/users'
+import { usersState, latestTimestampUserState, currentUserState } from '@/stores/users'
 import { MonitorCheck, MonitorX } from 'lucide-react'
 import { isValidTimestamp } from '@/utils/isValidTimestamp'
+import { updateUserOnline } from '@/api/user'
 
 const UsersViewer = () => {
   const [users, setUsers] = useAtom(usersState)
+  const [currentUser] = useAtom(currentUserState)
   const [latestTimestampUser] = useAtom(latestTimestampUserState)
 
   useEffect(() => {
+    console.log('run')
     if (!db) return
+    if (!currentUser) return
     const usersRef = ref(db, DB_USER)
     const handleValueChange = (snapshot: DataSnapshot) => {
+      console.log('run')
       const users = convertUsers(snapshot)
       users.sort((a, b) => b.timestamp - a.timestamp)
       console.log(users)
+
+      // 自分でないかつオンラインのユーザーの数を算出
+      // 算出したユーザーのトランザクションプールとチェーンを取得（多そう、負荷を計算すべき？）Max5人とか
+      // 自分のキャッシュと比較して差があるTxを取り入れる、差があるブロックを取り入れる（ID比較で良さそう）
+      // ブロックはIDでいいのか・・？blockHeightとかのシンプルな仕組みにしたい
+      const onlineUsers = users.filter((user) => isValidTimestamp(user.timestamp) && user.id !== currentUser.id)
+      console.log(onlineUsers)
       setUsers(users)
     }
     const handleError = (err: Error) => {
       console.error('Firebase read error:', err)
     }
     const unsubscribe = onValue(usersRef, handleValueChange, handleError)
-
+    
     return () => {
       off(usersRef, 'value', handleValueChange)
     }
@@ -40,7 +52,7 @@ const UsersViewer = () => {
           <li key={user.id} className="text-sm flex gap-2 items-center">
             <p>ID: {user.id}</p>
             <p>
-              {isValidTimestamp(user.timestamp) ? (
+              {user.status ? (
                 <span className="text-green-500">
                   <MonitorCheck size={20}/>
                 </span>
