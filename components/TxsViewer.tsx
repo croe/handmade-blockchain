@@ -1,45 +1,42 @@
 'use client'
 
-import { useEffect } from 'react'
-import {db, getMyTxPath, TX_AMOUNT_BUCKET} from '@/lib/firebase'
-import { convertTransactions } from '@/models/transaction'
+import { db, getUserTxPath, TX_AMOUNT_BUCKET } from '@/lib/firebase'
 import { useAtom } from 'jotai'
-import {txsState, syncedTxsState} from '@/stores/transactions'
-import {DataSnapshot, off, onValue, ref, remove} from 'firebase/database'
-import {getBucketImage} from '@/utils/getBucketImage'
-import {Button} from '@/components/ui/button'
-import {Trash2} from 'lucide-react'
-import {currentUserState} from '@/stores/users'
+import { txsState } from '@/stores/transactions'
+import { ref, remove } from 'firebase/database'
+import { getBucketImage } from '@/utils/getBucketImage'
+import { Button } from '@/components/ui/button'
+import { Trash2 } from 'lucide-react'
+import { currentUserState } from '@/stores/users'
 
 const TxsViewer = () => {
   const [currentUser] = useAtom(currentUserState)
-  const [txs, setTxs] = useAtom(txsState)
-  const [syncedTxs] = useAtom(syncedTxsState)
+  const [txs] = useAtom(txsState)
 
-  useEffect(() => {
-    if (!db) return
-    if (!currentUser) return
-    const txRef = ref(db, getMyTxPath(currentUser.id))
-
-    const handleValueChange = (snapshot: DataSnapshot) => {
-      const txs = convertTransactions(snapshot)
-      txs.sort((a, b) => b.timestamp - a.timestamp)
-      setTxs(txs)
-    }
-
-    const unsubscribe = onValue(txRef, handleValueChange)
-
-    return () => {
-      off(txRef, 'value', handleValueChange)
-    }
-  }, [])
+  // useEffect(() => {
+  //   if (!db) return
+  //   if (!currentUser) return
+  //   const txRef = ref(db, getUserTxPath(currentUser.id))
+  //
+  //   const handleValueChange = (snapshot: DataSnapshot) => {
+  //     const txs = convertTxs(snapshot)
+  //     txs.sort((a, b) => b.timestamp - a.timestamp)
+  //     // setTxs(txs)
+  //   }
+  //
+  //   const unsubscribe = onValue(txRef, handleValueChange)
+  //
+  //   return () => {
+  //     off(txRef, 'value', handleValueChange)
+  //   }
+  // }, [])
 
   // データ削除処理
   const handleDeleteItem = async (id: string) => {
     if (!db) return
     if (!currentUser) return
 
-    const itemRef = ref(db, `${getMyTxPath(currentUser.id)}/${id}`) // 削除対象のデータへの参照
+    const itemRef = ref(db, `${getUserTxPath(currentUser.id)}/${id}`) // 削除対象のデータへの参照
 
     try {
       await remove(itemRef) // removeでデータを削除

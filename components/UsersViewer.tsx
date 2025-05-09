@@ -4,33 +4,59 @@ import { useEffect } from 'react'
 import { db, DB_USER } from '@/lib/firebase'
 import { DataSnapshot, off, onValue, ref } from 'firebase/database'
 import { convertUsers } from '@/models/user'
-import { useAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import { usersState, latestTimestampUserState, currentUserState } from '@/stores/users'
-import { MonitorCheck, MonitorX } from 'lucide-react'
-import { isValidTimestamp } from '@/utils/isValidTimestamp'
+import { MonitorCheck } from 'lucide-react'
+import {getTxs, syncTxs} from '@/api/transaction'
+import { uniqBy } from 'lodash'
+import { txsState } from '@/stores/transactions'
+
+const SYNC_LIMIT = 3
 
 const UsersViewer = () => {
   const [users, setUsers] = useAtom(usersState)
   const [currentUser] = useAtom(currentUserState)
   const [latestTimestampUser] = useAtom(latestTimestampUserState)
+  const setTxs = useSetAtom(txsState)
 
   useEffect(() => {
     console.log('run')
     if (!db) return
     if (!currentUser) return
     const usersRef = ref(db, DB_USER)
-    const handleValueChange = (snapshot: DataSnapshot) => {
+    const handleValueChange = async (snapshot: DataSnapshot) => {
       const users = convertUsers(snapshot)
-      users.sort((a, b) => b.timestamp - a.timestamp)
-      console.log(users)
-
-      // 自分でないかつオンラインのユーザーの数を算出
-      // 算出したユーザーのトランザクションプールとチェーンを取得（多そう、負荷を計算すべき？）Max5人とか
-      // 自分のキャッシュと比較して差があるTxを取り入れる、差があるブロックを取り入れる（ID比較で良さそう）
-      // ブロックはIDでいいのか・・？blockHeightとかのシンプルな仕組みにしたい
-      const onlineUsers = users.filter((user) => isValidTimestamp(user.timestamp) && user.id !== currentUser.id)
-      console.log(onlineUsers)
       setUsers(users)
+
+      /**
+       * Sync Txs/Blocks
+       */
+      const onlineUsers = users.filter((user) => user.status && user.id !== currentUser.id)
+      if (onlineUsers.length === 0) return
+      const limitedOnlineUsers = onlineUsers.slice(0, SYNC_LIMIT)
+
+      /**
+       * Sync Txs
+       */
+      const txsPromises = limitedOnlineUsers.map(async (user) => await getTxs(user.id))
+      const usersTxs = await Promise.all(txsPromises)
+      const myTxs = await getTxs(currentUser.id)
+      if (usersTxs.length === 0) return
+      console.log(usersTxs)
+      const mergedTxs = uniqBy(usersTxs
+        .concat(myTxs)
+        .flatMap(e => e != null ? e : [])
+        .sort((a, b) => b.timestamp - a.timestamp), 'id')
+      const flatMappedMyTxs = myTxs ? myTxs.flatMap(e => e != null ? e : []) : []
+      if (mergedTxs.length > 0) {
+        setTxs(mergedTxs)
+        await syncTxs(currentUser.id, mergedTxs, flatMappedMyTxs)
+      }
+
+      /**
+       * Sync Blocks
+       */
+
     }
     const handleError = (err: Error) => {
       console.error('Firebase read error:', err)

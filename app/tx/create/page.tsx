@@ -8,7 +8,7 @@ import { Eraser, LoaderCircle } from 'lucide-react'
 import Link from 'next/link'
 import { storage } from '@/lib/firebase'
 import { ref, uploadString } from 'firebase/storage'
-import { makeTransaction } from '@/api/transaction'
+import { makeTx } from '@/api/transaction'
 
 const TxCreatePage = () => {
   // FIXME: 手数料を入れないと無限に作られてしまう問題？（ミスったら入れられないからいいか）
@@ -36,7 +36,7 @@ const TxCreatePage = () => {
   const handleSaveClick = async () => {
     if (!currentUser) return
     if (!canvas) return
-    const tx = await makeTransaction(currentUser.id, currentUser.id, 'test')
+    const tx = await makeTx(currentUser.id, currentUser.id, 'test')
     if (!tx) return
     const dataUrl = canvas.toDataURL({
       format: 'png',

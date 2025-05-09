@@ -9,8 +9,8 @@ export const DB_TRANSACTION = 'tx'
 export const DB_BLOCK = 'block'
 
 export const getMyUserPath = (userId: string) => `${DB_USER}/${userId}`
-export const getMyTxPath = (userId: string) => `${userId}/${DB_TRANSACTION}`
-export const getMyBlockPath = (userId: string) => `${userId}/${DB_BLOCK}`
+export const getUserTxPath = (userId: string) => `${userId}/${DB_TRANSACTION}`
+export const getUserBlockPath = (userId: string) => `${userId}/${DB_BLOCK}`
 
 export const PUBLIC_BUCKET = 'https://storage.googleapis.com/handmade-blockchain.firebasestorage.app/'
 export const TX_AMOUNT_BUCKET = 'tx_amounts'
