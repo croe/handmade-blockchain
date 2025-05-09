@@ -20,7 +20,6 @@ const UsersViewer = () => {
     if (!currentUser) return
     const usersRef = ref(db, DB_USER)
     const handleValueChange = (snapshot: DataSnapshot) => {
-      console.log('run')
       const users = convertUsers(snapshot)
       users.sort((a, b) => b.timestamp - a.timestamp)
       console.log(users)

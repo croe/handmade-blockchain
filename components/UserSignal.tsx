@@ -1,15 +1,10 @@
 'use client'
 
-import {useAtom, useSetAtom} from 'jotai'
-import {currentUserState, latestTimestampUserState} from '@/stores/users'
-import { getUser, updateUserOnline } from '@/api/user'
-import { useInterval } from 'react-use'
-import { USER_SIGNAL_INTERVAL } from '@/lib/const'
-import {isValidTimestamp} from '@/utils/isValidTimestamp'
-import {syncedTimestampState} from '@/stores/transactions'
-import {db, DB_USER, getMyUserPath} from '@/lib/firebase'
-import {DataSnapshot, off, onDisconnect, onValue, ref, serverTimestamp} from 'firebase/database'
-import {useEffect} from 'react'
+import { useAtom } from 'jotai'
+import { currentUserState } from '@/stores/users'
+import { updateUserOnline } from '@/api/user'
+import { db, getMyUserPath } from '@/lib/firebase'
+import { onDisconnect, onValue, ref, serverTimestamp } from 'firebase/database'
 
 const UserSignal = () => {
   const [currentUser, setCurrentUser] = useAtom(currentUserState)
