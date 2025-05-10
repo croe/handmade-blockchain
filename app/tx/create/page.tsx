@@ -1,14 +1,15 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { useAtomValue } from 'jotai'
+import {useAtomValue, useSetAtom} from 'jotai'
 import { currentUserState } from '@/stores/users'
 import * as fabric from 'fabric'
 import { Eraser, LoaderCircle } from 'lucide-react'
 import Link from 'next/link'
 import { storage } from '@/lib/firebase'
 import { ref, uploadString } from 'firebase/storage'
-import { makeTx } from '@/api/transaction'
+import {getTxs, makeTx} from '@/api/transaction'
+import {txsState} from '@/stores/transactions'
 
 const TxCreatePage = () => {
   // FIXME: 手数料を入れないと無限に作られてしまう問題？（ミスったら入れられないからいいか）
@@ -16,6 +17,7 @@ const TxCreatePage = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null)
   const currentUser = useAtomValue(currentUserState)
+  const setTxs = useSetAtom(txsState)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   useEffect(() => {
@@ -50,6 +52,13 @@ const TxCreatePage = () => {
     }).catch((error) => {
       console.error(error)
     })
+    const myTxs = await getTxs(currentUser.id)
+    if (myTxs) {
+      myTxs
+        .flatMap(e => e != null ? e : [])
+        .sort((a, b) => b.timestamp - a.timestamp)
+      setTxs(myTxs)
+    }
   }
 
   return (
