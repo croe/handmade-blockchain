@@ -2,7 +2,7 @@
 
 import { db, getUserTxPath, TX_AMOUNT_BUCKET } from '@/lib/firebase'
 import { useAtom } from 'jotai'
-import { txsState } from '@/stores/transactions'
+import { syncedTxsState } from '@/stores/transactions'
 import { ref, remove } from 'firebase/database'
 import { getBucketImage } from '@/utils/getBucketImage'
 import { Button } from '@/components/ui/button'
@@ -11,25 +11,8 @@ import { currentUserState } from '@/stores/users'
 
 const TxsViewer = () => {
   const [currentUser] = useAtom(currentUserState)
-  const [txs] = useAtom(txsState)
-
-  // useEffect(() => {
-  //   if (!db) return
-  //   if (!currentUser) return
-  //   const txRef = ref(db, getUserTxPath(currentUser.id))
-  //
-  //   const handleValueChange = (snapshot: DataSnapshot) => {
-  //     const txs = convertTxs(snapshot)
-  //     txs.sort((a, b) => b.timestamp - a.timestamp)
-  //     // setTxs(txs)
-  //   }
-  //
-  //   const unsubscribe = onValue(txRef, handleValueChange)
-  //
-  //   return () => {
-  //     off(txRef, 'value', handleValueChange)
-  //   }
-  // }, [])
+  const [txs] = useAtom(syncedTxsState)
+  console.log(txs)
 
   // データ削除処理
   const handleDeleteItem = async (id: string) => {

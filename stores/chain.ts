@@ -1,8 +1,4 @@
 import { atomWithStorage } from 'jotai/utils'
-import { Block } from '@/models/chain'
+import { Block } from '@/models/block'
 
-const options = {
-  getOnInit: true,
-}
-
-export const chainsState = atomWithStorage<Block[]>('chains', [], undefined, options)
+export const chainState = atomWithStorage<Block[]>('chains', [])

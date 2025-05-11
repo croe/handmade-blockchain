@@ -5,19 +5,22 @@ import { db, DB_USER } from '@/lib/firebase'
 import { DataSnapshot, off, onValue, ref } from 'firebase/database'
 import { convertUsers } from '@/models/user'
 import { useAtom, useSetAtom } from 'jotai'
-import { usersState, latestTimestampUserState, currentUserState } from '@/stores/users'
+import { usersState, currentUserState } from '@/stores/users'
 import { MonitorCheck } from 'lucide-react'
-import {getTxs, syncTxs} from '@/api/transaction'
-import { uniqBy } from 'lodash'
+import { getTxs, syncTxs } from '@/api/transaction'
+import { uniqBy, differenceBy } from 'lodash'
 import { txsState } from '@/stores/transactions'
+import { getBlocks, syncBlocks } from '@/api/block'
+import { filterNonNullableTxs, filterNonNullableBlocks } from '@/utils/filterNonNullable'
+import { chainState } from '@/stores/chain'
 
 const SYNC_LIMIT = 3
 
 const UsersViewer = () => {
   const [users, setUsers] = useAtom(usersState)
   const [currentUser] = useAtom(currentUserState)
-  const [latestTimestampUser] = useAtom(latestTimestampUserState)
   const setTxs = useSetAtom(txsState)
+  const setBlocks = useSetAtom(chainState)
 
   useEffect(() => {
     console.log('run')
@@ -43,20 +46,29 @@ const UsersViewer = () => {
       const myTxs = await getTxs(currentUser.id)
       if (usersTxs.length === 0) return
       console.log(usersTxs)
-      const mergedTxs = uniqBy(usersTxs
-        .concat(myTxs)
-        .flatMap(e => e != null ? e : [])
-        .sort((a, b) => b.timestamp - a.timestamp), 'id')
+      const mergedTxs = uniqBy(filterNonNullableTxs(usersTxs.concat(myTxs)), 'id')
       const flatMappedMyTxs = myTxs ? myTxs.flatMap(e => e != null ? e : []) : []
       if (mergedTxs.length > 0) {
+        const targetSyncTxs = differenceBy(mergedTxs, flatMappedMyTxs)
         setTxs(mergedTxs)
-        await syncTxs(currentUser.id, mergedTxs, flatMappedMyTxs)
+        await syncTxs(currentUser.id, targetSyncTxs)
       }
 
       /**
        * Sync Blocks
        */
-
+      const chainPromises = limitedOnlineUsers.map(async (user) => await getBlocks(user.id))
+      const userChains = await Promise.all(chainPromises)
+      const myChain = await getBlocks(currentUser.id)
+      if (userChains.length === 0) return
+      console.log(myChain)
+      const mergedChain = uniqBy(filterNonNullableBlocks(userChains.concat(myChain)), 'id')
+      const flatMappedMyChains = myChain ? myChain.flatMap(e => e != null ? e : []) : []
+      if (mergedChain.length > 0) {
+        const targetSyncChain = differenceBy(mergedChain, flatMappedMyChains)
+        setBlocks(mergedChain)
+        await syncBlocks(currentUser.id, targetSyncChain)
+      }
     }
     const handleError = (err: Error) => {
       console.error('Firebase read error:', err)
@@ -83,12 +95,6 @@ const UsersViewer = () => {
           </li>
         ))}
       </ul>
-      {latestTimestampUser && (
-        <p className="mt-4 text-sm text-gray-500">
-          <span>Latest Synced: </span>
-          <span>{new Date(latestTimestampUser.timestamp).toLocaleString()}</span>
-        </p>
-      )}
     </div>
   )
 }

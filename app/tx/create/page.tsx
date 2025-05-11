@@ -54,10 +54,7 @@ const TxCreatePage = () => {
     })
     const myTxs = await getTxs(currentUser.id)
     if (myTxs) {
-      myTxs
-        .flatMap(e => e != null ? e : [])
-        .sort((a, b) => b.timestamp - a.timestamp)
-      setTxs(myTxs)
+      setTxs(myTxs.flatMap(e => e != null ? e : []))
     }
   }
 

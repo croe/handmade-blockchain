@@ -2,9 +2,12 @@ import { db, getMyUserPath } from '@/lib/firebase'
 import { child, get, push, ref, serverTimestamp, set } from 'firebase/database'
 import { getUserTxPath } from '@/lib/firebase'
 import { convertTxs, convertTxToDB, Transaction } from '@/models/transaction'
-import { differenceBy } from 'lodash'
 
-export const makeTx = async (userId: string, from: string, to: string)=> {
+export const makeTx = async (
+  userId: string,
+  from: string,
+  to: string
+) => {
   try {
     if (!db) return
     const txRef = ref(db, getUserTxPath(userId))
@@ -50,11 +53,10 @@ export const syncTx = async (userId: string, tx: Transaction) => {
 
 export const syncTxs = async (
   userId: string,
-  txs: Transaction[],
-  excludeTxs: Transaction[]
+  txs: Transaction[]
 ) => {
   try {
-    const promises = differenceBy(txs, excludeTxs).map(async (tx) => await syncTx(userId, tx))
+    const promises = txs.map(async (tx) => await syncTx(userId, tx))
     await Promise.all(promises)
     return true
   } catch (error) {
