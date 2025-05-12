@@ -81,7 +81,7 @@ const UsersViewer = () => {
   }, [])
 
   return (
-    <div className="px-4 py-2 text-black">
+    <div className="px-4 py-2 text-black border-2">
       <p className="text-sm mb-2 font-bold">Users Viewer</p>
       <ul className="space-y-2 max-h-60 overflow-y-auto pr-2">
         {users.filter((user) => user.status).map((user) => (

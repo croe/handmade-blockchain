@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import {Card, CardContent} from '@/components/ui/card'
 import CreateWalletView from '@/components/CreateWalletView'
 import UsersViewer from '@/components/UsersViewer'
 import ChainViewer from '@/components/ChainViewer'
@@ -12,14 +11,12 @@ export default function Home() {
       <div>
         <ChainViewer />
       </div>
-      <Card>
+      <div>
         <CreateWalletView/>
-      </Card>
-      <Card>
-        <CardContent className="space-y-4">
-          <UsersViewer />
-        </CardContent>
-      </Card>
+      </div>
+      <div>
+        <UsersViewer />
+      </div>
       <p><Link href={`/tx/create`}>CREATE TX</Link></p>
       <p><Link href={`/block/create`}>CREATE BLOCK</Link></p>
     </main>

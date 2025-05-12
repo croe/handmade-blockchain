@@ -5,7 +5,6 @@ import { useAtom } from 'jotai'
 import { syncedTxsState } from '@/stores/transactions'
 import { ref, remove } from 'firebase/database'
 import { getBucketImage } from '@/utils/getBucketImage'
-import { Button } from '@/components/ui/button'
 import { Trash2 } from 'lucide-react'
 import { currentUserState } from '@/stores/users'
 
@@ -41,9 +40,9 @@ const TxsViewer = () => {
                     <span className="block text-xs text-gray-400">({new Date(item.timestamp).toLocaleString()})</span>
                     <img src={getBucketImage(TX_AMOUNT_BUCKET, item.id, 'png')} alt=""/>
                   </span>
-            <Button variant="ghost" size="icon" onClick={() => handleDeleteItem(item.id)}>
+            <button onClick={() => handleDeleteItem(item.id)}>
               <Trash2 className="h-4 w-4"/>
-            </Button>
+            </button>
           </li>
         ))}
       </ul>

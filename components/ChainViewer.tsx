@@ -1,13 +1,11 @@
 'use client'
 
-import { db, getUserBlockPath } from '@/lib/firebase'
 import { useAtom } from 'jotai'
 import { currentUserState } from '@/stores/users'
 import { chainState } from '@/stores/chain'
-import {Block, TxInBlock} from '@/models/block'
-import {makeTx} from '@/api/transaction'
-import {getUnixTime} from 'date-fns'
-import {buildBlock} from '@/api/block'
+import { TxInBlock } from '@/models/block'
+import { makeTx } from '@/api/transaction'
+import { buildBlock } from '@/api/block'
 
 const ChainViewer = () => {
   const [currentUser] = useAtom(currentUserState)

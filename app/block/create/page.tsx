@@ -10,12 +10,14 @@ import { storage } from '@/lib/firebase'
 import { ref, uploadString } from 'firebase/storage'
 import {getTxs, makeTx} from '@/api/transaction'
 import {txsState} from '@/stores/transactions'
+import { Transaction } from '@/models/transaction'
 
 const BlockCreatePage = () => {
+  const [selectedTxs, setSelectedTxs] = useState<Transaction[]>([])
 
   /**
    * どのブロックに繋げるか選ぶ
-   * どのTxを入れるか選ぶ→一覧からクリックで選択？
+   * どのTxを入れるか選ぶ→一覧からクリックで選択？(最大数3）
    * → 数値を入れる（Txを完成）
    * 報酬Txは自動的に入る
    * ブロックを追加する
