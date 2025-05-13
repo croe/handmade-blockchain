@@ -9,6 +9,7 @@ interface BlockFromDB {
   s: number;
   x: TxInBlock[];
   p: string;
+  l: number;
 }
 
 interface BlockWithIdFromDB extends BlockFromDB {
@@ -19,6 +20,7 @@ export type Block = {
   id: string;
   txs: TxInBlock[];
   prevId: string;
+  blockHeight: number;
   timestamp: number;
 }
 
@@ -41,6 +43,7 @@ const convertBlocksFromDB = (
     id: key.id,
     txs: key.x,
     prevId: key.p,
+    blockHeight: key.l,
     timestamp: key.s,
   }))
 }
@@ -51,6 +54,7 @@ export const convertBlockToDB = (
   return {
     s: block.timestamp,
     x: block.txs,
+    l: block.blockHeight,
     p: block.prevId,
   }
 }

@@ -6,6 +6,9 @@ import { updateUserOnline } from '@/api/user'
 import { db, getMyUserPath } from '@/lib/firebase'
 import { onDisconnect, onValue, ref, serverTimestamp } from 'firebase/database'
 
+/**
+ * プレゼンスを管理するコンポーネント（Topで呼ぶ必要がある？）
+ */
 const UserSignal = () => {
   const [currentUser, setCurrentUser] = useAtom(currentUserState)
   const handleUpdateUserOnline = async () => {

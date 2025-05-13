@@ -4,7 +4,6 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { Providers } from "@/components/providers"
 import WalletViewer from '@/components/WalletViewer'
-import TxsViewer from '@/components/TxsViewer'
 import UserSignal from '@/components/UserSignal'
 import RenderMounted from '@/components/ClientRender'
 
@@ -27,7 +26,6 @@ export default function RootLayout({
           <Providers>
             <UserSignal />
             <WalletViewer />
-            <TxsViewer />
             {children}
           </Providers>
         </RenderMounted>

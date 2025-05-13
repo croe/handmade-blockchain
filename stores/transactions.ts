@@ -8,3 +8,8 @@ export const syncedTxsState = atom<Transaction[]>((get) => {
   const txs = get(txsState)
   return txs.sort((a, b) => b.timestamp - a.timestamp)
 })
+
+/**
+ * ブロックに取り込むTxを選択するストア
+ */
+export const selectedTxsState = atom<Transaction[]>([])

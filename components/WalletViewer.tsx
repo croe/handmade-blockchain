@@ -1,7 +1,8 @@
 "use client";
 
-import { useAtomValue } from 'jotai'
+import {useAtom, useAtomValue} from 'jotai'
 import { currentUserState } from '@/stores/users'
+import {chainState} from '@/stores/chain'
 
 interface Props {
   children?: React.ReactNode;
@@ -17,6 +18,7 @@ const WalletViewerFrame = ({children}: Props) => {
 
 const WalletViewer = () => {
   const currentUser = useAtomValue(currentUserState)
+  const chain = useAtom(chainState)
   if (!currentUser) return (
     <WalletViewerFrame>
       <p className="text-sm">Loading...</p>

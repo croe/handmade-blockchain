@@ -49,7 +49,7 @@ const UsersViewer = () => {
       const mergedTxs = uniqBy(filterNonNullableTxs(usersTxs.concat(myTxs)), 'id')
       const flatMappedMyTxs = myTxs ? myTxs.flatMap(e => e != null ? e : []) : []
       if (mergedTxs.length > 0) {
-        const targetSyncTxs = differenceBy(mergedTxs, flatMappedMyTxs)
+        const targetSyncTxs = differenceBy(mergedTxs, flatMappedMyTxs, 'id')
         setTxs(mergedTxs)
         await syncTxs(currentUser.id, targetSyncTxs)
       }
@@ -65,7 +65,7 @@ const UsersViewer = () => {
       const mergedChain = uniqBy(filterNonNullableBlocks(userChains.concat(myChain)), 'id')
       const flatMappedMyChains = myChain ? myChain.flatMap(e => e != null ? e : []) : []
       if (mergedChain.length > 0) {
-        const targetSyncChain = differenceBy(mergedChain, flatMappedMyChains)
+        const targetSyncChain = differenceBy(mergedChain, flatMappedMyChains, 'id')
         setBlocks(mergedChain)
         await syncBlocks(currentUser.id, targetSyncChain)
       }

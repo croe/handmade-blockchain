@@ -15,7 +15,10 @@ export type Transaction = {
   from: string;
   to: string;
   timestamp: number;
-  image?: string;
+}
+
+export type TxWithValue = Transaction & {
+  amount: number;
 }
 
 export const convertTxs = (

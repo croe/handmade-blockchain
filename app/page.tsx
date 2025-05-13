@@ -4,10 +4,15 @@ import Link from 'next/link'
 import CreateWalletView from '@/components/CreateWalletView'
 import UsersViewer from '@/components/UsersViewer'
 import ChainViewer from '@/components/ChainViewer'
+import TxsViewer from '@/components/TxsViewer'
+import type React from 'react'
 
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center space-y-8 py-8">
+      <div>
+        <TxsViewer />
+      </div>
       <div>
         <ChainViewer />
       </div>

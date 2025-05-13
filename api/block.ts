@@ -8,6 +8,7 @@ export const buildBlock = async (
   userId: string,
   prevId: string,
   txs: TxInBlock[],
+  blockHeight: number,
 ) => {
   try {
     if (!db) return
@@ -21,7 +22,8 @@ export const buildBlock = async (
     return await push(blockRef, {
       x: txs,
       p: prevId,
-      s: serverTimestamp()
+      s: serverTimestamp(),
+      l: blockHeight
     })
   } catch (error) {
     console.error('Error adding new block', error)
@@ -40,6 +42,20 @@ export const getBlocks = async (userId: string) => {
     return null
   } catch (error) {
     console.error('Error get user blocks', error)
+  }
+}
+
+export const getBlock = async (userId: string, path: string) => {
+  try {
+    if (!db) return
+    const blockRef = child(ref(db, getUserBlockPath(userId)), path)
+    const blockSnapshot = await get(blockRef)
+    if (blockSnapshot.exists()) {
+      console.log(blockSnapshot.val())
+    }
+    return
+  } catch (error) {
+    console.error('Error get user block', error)
   }
 }
 
