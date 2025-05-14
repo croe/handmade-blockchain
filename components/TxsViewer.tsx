@@ -11,7 +11,6 @@ import { currentUserState } from '@/stores/users'
 const TxsViewer = () => {
   const [currentUser] = useAtom(currentUserState)
   const [txs] = useAtom(syncedTxsState)
-  console.log(txs)
 
   // データ削除処理
   const handleDeleteItem = async (id: string) => {

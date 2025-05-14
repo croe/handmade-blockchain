@@ -2,23 +2,19 @@
 
 import { useAtom } from 'jotai'
 import { currentUserState } from '@/stores/users'
-import { chainState } from '@/stores/chain'
+import { blocksState } from '@/stores/chain'
 import { TxInBlock } from '@/models/block'
 import { makeTx } from '@/api/transaction'
 import { buildBlock } from '@/api/block'
 
 const ChainViewer = () => {
   const [currentUser] = useAtom(currentUserState)
-  const [chain] = useAtom(chainState)
+  const [chain] = useAtom(blocksState)
 
-  // Genesis block生成とsystem txの作成
-  // 一旦システムがTx作って混ぜる方式で考える
+  // Genesis blockを作成する一時的な関数
   const handleTemporalMakeGenesisBlock = async () => {
     if (chain.length > 0) return
     if (!currentUser) return
-    // Genesis blockを作成する一時的な関数
-    // 報酬のSystem Txを作成する
-    // まずはTxの雛形を作成する
     const txKey = await makeTx(currentUser.id, 'reward', currentUser.id)
     console.log(txKey, !txKey?.key)
     if (!txKey?.key) return
@@ -26,11 +22,9 @@ const ChainViewer = () => {
       i: txKey.key,
       m: 100,
     }
-    const blockKey = await buildBlock(currentUser.id, '', [systemTx])
-    console.log(blockKey)
+    // const blockKey = await buildBlock(currentUser.id, '', [systemTx])
+    // console.log(blockKey)
   }
-
-  console.log(chain)
 
   return (
     <div className="w-4/5 mx-auto px-4 py-2 text-black border-2">

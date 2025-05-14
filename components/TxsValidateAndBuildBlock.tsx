@@ -7,7 +7,7 @@ import {TX_AMOUNT_BUCKET} from '@/lib/firebase'
 import {Controller, useForm} from 'react-hook-form'
 import {TxInBlock} from '@/models/block'
 import {useRouter} from 'next/navigation'
-import {chainState, selectedBlockState} from '@/stores/chain'
+import {blocksState, selectedBlockState} from '@/stores/chain'
 import {buildBlock} from '@/api/block'
 import {currentUserState} from '@/stores/users'
 import {makeTx} from '@/api/transaction'
@@ -49,8 +49,8 @@ const TxsValidateAndBuildBlock = () => {
       m: 100,
     }
     console.log(validatedTxs)
-    const blockKey =
-      await buildBlock(currentUser.id, selectedBlock.id, concat(validatedTxs, [systemTx]), selectedBlock.blockHeight + 1)
+    console.log(currentUser.id, selectedBlock.id, concat(validatedTxs, [systemTx]), selectedBlock.blockHeight + 1)
+    const blockKey = await buildBlock(currentUser.id, selectedBlock.id, concat(validatedTxs, [systemTx]), selectedBlock.blockHeight + 1)
     console.log(blockKey)
 
     /**

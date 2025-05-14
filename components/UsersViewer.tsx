@@ -12,7 +12,7 @@ import { uniqBy, differenceBy } from 'lodash'
 import { txsState } from '@/stores/transactions'
 import { getBlocks, syncBlocks } from '@/api/block'
 import { filterNonNullableTxs, filterNonNullableBlocks } from '@/utils/filterNonNullable'
-import { chainState } from '@/stores/chain'
+import { blocksState } from '@/stores/chain'
 
 const SYNC_LIMIT = 3
 
@@ -20,10 +20,9 @@ const UsersViewer = () => {
   const [users, setUsers] = useAtom(usersState)
   const [currentUser] = useAtom(currentUserState)
   const setTxs = useSetAtom(txsState)
-  const setBlocks = useSetAtom(chainState)
+  const setBlocks = useSetAtom(blocksState)
 
   useEffect(() => {
-    console.log('run')
     if (!db) return
     if (!currentUser) return
     const usersRef = ref(db, DB_USER)
@@ -45,7 +44,6 @@ const UsersViewer = () => {
       const usersTxs = await Promise.all(txsPromises)
       const myTxs = await getTxs(currentUser.id)
       if (usersTxs.length === 0) return
-      console.log(usersTxs)
       const mergedTxs = uniqBy(filterNonNullableTxs(usersTxs.concat(myTxs)), 'id')
       const flatMappedMyTxs = myTxs ? myTxs.flatMap(e => e != null ? e : []) : []
       if (mergedTxs.length > 0) {
@@ -61,7 +59,6 @@ const UsersViewer = () => {
       const userChains = await Promise.all(chainPromises)
       const myChain = await getBlocks(currentUser.id)
       if (userChains.length === 0) return
-      console.log(myChain)
       const mergedChain = uniqBy(filterNonNullableBlocks(userChains.concat(myChain)), 'id')
       const flatMappedMyChains = myChain ? myChain.flatMap(e => e != null ? e : []) : []
       if (mergedChain.length > 0) {

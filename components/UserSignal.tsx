@@ -37,7 +37,6 @@ const UserSignal = () => {
     <div className="flex flex-col items-center justify-center py-10">
       <h1 className="text-3xl font-bold mb-4">User Signal</h1>
       <p className="text-lg">This is the User Signal component.</p>
-      {/*<p>{currentUser?.timestamp}</p>*/}
     </div>
   );
 }
