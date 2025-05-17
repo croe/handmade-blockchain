@@ -2,14 +2,19 @@
 
 import { useAtom } from 'jotai'
 import { currentUserState } from '@/stores/users'
-import { blocksState } from '@/stores/chain'
+import { chainState } from '@/stores/chain'
 import { TxInBlock } from '@/models/block'
 import { makeTx } from '@/api/transaction'
 import { buildBlock } from '@/api/block'
 
 const ChainViewer = () => {
   const [currentUser] = useAtom(currentUserState)
-  const [chain] = useAtom(blocksState)
+  const [chain] = useAtom(chainState)
+
+  /**
+   * 分岐をどうロジックで出すかが大変そう
+   * Heightで並び替えつつ、チェーンごとに配列化、つながる点で繋げる
+   */
 
   // Genesis blockを作成する一時的な関数
   const handleTemporalMakeGenesisBlock = async () => {
