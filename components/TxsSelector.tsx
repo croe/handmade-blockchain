@@ -6,7 +6,7 @@ import {getBucketImage} from '@/utils/getBucketImage'
 import {TX_AMOUNT_BUCKET} from '@/lib/firebase'
 import {differenceBy} from 'lodash'
 import {Transaction} from '@/models/transaction'
-import {blocksState, selectedBlockState} from '@/stores/chain'
+import {chainState, selectedBlockState} from '@/stores/chain'
 import {useEffect, useState} from 'react'
 import {Block} from '@/models/block'
 
@@ -14,7 +14,7 @@ const TxsSelector = () => {
   const [confirmedTxs, setConfirmedTxs] = useState<Transaction[]>([])
   const [selectedTxs, setSelectedTxs] = useAtom(selectedTxsState)
   const [txs] = useAtom(syncedTxsState)
-  const [chain] = useAtom(blocksState)
+  const [chain] = useAtom(chainState)
   const [selectedBlock] = useAtom(selectedBlockState)
 
   useEffect(() => {
