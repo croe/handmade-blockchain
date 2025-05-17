@@ -1,13 +1,13 @@
 import type React from "react"
 import "./globals.css"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Poppins, Zen_Kaku_Gothic_New } from "next/font/google"
 import { Providers } from "@/components/providers"
-import WalletViewer from '@/components/WalletViewer'
 import UserSignal from '@/components/UserSignal'
 import RenderMounted from '@/components/ClientRender'
 
-const inter = Inter({ subsets: ["latin"] })
+const poppins = Poppins({ weight: "400", subsets: ['latin'] })
+const zenKakuGothicNew = Zen_Kaku_Gothic_New({ weight: "400", subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: "HANDMADE BLOCKCHAIN",
@@ -21,11 +21,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja" className="scroll-smooth" suppressHydrationWarning>
-      <body className={inter.className} suppressHydrationWarning>
+      <body suppressHydrationWarning>
         <RenderMounted>
           <Providers>
             <UserSignal />
-            <WalletViewer />
             {children}
           </Providers>
         </RenderMounted>

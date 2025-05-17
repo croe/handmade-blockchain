@@ -59,7 +59,7 @@ const BlockCreatePage = () => {
         </div>
       )}
       <p className="mt-10 px-2 py-1 rounded bg-gray-200 text-center w-max mx-auto">
-        <Link href={`/`}>HOME</Link>
+        <Link href={`/dashboard`}>HOME</Link>
       </p>
     </div>
   )

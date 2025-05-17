@@ -90,7 +90,7 @@ const TxCreatePage = () => {
           )}
         </button>
       </div>
-      <p className="text-center mt-10"><Link href={`/`}>HOME</Link></p>
+      <p className="text-center mt-10"><Link href={`/dashboard`}>HOME</Link></p>
     </div>
   )
 }

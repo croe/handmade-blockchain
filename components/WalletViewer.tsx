@@ -4,6 +4,7 @@ import { useAtom } from 'jotai'
 import { currentUserState } from '@/stores/users'
 import { myBalanceState } from '@/stores/transactions'
 import { useEffect } from 'react'
+import { generateReadableId, getAvatarForId } from '@/utils/id-to-readable-string'
 
 const WalletViewer = () => {
   const [currentUser] = useAtom(currentUserState)
@@ -13,16 +14,21 @@ const WalletViewer = () => {
     console.log(myBalance)
   }, [myBalance])
 
+  if (!currentUser) return (
+    <div>Loading...</div>
+  )
   return (
-    <div className="px-4 py-2 text-gray-500 border-b-2 mb-10">
-      <p className="text-sm">
-        <span>ID:</span>
-        <span className="text-base font-bold text-black">{currentUser?.id}</span>
-      </p>
-      <p className="text-sm flex gap-2 items-center">
-        <span>Your Balance:</span>
-        <span className="text-base font-bold text-black">{myBalance}</span>
-      </p>
+    <div className="fixed top-20 left-0 rounded-r-full bg-[#E0E0E0] py-5 pl-5 pr-10 flex items-center gap-3 text-sm h-20">
+      <img className="w-8 h-8" src={getAvatarForId(currentUser.id)} alt=""/>
+      <div>
+        <div className="flex gap-2 items-center">
+          <span className="text-[#666]">{currentUser && generateReadableId(currentUser.id)}</span>
+        </div>
+        <div className="flex gap-2 items-center">
+          <img className="h-4" src="/images/icons/icon_cnc.png" alt=""/>
+          <span className="text-[#3d3d3d]">{myBalance}</span>
+        </div>
+      </div>
     </div>
   )
 }

@@ -1,29 +1,17 @@
 'use client'
 
 import Link from 'next/link'
-import CreateWalletView from '@/components/CreateWalletView'
-import UsersViewer from '@/components/UsersViewer'
-import ChainViewer from '@/components/ChainViewer'
-import TxsViewer from '@/components/TxsViewer'
 import type React from 'react'
+import SplashImage from '@/assets/images/splash.png'
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center space-y-8 py-8">
-      <div>
-        <TxsViewer />
-      </div>
-      <div>
-        <ChainViewer />
-      </div>
-      <div>
-        <CreateWalletView/>
-      </div>
-      <div>
-        <UsersViewer />
-      </div>
-      <p><Link href={`/tx/create`}>CREATE TX</Link></p>
-      <p><Link href={`/block/create`}>CREATE BLOCK</Link></p>
+    <main className="w-full min-h-screen">
+      <Link href="/dashboard">
+        <div className="fixed top-0 left-0 w-full h-full flex flex-col items-center justify-center">
+          <img className="w-[250px]" src={SplashImage.src} alt=""/>
+        </div>
+      </Link>
     </main>
   )
 }

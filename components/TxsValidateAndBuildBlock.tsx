@@ -68,6 +68,7 @@ const TxsValidateAndBuildBlock = () => {
         return;
     }
 
+    // FIXME: 同期タイミングを考える必要がありそう
     const txKey = await makeTx(currentUser.id, 'reward', currentUser.id);
     if (!txKey?.key) return;
     const systemTx: TxInBlock = {
