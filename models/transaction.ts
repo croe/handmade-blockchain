@@ -44,6 +44,17 @@ const convertTxsFromDB = (
   }))
 }
 
+export const convertTxFromDB = (
+  db: TransactionWithIdFromDB
+): Transaction => {
+  return {
+    id: db.id,
+    from: db.f,
+    to: db.t,
+    timestamp: db.s,
+  }
+}
+
 export const convertTxToDB = (
   tx: Transaction
 ): TransactionFromDB => {

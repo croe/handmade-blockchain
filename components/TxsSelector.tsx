@@ -56,18 +56,24 @@ const TxsSelector = () => {
 
 
   console.log(confirmedTxs, differenceBy(txs, selectedTxs, 'id'))
-  const pendingTxs = differenceBy(differenceBy(txs, selectedTxs, 'id'), confirmedTxs, 'id')
+  const pendingTxs = differenceBy(
+    differenceBy(txs, selectedTxs, 'id'), confirmedTxs, 'id'
+  ).filter((tx) => tx.from !== 'reward')
   console.log(pendingTxs)
 
   return (
     <div className="max-w-screen-sm mx-auto">
       <div>
         <h2 className="font-bold mb-2">Pending Transactions</h2>
-        <div className="flex flex-col gap-2 max-h-[300px] overflow-y-auto mx-auto p-2 border">
+        <div className="flex flex-col gap-2 w-[300px] max-h-[500px] overflow-y-auto mx-auto p-2 border">
           {pendingTxs.map((tx) => (
             <div key={tx.id} className="border border-black cursor-pointer" onClick={() => handleSelectTx(tx)}>
               <p>{tx.id}</p>
-              <img className="w-[200px]" src={getBucketImage(TX_AMOUNT_BUCKET, tx.id, 'png')} alt=""/>
+              <img className="w-[200px]"  src={
+                tx.from === 'reward'
+                  ? getBucketImage(TX_AMOUNT_BUCKET, 'reward', 'png')
+                  : getBucketImage(TX_AMOUNT_BUCKET, tx.id, 'png')
+              } alt=""/>
               <p>{new Date(tx.timestamp).toLocaleString()}</p>
             </div>
           ))}

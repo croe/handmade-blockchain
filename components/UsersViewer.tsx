@@ -60,9 +60,7 @@ const UsersViewer = () => {
       const myChain = await getBlocks(currentUser.id)
       if (userChains.length === 0) return
       const mergedChain = uniqBy(filterNonNullableBlocks(userChains.concat(myChain)), 'id')
-      console.log(mergedChain)
       const flatMappedMyChains = myChain ? myChain.flatMap(e => e != null ? e : []) : []
-      console.log(flatMappedMyChains)
       if (mergedChain.length > 0) {
         const targetSyncChain = differenceBy(mergedChain, flatMappedMyChains, 'id')
         console.log(targetSyncChain)

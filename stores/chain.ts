@@ -14,25 +14,44 @@ export const syncedBlocksState = atom<Block[]>(
 /**
  * 最長のチェーン
  */
-export const currentChainState = atom<Block[]>(
-  (get) => {
-    const chain = get(chainState)
-    if (chain.length === 0) return []
+export const currentChainState = atom<Block[]>((get) => {
+  const chain = get(chainState)
+  if (chain.length === 0) return []
 
-    // blockHeightの最大値を取得
-    const maxHeight = Math.max(...chain.map(block => block.blockHeight))
+  // 1. 起点となるブロック (startBlock) を見つける
+  // blockHeightの最大値を取得
+  const maxHeight = Math.max(...chain.map((block) => block.blockHeight))
 
-    // 最大のblockHeightを持つブロックをフィルタリング
-    const blocksWithMaxHeight = chain.filter(block => block.blockHeight === maxHeight)
+  // 最大のblockHeightを持つブロックをフィルタリング
+  const blocksWithMaxHeight = chain.filter(
+    (block) => block.blockHeight === maxHeight,
+  )
 
-    // timestampが最も古いブロックを選択
-    const oldestBlock = blocksWithMaxHeight.reduce((oldest, current) =>
-      current.timestamp < oldest.timestamp ? current : oldest
-    )
+  // timestampが最も古いブロックを選択
+  // blocksWithMaxHeight が空の場合はありえないが、念のためチェック
+  if (blocksWithMaxHeight.length === 0) return [] 
+  
+  const startBlock = blocksWithMaxHeight.reduce((oldest, current) =>
+    current.timestamp < oldest.timestamp ? current : oldest,
+  )
 
-    return [oldestBlock]
+  // 2. startBlock から prevId をたどってチェーンを構築
+  const resultChain: Block[] = []
+  let currentBlock: Block | undefined = startBlock
+
+  while (currentBlock) {
+    resultChain.push(currentBlock)
+    if (currentBlock.prevId === '') {
+      // ジェネシスブロックに到達
+      break
+    }
+    currentBlock = chain.find((block) => block.id === currentBlock!.prevId)
   }
-)
+
+  // 3. 配列を返す (現在は startBlock からジェネシスブロックの順)
+  // もしジェネシスブロックから startBlock の順にしたければ、最後に reverse() する
+  return resultChain.reverse() // ジェネシスから最新の順にするのだ
+})
 
 
 /**

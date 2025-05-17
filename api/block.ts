@@ -2,7 +2,7 @@
 // そのチェーンでの正史で結果が変わる。→チェーンを切り替えた時の残高が見えるといいかも
 import {db, getMyUserPath, getUserBlockPath} from '@/lib/firebase'
 import {child, get, push, ref, serverTimestamp, set} from 'firebase/database'
-import {Block, convertBlocks, convertBlockToDB, TxInBlock} from '@/models/block'
+import {Block, convertBlockFromDB, convertBlocks, convertBlockToDB, TxInBlock} from '@/models/block'
 
 export const buildBlock = async (
   userId: string,
@@ -51,7 +51,13 @@ export const getBlock = async (userId: string, path: string) => {
     const blockRef = child(ref(db, getUserBlockPath(userId)), path)
     const blockSnapshot = await get(blockRef)
     if (blockSnapshot.exists()) {
-      console.log(blockSnapshot.val())
+      const rawData = blockSnapshot.val()
+      const rawDataKey = Object.keys(rawData)[0]
+      const blockData = {
+        id: rawDataKey,
+        ...rawData[rawDataKey],
+      }
+      return convertBlockFromDB(blockData)
     }
     return
   } catch (error) {

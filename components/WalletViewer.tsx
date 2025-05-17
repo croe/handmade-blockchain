@@ -1,32 +1,29 @@
 "use client";
 
-import {useAtom, useAtomValue} from 'jotai'
+import { useAtom } from 'jotai'
 import { currentUserState } from '@/stores/users'
-import { currentChainState } from '@/stores/chain'
-
-interface Props {
-  children?: React.ReactNode;
-}
-
-const WalletViewerFrame = ({children}: Props) => {
-  return (
-    <div className="fixed top-2 left-2 px-4 py-2 text-black border-2" >
-      {children}
-    </div>
-  )
-}
+import { myBalanceState } from '@/stores/transactions'
+import { useEffect } from 'react'
 
 const WalletViewer = () => {
-  const currentUser = useAtomValue(currentUserState)
-  if (!currentUser) return (
-    <WalletViewerFrame>
-      <p className="text-sm">Loading...</p>
-    </WalletViewerFrame>
-  )
+  const [currentUser] = useAtom(currentUserState)
+  const [myBalance] = useAtom(myBalanceState)
+
+  useEffect(() => {
+    console.log(myBalance)
+  }, [myBalance])
+
   return (
-    <WalletViewerFrame>
-      <p className="text-sm">ID: {currentUser?.id}</p>
-    </WalletViewerFrame>
+    <div className="px-4 py-2 text-gray-500 border-b-2 mb-10">
+      <p className="text-sm">
+        <span>ID:</span>
+        <span className="text-base font-bold text-black">{currentUser?.id}</span>
+      </p>
+      <p className="text-sm flex gap-2 items-center">
+        <span>Your Balance:</span>
+        <span className="text-base font-bold text-black">{myBalance}</span>
+      </p>
+    </div>
   )
 }
 

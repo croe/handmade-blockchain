@@ -31,8 +31,8 @@ const BlockSelector = () => {
               {block.prevId !== '' && (
                 <div className="w-[1px] h-3 bg-gray-400" />
               )}
-              <div className="w-10 h-10 bg-gray-400 flex items-center">
-                <p className="truncate text-[7px] text-white">{block.id}</p>
+              <div className="w-10 h-10 bg-gray-400 flex items-center justify-center">
+                <p className="text-sm text-white">{block.blockHeight}</p>
               </div>
             </div>
           ))}
@@ -44,6 +44,7 @@ const BlockSelector = () => {
           <div className="text-sm text-gray-500">
             <p>ID: {selectedBlock.id}</p>
             <p>Prev: {selectedBlock.prevId}</p>
+            <p>Height: {selectedBlock.blockHeight}</p>
             <p>{new Date(selectedBlock.timestamp).toLocaleString()}</p>
           </div>
         )}

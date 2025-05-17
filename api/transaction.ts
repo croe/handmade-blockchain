@@ -1,7 +1,7 @@
 import { db, getMyUserPath } from '@/lib/firebase'
 import { child, get, push, ref, serverTimestamp, set } from 'firebase/database'
 import { getUserTxPath } from '@/lib/firebase'
-import { convertTxs, convertTxToDB, Transaction } from '@/models/transaction'
+import {convertTxFromDB, convertTxs, convertTxToDB, Transaction} from '@/models/transaction'
 
 export const makeTx = async (
   userId: string,
@@ -38,6 +38,26 @@ export const getTxs = async (userId: string) => {
     return null
   } catch (error) {
     console.error('Error updating user txs', error)
+  }
+}
+
+export const getTx = async (userId: string, txId: string) => {
+  try {
+    if (!db) return null
+    const txRef = child(ref(db, getUserTxPath(userId)), txId)
+    const txSnapshot = await get(txRef)
+    if (txSnapshot.exists()) {
+      const rawData = txSnapshot.val()
+      const rawDataKey = Object.keys(rawData)[0]
+      const txData = {
+        id: rawDataKey,
+        ...rawData[rawDataKey],
+      }
+      return convertTxFromDB(txData)
+    }
+    return null
+  } catch (error) {
+    console.error('Error getting tx:', error)
   }
 }
 

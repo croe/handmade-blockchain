@@ -48,6 +48,18 @@ const convertBlocksFromDB = (
   }))
 }
 
+export const convertBlockFromDB = (
+  db: BlockWithIdFromDB
+): Block => {
+  return {
+    id: db.id,
+    txs: db.x,
+    prevId: db.p,
+    blockHeight: db.l,
+    timestamp: db.s,
+  }
+}
+
 export const convertBlockToDB = (
   block: Block
 ): BlockFromDB => {
