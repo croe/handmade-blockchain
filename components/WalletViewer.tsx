@@ -25,7 +25,7 @@ const WalletViewer = () => {
           <span className="text-[#666]">{currentUser && generateReadableId(currentUser.id)}</span>
         </div>
         <div className="flex gap-2 items-center">
-          <img className="h-4" src="/images/icons/icon_cnc.png" alt=""/>
+          <img className="h-4" src="/images/icons/cnc.svg" alt=""/>
           <span className="text-[#3d3d3d]">{myBalance}</span>
         </div>
       </div>

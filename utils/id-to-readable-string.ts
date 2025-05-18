@@ -229,15 +229,15 @@ export function generateReadableId(id: string): string {
  */
 
 const AVATAR_COUNT = 6;
-const AVATAR_PATH_PREFIX = "/images/icons/icon_avatar_";
-const AVATAR_DEFAULT_ICON = `${AVATAR_PATH_PREFIX}1.png`;
+const AVATAR_PATH_PREFIX = "/images/icons/avatar_";
+const AVATAR_DEFAULT_ICON = `${AVATAR_PATH_PREFIX}1.svg`;
 
 /**
  * 文字列IDから決定論的にアバター画像のパスを生成するのだ。
  * IDをSHA256でハッシュ化し、そのハッシュ値を基にアバターを選択するのだ。
  *
  * @param id 対象のID文字列なのだ
- * @returns アバター画像のパス文字列なのだ。例: "assets/images/icons/icon_avatar_3.png"
+ * @returns アバター画像のパス文字列なのだ。例: "assets/images/icons/icon_avatar_3.svg"
  */
 export function getAvatarForId(id: string): string {
   if (!id) {
@@ -252,7 +252,7 @@ export function getAvatarForId(id: string): string {
     const numericHashPart = parseInt(hash.substring(0, 16), 16);
     const avatarIndex = (numericHashPart % AVATAR_COUNT) + 1; // 1からAVATAR_COUNTまでの数値を得るのだ
 
-    return `${AVATAR_PATH_PREFIX}${avatarIndex}.png`;
+    return `${AVATAR_PATH_PREFIX}${avatarIndex}.svg`;
   } catch (error) {
     console.error("Error generating avatar path for ID:", id, error);
     return AVATAR_DEFAULT_ICON; // エラー発生時もデフォルトアイコンを返すのだ

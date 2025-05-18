@@ -9,7 +9,10 @@ export default function Home() {
     <main className="w-full min-h-screen">
       <Link href="/dashboard">
         <div className="fixed top-0 left-0 w-full h-full flex flex-col items-center justify-center">
-          <img className="w-[250px]" src={SplashImage.src} alt=""/>
+          <img className="w-[250px] animate-fadeIn" src={SplashImage.src} alt=""/>
+        </div>
+        <div className="fixed bottom-24 left-0 w-full">
+          <p className="font-black text-center text-[#6B73FF] animate-fadeIn-delay-1s">Tap To Start</p>
         </div>
       </Link>
     </main>
