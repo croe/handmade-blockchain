@@ -18,7 +18,7 @@ const WalletViewer = () => {
     <div>Loading...</div>
   )
   return (
-    <div className="fixed top-20 left-0 rounded-r-full bg-[#E0E0E0] py-5 pl-5 pr-10 flex items-center gap-3 text-sm h-20">
+    <div className="fixed z-10 top-20 left-0 rounded-r-full bg-[#E0E0E0] py-5 pl-5 pr-10 flex items-center gap-3 text-sm h-20">
       <img className="w-8 h-8" src={getAvatarForId(currentUser.id)} alt=""/>
       <div>
         <div className="flex gap-2 items-center">

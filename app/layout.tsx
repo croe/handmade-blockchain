@@ -21,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja" className="scroll-smooth" suppressHydrationWarning>
-      <body suppressHydrationWarning>
+      <body id="root" suppressHydrationWarning>
         <RenderMounted>
           <Providers>
             <UserSignal />
