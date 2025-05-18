@@ -10,14 +10,14 @@ const SideMenu = () => {
   return (
     <>
       <div
-        className={`fixed top-0 right-0 h-full w-full bg-[#E0E0E0] pt-[190px] md:text-sm text-xs transform ${
+        className={`fixed top-0 right-0 h-full w-full bg-[#E0E0E0] md:text-sm text-xs transform ${
           sideMenu ? '-translate-x-0' : 'translate-x-full'
         } transition-transform duration-300 ease-in-out z-10 flex flex-col items-center justify-between`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="menu-heading"
       >
-        <div className="w-full flex flex-col items-center overflow-y-scroll px-5 gap-7">
+        <div className="w-full flex flex-col items-center overflow-y-scroll pt-[190px] px-5 pb-10 gap-7">
           <div className="w-full border-t border-[#999] pt-3">
             <h2 className="flex gap-1 items-center text-[#999]">
               <img className="w-5" src="/images/icons/db.svg" alt=""/>

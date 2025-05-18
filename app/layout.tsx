@@ -6,8 +6,8 @@ import { Providers } from "@/components/providers"
 import UserSignal from '@/components/UserSignal'
 import RenderMounted from '@/components/ClientRender'
 
-const poppins = Poppins({ weight: ["400", "700"], subsets: ['latin'] })
-const zenKakuGothicNew = Zen_Kaku_Gothic_New({ weight: "400", subsets: ['latin'] })
+const poppins = Poppins({ weight: ["400", "900"], subsets: ['latin'] })
+const zenKakuGothicNew = Zen_Kaku_Gothic_New({ weight: ["400", "900"], subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: "HANDMADE BLOCKCHAIN",
