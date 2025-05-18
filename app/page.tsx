@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import type React from 'react'
-import SplashImage from '@/assets/images/splash.png'
+import SplashImage from '@/assets/images/splash.svg'
 
 export default function Home() {
   return (
