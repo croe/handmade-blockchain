@@ -163,6 +163,7 @@ const ChainViewer = () => {
                   y={-10}
                   width={35}
                   height={40}
+                  onClick={() => console.log(block)}
                 />
               </Group>
             ))}

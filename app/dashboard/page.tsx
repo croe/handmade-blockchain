@@ -1,6 +1,8 @@
 'use client'
 
 import Link from 'next/link'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { useAtom } from 'jotai'
 import { sideMenuState } from '@/stores/ui'
 import { currentUserState } from '@/stores/users'
@@ -11,8 +13,7 @@ import WalletViewer from '@/components/WalletViewer'
 import MenuButton from '@/components/MenuButton'
 import SideMenu from '@/components/SideMenu'
 import BottomBar from '@/components/BottomBar'
-import {useEffect} from 'react'
-import { useRouter } from 'next/navigation'
+import CountDownTimer from '@/components/CountDownTimer'
 
 // Modal.setAppElement('#root')
 
@@ -37,10 +38,7 @@ const Dashboard = () => {
       <ChainViewer />
       <BottomBar>
         <div className="flex items-center gap-8 justify-center">
-          <div className="min-w-32 text-[#3842FF] flex flex-col items-center justify-center">
-            <p className="text-xs font-black">ブロック作成可能まで</p>
-            <p className="text-[29px] font-black">08m28s</p>
-          </div>
+          <CountDownTimer />
           <div className="w-full flex justify-center gap-5 mb-8">
             <Link href={`/shop`}>
               <div className="relative w-[45px] h-[77px]">
