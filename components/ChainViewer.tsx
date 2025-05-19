@@ -7,27 +7,8 @@ import {TxInBlock} from '@/models/block'
 import {makeTx} from '@/api/transaction'
 import React, {useState, useCallback} from 'react'
 import Konva from 'konva'
-import {Layer, Rect, Stage, RegularPolygon, Circle} from 'react-konva'
-
-const ColoredRect = () => {
-  const [color, setColor] = useState('green')
-
-  const handleClick = () => {
-    setColor(Konva.Util.getRandomColor())
-  }
-
-  return (
-    <Rect
-      x={20}
-      y={20}
-      width={50}
-      height={50}
-      fill={color}
-      shadowBlur={5}
-      onClick={handleClick}
-    />
-  )
-}
+import {Layer, Stage, Image, Group} from 'react-konva'
+import useImage from 'use-image'
 
 type Pos = {
   x: number;
@@ -43,6 +24,9 @@ const ChainViewer = () => {
   const [lastCenter, setLastCenter] = useState<Pos | null>(null)
   const [lastDist, setLastDist] = useState(0)
   const [dragStopped, setDragStopped] = useState(false)
+
+  const [blockImage] = useImage('/images/icons/block_1.svg')
+  const [beltLineImage] = useImage('/images/icons/belt_line_1.svg')
 
   const getDistance = (p1: Pos, p2: Pos) => {
     return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2))
@@ -140,10 +124,10 @@ const ChainViewer = () => {
       const txKey = await makeTx(currentUser.id, 'reward', currentUser.id)
       console.log(txKey, !txKey?.key)
       if (!txKey?.key) return
-      const systemTx: TxInBlock = {
-        i: txKey.key,
-        m: 100,
-      }
+      // const systemTx: TxInBlock = {
+      //   i: txKey.key,
+      //   m: 100,
+      // }
     }
 
   return (
@@ -161,41 +145,30 @@ const ChainViewer = () => {
           onTouchEnd={handleTouchEnd}
         >
           <Layer>
-            <RegularPolygon
-              x={190}
-              y={window.innerHeight / 2}
-              sides={3}
-              radius={80}
-              fill="green"
-              stroke="black"
-              strokeWidth={4}
-            />
-            <Circle
-              x={380}
-              y={window.innerHeight / 2}
-              radius={70}
-              fill="red"
-              stroke="black"
-              strokeWidth={4}
-            />
+            {chain.map((block, i) => (
+              <Group
+                key={`${block.id}-${i}`}
+                x={150 + i * 33}
+                y={150 + i * 19.5}
+              >
+                <Image
+                  image={beltLineImage}
+                  x={0}
+                  y={0}
+                  width={66}
+                  height={48}
+                />
+                <Image
+                  image={blockImage}
+                  x={15.5}
+                  y={-10}
+                  width={35}
+                  height={40}
+                />
+              </Group>
+            ))}
           </Layer>
         </Stage>
-      </div>
-      <div className="w-4/5 mx-auto px-4 py-2 text-black border-2">
-        <ul className="space-y-2 max-h-96 overflow-y-auto">
-          {chain.map((block) => (
-            <li key={block.id}
-                className="flex item-center justify-between p-2 border rounded bg-white"
-            >
-            <span className="flex-1 mr-2 break-words">
-              <span className="block text-xs text-gray-400">{block.prevId}</span>
-              <span className="block text-xs text-gray-400">{block.id}</span>
-              <span className="block text-xs text-gray-400">{new Date(block.timestamp).toLocaleString()}</span>
-            </span>
-            </li>
-          ))}
-        </ul>
-        {/*<button onClick={handleTemporalMakeGenesisBlock}>GENESIS BLOCK</button>*/}
       </div>
     </div>
   )
