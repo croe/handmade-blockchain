@@ -26,7 +26,7 @@ const Dashboard = () => {
       router.push('/')
     }
   }, [currentUser])
-  
+
   return (
     <main className={`flex min-h-screen flex-col items-center overflow-x-hidden ${
       sideMenu ? 'overflow-hidden h-screen' : 'overflow-x-hidden'
@@ -47,18 +47,21 @@ const Dashboard = () => {
                 <img className="absolute top-0 left-1/2 -translate-x-1/2 w-[34px] h-[40px]" src="/images/icons/shop_1.svg" alt=""/>
                 <img className="absolute bottom-0 left-0 w-[45px] h-[42px]" src="/images/icons/box_shop.svg" alt=""/>
               </div>
+              <p className="text-[10px] text-[#3E68C6] font-black mt-2">ショップ</p>
             </Link>
             <Link href={`/tx/create`}>
               <div className="relative w-[35px] h-[77px]">
                 <img className="absolute top-0 left-0 w-[34px] h-[40px]" src="/images/icons/tx_make.svg" alt=""/>
                 <img className="absolute bottom-0 left-0 w-[35px] h-[40px]" src="/images/icons/box_tx.svg" alt=""/>
               </div>
+              <p className="text-[10px] text-[#763EC6] font-black mt-2">取引作成</p>
             </Link>
             <Link href={`/tx`}>
               <div className="relative w-[35px] h-[77px]">
                 <img className="absolute top-0 left-0 w-[34px] h-[40px]" src="/images/icons/tx_list.svg" alt=""/>
                 <img className="absolute bottom-0 left-0 w-[35px] h-[40px]" src="/images/icons/box_verify.svg" alt=""/>
               </div>
+              <p className="text-[10px] text-[#2AE864] font-black mt-2">取引プール</p>
             </Link>
           </div>
         </div>

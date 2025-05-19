@@ -13,7 +13,7 @@ const MenuButton = () => {
 
   return (
     <button
-      className={`fixed z-20 top-20 right-0 rounded-l-full w-20 py-5 px-8 mt-0 flex items-center gap-3 text-sm h-20 ${sideMenu ? "bg-[#F4F4F4]" : "bg-[#E0E0E0]"}`}
+      className={`fixed z-20 top-6 right-0 rounded-l-full w-20 py-5 px-8 mt-0 flex items-center gap-3 text-sm h-20 ${sideMenu ? "bg-[#F4F4F4]" : "bg-[#E0E0E0]"}`}
       onClick={handleClick}
     >
       {sideMenu ? (
