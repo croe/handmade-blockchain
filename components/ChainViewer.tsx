@@ -3,7 +3,6 @@
 import {useAtom} from 'jotai'
 import {currentUserState} from '@/stores/users'
 import {chainState} from '@/stores/chain'
-import {TxInBlock} from '@/models/block'
 import {makeTx} from '@/api/transaction'
 import React, {useState, useCallback} from 'react'
 import Konva from 'konva'

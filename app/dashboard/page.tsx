@@ -3,20 +3,30 @@
 import Link from 'next/link'
 import { useAtom } from 'jotai'
 import { sideMenuState } from '@/stores/ui'
+import { currentUserState } from '@/stores/users'
 import TxsViewer from '@/components/TxsViewer'
 import ChainViewer from '@/components/ChainViewer'
-import CreateWalletView from '@/components/CreateWalletView'
 import UsersViewer from '@/components/UsersViewer'
 import WalletViewer from '@/components/WalletViewer'
 import MenuButton from '@/components/MenuButton'
 import SideMenu from '@/components/SideMenu'
 import BottomBar from '@/components/BottomBar'
+import {useEffect} from 'react'
+import { useRouter } from 'next/navigation'
 
 // Modal.setAppElement('#root')
 
 const Dashboard = () => {
+  const [currentUser] = useAtom(currentUserState)
   const [sideMenu] = useAtom(sideMenuState)
+  const router = useRouter()
 
+  useEffect(() => {
+    if (!currentUser) {
+      router.push('/')
+    }
+  }, [currentUser])
+  
   return (
     <main className={`flex min-h-screen flex-col items-center overflow-x-hidden ${
       sideMenu ? 'overflow-hidden h-screen' : 'overflow-x-hidden'
@@ -55,9 +65,6 @@ const Dashboard = () => {
       </BottomBar>
       <div>
         <TxsViewer />
-      </div>
-      <div>
-        <CreateWalletView/>
       </div>
       <div>
         <UsersViewer />
