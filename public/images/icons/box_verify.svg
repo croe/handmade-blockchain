@@ -1,1 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="35" height="40" fill="none"><path fill="#E2E2E2" d="M17.345 5.105.295 14.949l17.05 9.843 17.05-9.843-17.05-9.844Z"/><path fill="#C1C1C1" d="M.295 14.949v14.877l17.05 9.844V24.792L.295 14.95Z"/><path fill="#A3A3A3" d="M17.345 24.792V39.67l17.05-9.844V14.95l-17.05 9.843Z"/><path stroke="#636363" stroke-linejoin="round" stroke-width=".591" d="M17.345 5.105.295 14.949l17.05 9.843 17.05-9.843-17.05-9.844Z"/><path stroke="#636363" stroke-linejoin="round" stroke-width=".591" d="M.295 14.949v14.877l17.05 9.844V24.792L.295 14.95Z"/><path stroke="#636363" stroke-linejoin="round" stroke-width=".591" d="M17.345 24.792V39.67l17.05-9.844V14.95l-17.05 9.843Z"/><path fill="#fff" d="M18.085 11.127 9.79 15.915l4.945 2.856h3.74l6.425-3.71-6.815-3.934Z"/><path stroke="#636363" stroke-linecap="round" stroke-miterlimit="10" stroke-width=".25" d="m21.1 14.967-3.545-2.047M19.924 15.605 16.38 13.56M17.99 15.858l-2.844-1.642"/><path stroke="#636363" stroke-linejoin="round" stroke-width=".591" d="m16.605 17.691 1.87 1.08h-3.74l1.87-1.08Z"/><path stroke="#636363" stroke-linejoin="round" stroke-width=".591" d="M18.085 11.127 9.79 15.915l4.945 2.856h3.74l6.425-3.71-6.815-3.934Z"/><path fill="#A3A3A3" d="m25.735.856-2.092-.56-2.316 8.644 2.092.56L25.735.857Z"/><path stroke="#636363" stroke-linejoin="round" stroke-width=".591" d="m25.735.856-2.092-.56-2.316 8.644 2.092.56L25.735.857Z"/><path fill="#C1C1C1" d="m21.704 11.715-.377-2.775 2.092.56-1.715 2.215Z"/><path stroke="#636363" stroke-linejoin="round" stroke-width=".591" d="m21.704 11.715-.377-2.775 2.092.56-1.715 2.215Z"/><path fill="#2AE864" d="M34.542 14.693 23.97 8.59 26.02.933a.295.295 0 0 0-.209-.362l-2.092-.56a.293.293 0 0 0-.361.209l-1.86 6.942-4.005-2.312a.295.295 0 0 0-.295 0L.148 14.693A.294.294 0 0 0 0 14.95v14.877c0 .106.056.203.148.256l17.05 9.844a.295.295 0 0 0 .295 0l17.05-9.844a.294.294 0 0 0 .147-.256V14.95a.294.294 0 0 0-.148-.256Z" style="mix-blend-mode:overlay"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="35" height="40" fill="none">
+    <path fill="#E2E2E2" d="M17.345 5.105.295 14.949l17.05 9.843 17.05-9.843-17.05-9.844Z"/>
+    <path fill="#C1C1C1" d="M.295 14.949v14.877l17.05 9.844V24.792L.295 14.95Z"/>
+    <path fill="#A3A3A3" d="M17.345 24.792V39.67l17.05-9.844V14.95l-17.05 9.843Z"/>
+    <path stroke="#636363" stroke-linejoin="round" stroke-width=".591"
+          d="M17.345 5.105.295 14.949l17.05 9.843 17.05-9.843-17.05-9.844Z"/>
+    <path stroke="#636363" stroke-linejoin="round" stroke-width=".591"
+          d="M.295 14.949v14.877l17.05 9.844V24.792L.295 14.95Z"/>
+    <path stroke="#636363" stroke-linejoin="round" stroke-width=".591"
+          d="M17.345 24.792V39.67l17.05-9.844V14.95l-17.05 9.843Z"/>
+    <path fill="#fff" d="M18.085 11.127 9.79 15.915l4.945 2.856h3.74l6.425-3.71-6.815-3.934Z"/>
+    <path stroke="#636363" stroke-linecap="round" stroke-miterlimit="10" stroke-width=".25"
+          d="m21.1 14.967-3.545-2.047M19.924 15.605 16.38 13.56M17.99 15.858l-2.844-1.642"/>
+    <path stroke="#636363" stroke-linejoin="round" stroke-width=".591" d="m16.605 17.691 1.87 1.08h-3.74l1.87-1.08Z"/>
+    <path stroke="#636363" stroke-linejoin="round" stroke-width=".591"
+          d="M18.085 11.127 9.79 15.915l4.945 2.856h3.74l6.425-3.71-6.815-3.934Z"/>
+    <path fill="#A3A3A3" d="m25.735.856-2.092-.56-2.316 8.644 2.092.56L25.735.857Z"/>
+    <path stroke="#636363" stroke-linejoin="round" stroke-width=".591"
+          d="m25.735.856-2.092-.56-2.316 8.644 2.092.56L25.735.857Z"/>
+    <path fill="#C1C1C1" d="m21.704 11.715-.377-2.775 2.092.56-1.715 2.215Z"/>
+    <path stroke="#636363" stroke-linejoin="round" stroke-width=".591"
+          d="m21.704 11.715-.377-2.775 2.092.56-1.715 2.215Z"/>
+    <path fill="#2AE864"
+          d="M34.542 14.693 23.97 8.59 26.02.933a.295.295 0 0 0-.209-.362l-2.092-.56a.293.293 0 0 0-.361.209l-1.86 6.942-4.005-2.312a.295.295 0 0 0-.295 0L.148 14.693A.294.294 0 0 0 0 14.95v14.877c0 .106.056.203.148.256l17.05 9.844a.295.295 0 0 0 .295 0l17.05-9.844a.294.294 0 0 0 .147-.256V14.95a.294.294 0 0 0-.148-.256Z"
+          style="mix-blend-mode:overlay"/>
+</svg>
