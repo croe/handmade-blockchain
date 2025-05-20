@@ -134,7 +134,7 @@ const ChainViewer = () => {
       <div>
         <Stage
           width={window.innerWidth}
-          height={window.innerHeight}
+          height={window.innerHeight - 10}
           draggable
           x={stagePos.x}
           y={stagePos.y}

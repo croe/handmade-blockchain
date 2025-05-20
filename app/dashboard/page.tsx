@@ -64,14 +64,14 @@ const Dashboard = () => {
           </div>
         </div>
       </BottomBar>
-      <div>
-        <TxsViewer />
-      </div>
+      {/*<div>*/}
+        {/*<TxsViewer />*/}
+      {/*</div>*/}
       <div>
         <UsersViewer />
       </div>
-      <p><Link href={`/tx/create`}>CREATE TX</Link></p>
-      <p><Link href={`/block/create`}>CREATE BLOCK</Link></p>
+      {/*<p><Link href={`/tx/create`}>CREATE TX</Link></p>*/}
+      {/*<p><Link href={`/block/create`}>CREATE BLOCK</Link></p>*/}
     </main>
   )
 }
