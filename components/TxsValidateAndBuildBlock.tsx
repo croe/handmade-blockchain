@@ -89,7 +89,9 @@ const TxsValidateAndBuildBlock = () => {
     );
     console.log(blockKey)
     if (!blockKey?.key) return
+    // FIXME: ここがなんか変
     const newBlockFromDB = await getBlock(currentUser.id, blockKey.key)
+    console.log(newBlockFromDB)
     if (newBlockFromDB) {
       setChain(prev => concat(prev, [newBlockFromDB]).flatMap(e => e != null ? e : []))
     }

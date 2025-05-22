@@ -49,14 +49,16 @@ export const getBlock = async (userId: string, path: string) => {
   try {
     if (!db) return
     const blockRef = child(ref(db, getUserBlockPath(userId)), path)
+    console.log('blockref', blockRef)
     const blockSnapshot = await get(blockRef)
+    console.log('blockSnapshot', blockSnapshot)
     if (blockSnapshot.exists()) {
       const rawData = blockSnapshot.val()
-      const rawDataKey = Object.keys(rawData)[0]
       const blockData = {
-        id: rawDataKey,
-        ...rawData[rawDataKey],
+        id: path,
+        ...rawData,
       }
+      console.log('blockData', blockData)
       return convertBlockFromDB(blockData)
     }
     return

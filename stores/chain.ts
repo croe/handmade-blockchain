@@ -11,6 +11,65 @@ export const syncedBlocksState = atom<Block[]>(
   }
 )
 
+// チェーンの型定義
+export type Chain = {
+  blocks: Block[];
+  lastBlock: Block;
+  length: number;
+}
+
+// チェーンごとにブロックを整理する関数
+const organizeChains = (blocks: Block[]): Chain[] => {
+  // ブロックの高さでソート
+  const sortedBlocks = [...blocks].sort((a, b) => a.blockHeight - b.blockHeight)
+  
+  // チェーンを格納する配列
+  const chains: Chain[] = []
+  
+  // 処理済みのブロックを記録
+  const processedBlocks = new Set<string>()
+  
+  // 各ブロックからチェーンを構築
+  for (const block of sortedBlocks) {
+    if (processedBlocks.has(block.id)) continue
+    
+    // 新しいチェーンを構築
+    const chain: Chain = {
+      blocks: [block],
+      lastBlock: block,
+      length: 1
+    }
+    
+    processedBlocks.add(block.id)
+    
+    // 子ブロックを探して追加
+    let currentBlock = block
+    while (true) {
+      const nextBlock = sortedBlocks.find(b => b.prevId === currentBlock.id)
+      if (!nextBlock) break
+      
+      chain.blocks.push(nextBlock)
+      chain.lastBlock = nextBlock
+      chain.length++
+      processedBlocks.add(nextBlock.id)
+      currentBlock = nextBlock
+    }
+    
+    chains.push(chain)
+  }
+  
+  // チェーンの長さで降順ソート
+  return chains.sort((a, b) => b.length - a.length)
+}
+
+// チェーンを取得するatomを作成
+export const chainsState = atom<Chain[]>(
+  (get) => {
+    const blocks = get(chainState)
+    return organizeChains(blocks)
+  }
+)
+
 /**
  * 最長のチェーン
  */
@@ -52,7 +111,6 @@ export const currentChainState = atom<Block[]>((get) => {
   // もしジェネシスブロックから startBlock の順にしたければ、最後に reverse() する
   return resultChain.reverse() // ジェネシスから最新の順にするのだ
 })
-
 
 /**
  * 接続するブロック

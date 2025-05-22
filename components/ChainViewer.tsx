@@ -2,21 +2,37 @@
 
 import {useAtom} from 'jotai'
 import {currentUserState} from '@/stores/users'
-import {chainState} from '@/stores/chain'
+import {chainState, chainsState} from '@/stores/chain'
 import {makeTx} from '@/api/transaction'
 import React, {useState, useCallback} from 'react'
 import Konva from 'konva'
 import {Layer, Stage, Image, Group} from 'react-konva'
 import useImage from 'use-image'
 
+declare global {
+  interface Window {
+    Konva: typeof Konva;
+  }
+}
+
 type Pos = {
   x: number;
   y: number;
 }
 
+window.Konva.hitOnDragEnabled = true;
+
+const BLOCK_SPACING_X = 66 // ブロック間の水平方向の間隔
+const BLOCK_SPACING_Y = 48 // チェーン間の垂直方向の間隔
+const BLOCK_WIDTH = 35
+const BLOCK_HEIGHT = 40
+const BELT_WIDTH = 66
+const BELT_HEIGHT = 48
+
 const ChainViewer = () => {
   const [currentUser] = useAtom(currentUserState)
   const [chain] = useAtom(chainState)
+  const [chains] = useAtom(chainsState)
 
   const [stagePos, setStagePos] = useState<Pos>({x: 0, y: 0})
   const [stageScale, setStageScale] = useState<Pos>({x: 1, y: 1})
@@ -46,15 +62,12 @@ const ChainViewer = () => {
       const stage = e.target.getStage()
 
       if (!stage) return
-      // we need to restore dragging, if it was cancelled by multi-touch
       if (touch1 && !touch2 && !stage.isDragging() && dragStopped) {
         stage.startDrag()
         setDragStopped(false)
       }
 
       if (touch1 && touch2) {
-        // if the stage was under Konva's drag&drop
-        // we need to stop it, and implement our own pan logic with two pointers
         if (stage.isDragging()) {
           stage.stopDrag()
           setDragStopped(true)
@@ -82,7 +95,6 @@ const ChainViewer = () => {
           return
         }
 
-        // local coordinates of center point
         const pointTo = {
           x: (newCenter.x - stagePos.x) / stageScale.x,
           y: (newCenter.y - stagePos.y) / stageScale.x,
@@ -92,7 +104,6 @@ const ChainViewer = () => {
 
         setStageScale({x: scale, y: scale})
 
-        // calculate new position of the stage
         const dx = newCenter.x - lastCenter.x
         const dy = newCenter.y - lastCenter.y
 
@@ -129,6 +140,8 @@ const ChainViewer = () => {
       // }
     }
 
+  console.log(chains)
+
   return (
     <div>
       <div>
@@ -144,27 +157,31 @@ const ChainViewer = () => {
           onTouchEnd={handleTouchEnd}
         >
           <Layer>
-            {chain.map((block, i) => (
-              <Group
-                key={`${block.id}-${i}`}
-                x={150 + i * 33}
-                y={150 + i * 19.5}
-              >
-                <Image
-                  image={beltLineImage}
-                  x={0}
-                  y={0}
-                  width={66}
-                  height={48}
-                />
-                <Image
-                  image={blockImage}
-                  x={15.5}
-                  y={-10}
-                  width={35}
-                  height={40}
-                  onClick={() => console.log(block)}
-                />
+            {chains.map((chain, chainIndex) => (
+              <Group key={`chain-${chainIndex}`}>
+                {chain.blocks.map((block, blockIndex) => (
+                  <Group
+                    key={`${block.id}-${blockIndex}`}
+                    x={150 + blockIndex * BLOCK_SPACING_X}
+                    y={150 + chainIndex * BLOCK_SPACING_Y}
+                  >
+                    <Image
+                      image={beltLineImage}
+                      x={0}
+                      y={0}
+                      width={BELT_WIDTH}
+                      height={BELT_HEIGHT}
+                    />
+                    <Image
+                      image={blockImage}
+                      x={15.5}
+                      y={-10}
+                      width={BLOCK_WIDTH}
+                      height={BLOCK_HEIGHT}
+                      onClick={() => console.log(block)}
+                    />
+                  </Group>
+                ))}
               </Group>
             ))}
           </Layer>

@@ -3,6 +3,7 @@
 import {useAtom} from 'jotai'
 import {sideMenuState} from '@/stores/ui'
 import BasicButton from '@/components/BasicButton'
+import Link from 'next/link'
 
 const SideMenu = () => {
   const [sideMenu] = useAtom(sideMenuState)
@@ -29,6 +30,7 @@ const SideMenu = () => {
                 取引データを参加者自身の手で検証し、追加していくことで、このブロックチェーンの正しさが保たれていきます。ブロックチェーンは大きなイノベーションである一方で、ブラックボックス＝よくわからないものと捉えられてしまうと、活用の可能性を想像しにくい存在にもなり得ます。
                 この作品では、実際のブロックチェーンに近い体験を通して、その仕組みをより直感的に理解し、その構造や概念の美しさを感じ取ることを目指しています。
               </p>
+              <Link href={'/block/create'}>ブロック作成</Link>
               <BasicButton>チュートリアルをすべて見る</BasicButton>
             </div>
           </div>
