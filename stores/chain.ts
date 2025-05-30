@@ -115,9 +115,9 @@ export const currentChainState = atom<Block[]>((get) => {
 
 export const forkedPointsState = atom<number[]>((get) => {
   const chains = get(chainsState)
-  return uniq(chains.map((chain) => {
+  return chains.map((chain) => {
     return chain.blocks[0].blockHeight
-  })).slice(1)
+  }).slice(1)
 })
 
 /**

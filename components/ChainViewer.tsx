@@ -23,7 +23,7 @@ type Pos = {
 window.Konva.hitOnDragEnabled = true
 
 const BLOCK_SPACING_X = 66 // ブロック間の水平方向の間隔
-const BLOCK_SPACING_Y = 48 // チェーン間の垂直方向の間隔
+const BLOCK_SPACING_Y = 38.6 // チェーン間の垂直方向の間隔
 const BLOCK_WIDTH = 35
 const BLOCK_HEIGHT = 40
 const BELT_WIDTH = 66
@@ -164,49 +164,28 @@ const ChainViewer = () => {
         >
           <Layer>
             {chains.map((chain, chainIndex) => (
-              <Group key={`chain-${chainIndex}`}>
+              <Group key={`chain-${chainIndex}`}
+                     x={chainIndex !== 0
+                       ? chains[chainIndex - 1]?.blocks[0]?.blockHeight === chain.blocks[0].blockHeight
+                         ? (chain.blocks[0].blockHeight * BLOCK_SPACING_X) - BLOCK_SPACING_X * chainIndex
+                         : (chain.blocks[0].blockHeight * BLOCK_SPACING_X) - BLOCK_SPACING_X
+                       : 0}
+                     y={chainIndex !== 0
+                       ? chains[chainIndex - 1]?.blocks[0]?.blockHeight === chain.blocks[0].blockHeight
+                         ? (chain.blocks[0].blockHeight * BLOCK_SPACING_Y) + BLOCK_SPACING_Y * chainIndex
+                         : (chain.blocks[0].blockHeight * BLOCK_SPACING_Y) + BLOCK_SPACING_Y
+                       : 0}
+              >
                 {chain.blocks.map((block, blockIndex) => {
                     if (chainIndex === 0) {
-                      if (forkedPoints.includes(blockIndex)) {
-                        return (
-                          <Group
-                            key={`${block.id}-${blockIndex}`}
-                            x={150 + blockIndex * BLOCK_SPACING_X * 2 - 33 * blockIndex * 2}
-                            y={158.5 + chainIndex * BLOCK_SPACING_Y * 2 + 19.3 * blockIndex * 2 - 10 * chainIndex}
-                          >
-                            <Image
-                              image={beltSplit1Image}
-                              x={0}
-                              y={0}
-                              width={BELT_WIDTH}
-                              height={BELT_HEIGHT}
-                            />
-                            <Image
-                              image={beltLine1Image}
-                              x={33}
-                              y={19.3}
-                              width={BELT_WIDTH}
-                              height={BELT_HEIGHT}
-                            />
-                            <Image
-                              image={blockImage}
-                              x={15.5 + 33}
-                              y={-10 + 19.3}
-                              width={BLOCK_WIDTH}
-                              height={BLOCK_HEIGHT}
-                              onClick={() => console.log(block)}
-                            />
-                          </Group>
-                        )
-                      }
                       return (
                         <Group
                           key={`${block.id}-${blockIndex}`}
-                          x={150 + blockIndex * BLOCK_SPACING_X * 2 - 33 * blockIndex * 2}
-                          y={158.5 + chainIndex * BLOCK_SPACING_Y * 2 + 19.3 * blockIndex * 2 - 10 * chainIndex}
+                          x={blockIndex * BLOCK_SPACING_X}
+                          y={blockIndex * BLOCK_SPACING_Y}
                         >
                           <Image
-                            image={beltLine1Image}
+                            image={forkedPoints.includes(blockIndex) ? beltSplit1Image : beltLine1Image}
                             x={0}
                             y={0}
                             width={BELT_WIDTH}
@@ -219,7 +198,6 @@ const ChainViewer = () => {
                             width={BELT_WIDTH}
                             height={BELT_HEIGHT}
                           />
-
                           <Image
                             image={blockImage}
                             x={15.5 + 33}
@@ -239,8 +217,8 @@ const ChainViewer = () => {
                           return (
                             <Group
                               key={`${block.id}-${blockIndex}`}
-                              x={150 + blockIndex * BLOCK_SPACING_X * 2 - 33 * blockIndex * 2 + block.blockHeight * 33}
-                              y={149.5 + chainIndex * BLOCK_SPACING_Y * 2 + 19.3 * blockIndex * 2 - 10 * chainIndex + block.blockHeight * 19.3}
+                              x={blockIndex * BLOCK_SPACING_X}
+                              y={blockIndex * BLOCK_SPACING_Y}
                             >
                               <Image
                                 image={beltLine2Image}
@@ -278,8 +256,8 @@ const ChainViewer = () => {
                           return (
                             <Group
                               key={`${block.id}-${blockIndex}`}
-                              x={150 + blockIndex * BLOCK_SPACING_X * 2 - 33 * blockIndex * 2}
-                              y={140.7 + chainIndex * BLOCK_SPACING_Y * 2 + 19.3 * blockIndex * 2 - 10 * chainIndex}
+                              x={blockIndex * BLOCK_SPACING_X}
+                              y={blockIndex * BLOCK_SPACING_Y}
                             >
                               <Image
                                 image={beltLine2Image}
@@ -314,14 +292,12 @@ const ChainViewer = () => {
                           )
                         }
                       }
-                      // 215.8 + blockIndex * BLOCK_SPACING_X * 2 - 33 * blockIndex * 2
-                      // 188 + chainIndex * BLOCK_SPACING_Y * 2 + 19.3 * blockIndex * 2 - 10 * chainIndex
                     }
                     return (
                       <Group
                         key={`${block.id}-${blockIndex}`}
-                        x={(chain.blocks[0].blockHeight * 33) + 150 + blockIndex * BLOCK_SPACING_X * 2 - 33 * blockIndex * 2}
-                        y={(chain.blocks[0].blockHeight * 19.3) + (chainIndex * 150) + blockIndex * BLOCK_SPACING_Y * 2 + 19.3 * blockIndex * 2 - 10 * chainIndex}
+                        x={blockIndex * BLOCK_SPACING_X}
+                        y={blockIndex * BLOCK_SPACING_Y}
                       >
                         <Image
                           image={beltLine1Image}
