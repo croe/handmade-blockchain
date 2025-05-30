@@ -29,13 +29,13 @@ const SideMenu = () => {
       <div
         className={`fixed top-0 right-0 h-full w-full bg-[#E0E0E0] text-xs transform ${
           sideMenu ? '-translate-x-0' : 'translate-x-full'
-        } transition-transform duration-300 ease-in-out z-10 flex flex-col`}
+        } transition-transform duration-300 ease-in-out z-10 flex flex-col overflow-y-scroll`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="menu-heading"
       >
-        {/* 上部ロゴ・閉じるボタン */}
-        <div className="flex items-center justify-between px-4 h-[118px]">
+        {/* 上部ロゴ */}
+        <div className="flex items-center justify-between px-4 pt-12 pb-8">
           <div className="flex flex-col font-black text-[22px] leading-5 text-[#3E3EFF]">
             <span>HANDMADE</span>
             <span className="tracking-wider">BLOCKCHAIN</span>
@@ -73,7 +73,7 @@ const SideMenu = () => {
           </div>
         </div>
         {/* アクションボタン */}
-        <div className="px-4 mt-3 flex flex-col gap-2">
+        <div className="px-4 mt-3 mb-5 flex flex-col gap-2">
           <button className="w-full py-3 rounded-xl bg-cyan-400 text-white font-bold text-[15px] shadow flex items-center justify-center gap-2">
             手動で更新を開始する
             <img src="/images/icons/arrow_clockwise.svg" className="w-4 h-4" alt="reload" />
@@ -84,7 +84,7 @@ const SideMenu = () => {
           </button>
         </div>
         {/* 下部説明文 */}
-        <div className="mt-auto px-4 pb-4 pt-6 text-[12px] text-[#888] leading-relaxed bg-[#F4F4F4] overflow-y-scroll">
+        <div className="mt-auto px-4 pb-4 pt-6 text-[12px] text-[#888] leading-relaxed bg-[#F4F4F4]">
           <div className="flex items-center gap-1 mb-1">
             <img src="/images/icons/book.svg" className="w-4 h-4" alt="book" />
             <span className="font-bold">ハンドメイドブロックチェーンについて</span>

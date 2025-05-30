@@ -25,7 +25,7 @@ const IconMenuButton: React.FC<IconMenuButtonProps> = ({
     <div className="border border-[#E5E5E5] w-full h-full block rounded-xl p-2">
       <div className="flex flex-col items-center">
         <img src={iconSrc} alt="" className="w-10 h-10 object-contain" />
-        <span className="text-xs text-[#444] font-bold">{label}</span>
+        <span className="text-xs text-[#444] font-bold whitespace-pre">{label}</span>
       </div>
     </div>
   );

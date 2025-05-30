@@ -57,7 +57,7 @@ const Dashboard = () => {
             <Link href={`/tx`}>
               <div className="relative w-[35px] h-[77px]">
                 <img className="absolute top-0 left-0 w-[34px] h-[40px]" src="/images/icons/tip_tx_pool.svg" alt=""/>
-                <img className="absolute bottom-0 left-0 w-[35px] h-[40px]" src="/images/icons/box_verify.svg" alt=""/>
+                <img className="absolute bottom-0 left-0 w-[35px] h-[40px]" src="/images/icons/box_pool.svg" alt=""/>
               </div>
               <p className="text-[10px] text-[#2AE864] font-black mt-2">取引プール</p>
             </Link>
