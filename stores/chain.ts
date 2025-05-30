@@ -1,6 +1,7 @@
 import { atom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import { Block } from '@/models/block'
+import { uniq } from 'lodash'
 
 export const chainState = atomWithStorage<Block[]>('chains', [])
 
@@ -22,42 +23,42 @@ export type Chain = {
 const organizeChains = (blocks: Block[]): Chain[] => {
   // ブロックの高さでソート
   const sortedBlocks = [...blocks].sort((a, b) => a.blockHeight - b.blockHeight)
-  
+
   // チェーンを格納する配列
   const chains: Chain[] = []
-  
+
   // 処理済みのブロックを記録
   const processedBlocks = new Set<string>()
-  
+
   // 各ブロックからチェーンを構築
   for (const block of sortedBlocks) {
     if (processedBlocks.has(block.id)) continue
-    
+
     // 新しいチェーンを構築
     const chain: Chain = {
       blocks: [block],
       lastBlock: block,
-      length: 1
+      length: 1,
     }
-    
+
     processedBlocks.add(block.id)
-    
+
     // 子ブロックを探して追加
     let currentBlock = block
     while (true) {
       const nextBlock = sortedBlocks.find(b => b.prevId === currentBlock.id)
       if (!nextBlock) break
-      
+
       chain.blocks.push(nextBlock)
       chain.lastBlock = nextBlock
       chain.length++
       processedBlocks.add(nextBlock.id)
       currentBlock = nextBlock
     }
-    
+
     chains.push(chain)
   }
-  
+
   // チェーンの長さで降順ソート
   return chains.sort((a, b) => b.length - a.length)
 }
@@ -88,8 +89,8 @@ export const currentChainState = atom<Block[]>((get) => {
 
   // timestampが最も古いブロックを選択
   // blocksWithMaxHeight が空の場合はありえないが、念のためチェック
-  if (blocksWithMaxHeight.length === 0) return [] 
-  
+  if (blocksWithMaxHeight.length === 0) return []
+
   const startBlock = blocksWithMaxHeight.reduce((oldest, current) =>
     current.timestamp < oldest.timestamp ? current : oldest,
   )
@@ -110,6 +111,13 @@ export const currentChainState = atom<Block[]>((get) => {
   // 3. 配列を返す (現在は startBlock からジェネシスブロックの順)
   // もしジェネシスブロックから startBlock の順にしたければ、最後に reverse() する
   return resultChain.reverse() // ジェネシスから最新の順にするのだ
+})
+
+export const forkedPointsState = atom<number[]>((get) => {
+  const chains = get(chainsState)
+  return uniq(chains.map((chain) => {
+    return chain.blocks[0].blockHeight
+  })).slice(1)
 })
 
 /**

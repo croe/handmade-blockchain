@@ -2,7 +2,7 @@
 
 import {useAtom} from 'jotai'
 import {currentUserState} from '@/stores/users'
-import {chainState, chainsState} from '@/stores/chain'
+import {chainState, chainsState, forkedPointsState} from '@/stores/chain'
 import {makeTx} from '@/api/transaction'
 import React, {useState, useCallback} from 'react'
 import Konva from 'konva'
@@ -20,7 +20,7 @@ type Pos = {
   y: number;
 }
 
-window.Konva.hitOnDragEnabled = true;
+window.Konva.hitOnDragEnabled = true
 
 const BLOCK_SPACING_X = 66 // ブロック間の水平方向の間隔
 const BLOCK_SPACING_Y = 48 // チェーン間の垂直方向の間隔
@@ -33,6 +33,7 @@ const ChainViewer = () => {
   const [currentUser] = useAtom(currentUserState)
   const [chain] = useAtom(chainState)
   const [chains] = useAtom(chainsState)
+  const [forkedPoints] = useAtom(forkedPointsState)
 
   const [stagePos, setStagePos] = useState<Pos>({x: 0, y: 0})
   const [stageScale, setStageScale] = useState<Pos>({x: 1, y: 1})
@@ -41,7 +42,11 @@ const ChainViewer = () => {
   const [dragStopped, setDragStopped] = useState(false)
 
   const [blockImage] = useImage('/images/icons/block_1.svg')
-  const [beltLineImage] = useImage('/images/icons/belt_line_1.svg')
+  const [beltLine1Image] = useImage('/images/icons/belt_l1.svg')
+  const [beltLine2Image] = useImage('/images/icons/belt_l2.svg')
+  const [beltSplit1Image] = useImage('/images/icons/belt_s1.svg')
+  const [beltSplit2Image] = useImage('/images/icons/belt_s2.svg')
+  const [beltCorner1Image] = useImage('/images/icons/belt_c1.svg')
 
   const getDistance = (p1: Pos, p2: Pos) => {
     return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2))
@@ -141,6 +146,7 @@ const ChainViewer = () => {
     }
 
   console.log(chains)
+  console.log(forkedPoints)
 
   return (
     <div>
@@ -159,29 +165,191 @@ const ChainViewer = () => {
           <Layer>
             {chains.map((chain, chainIndex) => (
               <Group key={`chain-${chainIndex}`}>
-                {chain.blocks.map((block, blockIndex) => (
-                  <Group
-                    key={`${block.id}-${blockIndex}`}
-                    x={150 + blockIndex * BLOCK_SPACING_X}
-                    y={150 + chainIndex * BLOCK_SPACING_Y}
-                  >
-                    <Image
-                      image={beltLineImage}
-                      x={0}
-                      y={0}
-                      width={BELT_WIDTH}
-                      height={BELT_HEIGHT}
-                    />
-                    <Image
-                      image={blockImage}
-                      x={15.5}
-                      y={-10}
-                      width={BLOCK_WIDTH}
-                      height={BLOCK_HEIGHT}
-                      onClick={() => console.log(block)}
-                    />
-                  </Group>
-                ))}
+                {chain.blocks.map((block, blockIndex) => {
+                    if (chainIndex === 0) {
+                      if (forkedPoints.includes(blockIndex)) {
+                        return (
+                          <Group
+                            key={`${block.id}-${blockIndex}`}
+                            x={150 + blockIndex * BLOCK_SPACING_X * 2 - 33 * blockIndex * 2}
+                            y={158.5 + chainIndex * BLOCK_SPACING_Y * 2 + 19.3 * blockIndex * 2 - 10 * chainIndex}
+                          >
+                            <Image
+                              image={beltSplit1Image}
+                              x={0}
+                              y={0}
+                              width={BELT_WIDTH}
+                              height={BELT_HEIGHT}
+                            />
+                            <Image
+                              image={beltLine1Image}
+                              x={33}
+                              y={19.3}
+                              width={BELT_WIDTH}
+                              height={BELT_HEIGHT}
+                            />
+                            <Image
+                              image={blockImage}
+                              x={15.5 + 33}
+                              y={-10 + 19.3}
+                              width={BLOCK_WIDTH}
+                              height={BLOCK_HEIGHT}
+                              onClick={() => console.log(block)}
+                            />
+                          </Group>
+                        )
+                      }
+                      return (
+                        <Group
+                          key={`${block.id}-${blockIndex}`}
+                          x={150 + blockIndex * BLOCK_SPACING_X * 2 - 33 * blockIndex * 2}
+                          y={158.5 + chainIndex * BLOCK_SPACING_Y * 2 + 19.3 * blockIndex * 2 - 10 * chainIndex}
+                        >
+                          <Image
+                            image={beltLine1Image}
+                            x={0}
+                            y={0}
+                            width={BELT_WIDTH}
+                            height={BELT_HEIGHT}
+                          />
+                          <Image
+                            image={beltLine1Image}
+                            x={33}
+                            y={19.3}
+                            width={BELT_WIDTH}
+                            height={BELT_HEIGHT}
+                          />
+
+                          <Image
+                            image={blockImage}
+                            x={15.5 + 33}
+                            y={-10 + 19.3}
+                            width={BLOCK_WIDTH}
+                            height={BLOCK_HEIGHT}
+                            onClick={() => console.log(block)}
+                          />
+                        </Group>
+                      )
+                    }
+                    if (chainIndex > 0) {
+                      if (blockIndex === 0) {
+                        // 最長チェーン以外で複数の分岐が同じブロックから起こる場合
+                        if (block.blockHeight === chains[chainIndex + 1]?.blocks[0]?.blockHeight) {
+                          console.log('同一ブロック複数分岐')
+                          return (
+                            <Group
+                              key={`${block.id}-${blockIndex}`}
+                              x={150 + blockIndex * BLOCK_SPACING_X * 2 - 33 * blockIndex * 2 + block.blockHeight * 33}
+                              y={149.5 + chainIndex * BLOCK_SPACING_Y * 2 + 19.3 * blockIndex * 2 - 10 * chainIndex + block.blockHeight * 19.3}
+                            >
+                              <Image
+                                image={beltLine2Image}
+                                x={33}
+                                y={-19.3}
+                                width={BELT_WIDTH}
+                                height={BELT_HEIGHT}
+                              />
+                              <Image
+                                image={beltSplit2Image}
+                                x={0}
+                                y={0}
+                                width={BELT_WIDTH}
+                                height={BELT_HEIGHT}
+                              />
+                              <Image
+                                image={beltLine1Image}
+                                x={33}
+                                y={19.3}
+                                width={BELT_WIDTH}
+                                height={BELT_HEIGHT}
+                              />
+                              <Image
+                                image={blockImage}
+                                x={15.5 + 33}
+                                y={-10 + 19.3}
+                                width={BLOCK_WIDTH}
+                                height={BLOCK_HEIGHT}
+                                onClick={() => console.log(block)}
+                              />
+                            </Group>
+                          )
+                        } else {
+                          // 分岐する最初のブロック
+                          return (
+                            <Group
+                              key={`${block.id}-${blockIndex}`}
+                              x={150 + blockIndex * BLOCK_SPACING_X * 2 - 33 * blockIndex * 2}
+                              y={140.7 + chainIndex * BLOCK_SPACING_Y * 2 + 19.3 * blockIndex * 2 - 10 * chainIndex}
+                            >
+                              <Image
+                                image={beltLine2Image}
+                                x={33}
+                                y={-19.3}
+                                width={BELT_WIDTH}
+                                height={BELT_HEIGHT}
+                              />
+                              <Image
+                                image={beltCorner1Image}
+                                x={0}
+                                y={0}
+                                width={BELT_WIDTH}
+                                height={BELT_HEIGHT}
+                              />
+                              <Image
+                                image={beltLine1Image}
+                                x={33}
+                                y={19.3}
+                                width={BELT_WIDTH}
+                                height={BELT_HEIGHT}
+                              />
+                              <Image
+                                image={blockImage}
+                                x={15.5 + 33}
+                                y={-10 + 19.3}
+                                width={BLOCK_WIDTH}
+                                height={BLOCK_HEIGHT}
+                                onClick={() => console.log(block)}
+                              />
+                            </Group>
+                          )
+                        }
+                      }
+                      // 215.8 + blockIndex * BLOCK_SPACING_X * 2 - 33 * blockIndex * 2
+                      // 188 + chainIndex * BLOCK_SPACING_Y * 2 + 19.3 * blockIndex * 2 - 10 * chainIndex
+                    }
+                    return (
+                      <Group
+                        key={`${block.id}-${blockIndex}`}
+                        x={(chain.blocks[0].blockHeight * 33) + 150 + blockIndex * BLOCK_SPACING_X * 2 - 33 * blockIndex * 2}
+                        y={(chain.blocks[0].blockHeight * 19.3) + (chainIndex * 150) + blockIndex * BLOCK_SPACING_Y * 2 + 19.3 * blockIndex * 2 - 10 * chainIndex}
+                      >
+                        <Image
+                          image={beltLine1Image}
+                          x={0}
+                          y={0}
+                          width={BELT_WIDTH}
+                          height={BELT_HEIGHT}
+                        />
+                        <Image
+                          image={beltLine1Image}
+                          x={33}
+                          y={19.3}
+                          width={BELT_WIDTH}
+                          height={BELT_HEIGHT}
+                        />
+
+                        <Image
+                          image={blockImage}
+                          x={15.5 + 33}
+                          y={-10 + 19.3}
+                          width={BLOCK_WIDTH}
+                          height={BLOCK_HEIGHT}
+                          onClick={() => console.log(block)}
+                        />
+                      </Group>
+                    )
+                  },
+                )}
               </Group>
             ))}
           </Layer>
