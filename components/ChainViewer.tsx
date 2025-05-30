@@ -193,15 +193,15 @@ const ChainViewer = () => {
                           />
                           <Image
                             image={beltLine1Image}
-                            x={33}
-                            y={19.3}
+                            x={BLOCK_SPACING_X / 2}
+                            y={BLOCK_SPACING_Y / 2}
                             width={BELT_WIDTH}
                             height={BELT_HEIGHT}
                           />
                           <Image
                             image={blockImage}
-                            x={15.5 + 33}
-                            y={-10 + 19.3}
+                            x={15.5 + BLOCK_SPACING_X / 2}
+                            y={-10 + BLOCK_SPACING_Y / 2}
                             width={BLOCK_WIDTH}
                             height={BLOCK_HEIGHT}
                             onClick={() => console.log(block)}
@@ -222,8 +222,8 @@ const ChainViewer = () => {
                             >
                               <Image
                                 image={beltLine2Image}
-                                x={33}
-                                y={-19.3}
+                                x={BLOCK_SPACING_X / 2}
+                                y={BLOCK_SPACING_Y / -2}
                                 width={BELT_WIDTH}
                                 height={BELT_HEIGHT}
                               />
@@ -236,15 +236,15 @@ const ChainViewer = () => {
                               />
                               <Image
                                 image={beltLine1Image}
-                                x={33}
-                                y={19.3}
+                                x={BLOCK_SPACING_X / 2}
+                                y={BLOCK_SPACING_Y / 2}
                                 width={BELT_WIDTH}
                                 height={BELT_HEIGHT}
                               />
                               <Image
                                 image={blockImage}
-                                x={15.5 + 33}
-                                y={-10 + 19.3}
+                                x={15.5 + BLOCK_SPACING_X / 2}
+                                y={-10 + BLOCK_SPACING_Y / 2}
                                 width={BLOCK_WIDTH}
                                 height={BLOCK_HEIGHT}
                                 onClick={() => console.log(block)}
@@ -261,8 +261,8 @@ const ChainViewer = () => {
                             >
                               <Image
                                 image={beltLine2Image}
-                                x={33}
-                                y={-19.3}
+                                x={BLOCK_SPACING_X / 2}
+                                y={BLOCK_SPACING_Y / -2}
                                 width={BELT_WIDTH}
                                 height={BELT_HEIGHT}
                               />
@@ -275,15 +275,15 @@ const ChainViewer = () => {
                               />
                               <Image
                                 image={beltLine1Image}
-                                x={33}
-                                y={19.3}
+                                x={BLOCK_SPACING_X / 2}
+                                y={BLOCK_SPACING_Y / 2}
                                 width={BELT_WIDTH}
                                 height={BELT_HEIGHT}
                               />
                               <Image
                                 image={blockImage}
-                                x={15.5 + 33}
-                                y={-10 + 19.3}
+                                x={15.5 + BLOCK_SPACING_X / 2}
+                                y={-10 + BLOCK_SPACING_Y / 2}
                                 width={BLOCK_WIDTH}
                                 height={BLOCK_HEIGHT}
                                 onClick={() => console.log(block)}
@@ -308,16 +308,16 @@ const ChainViewer = () => {
                         />
                         <Image
                           image={beltLine1Image}
-                          x={33}
-                          y={19.3}
+                          x={BLOCK_SPACING_X / 2}
+                          y={BLOCK_SPACING_Y / 2}
                           width={BELT_WIDTH}
                           height={BELT_HEIGHT}
                         />
 
                         <Image
                           image={blockImage}
-                          x={15.5 + 33}
-                          y={-10 + 19.3}
+                          x={15.5 + BLOCK_SPACING_X / 2}
+                          y={-10 + BLOCK_SPACING_Y / 2}
                           width={BLOCK_WIDTH}
                           height={BLOCK_HEIGHT}
                           onClick={() => console.log(block)}
