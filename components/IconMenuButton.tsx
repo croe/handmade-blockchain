@@ -11,7 +11,7 @@ export type IconMenuButtonProps = {
 }
 
 const baseStyle =
-  'flex flex-col items-center justify-center w-full h-[90px] p-1.5 rounded-2xl border border-[#E0E0E0] bg-white shadow-md active:scale-95 transition-all duration-100 select-none cursor-pointer hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed';
+  'flex flex-col items-center justify-center w-full h-[90px] p-1.5 rounded-2xl border border-[#E0E0E0] bg-white shadow active:scale-95 transition-all duration-100 select-none cursor-pointer hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed';
 
 const IconMenuButton: React.FC<IconMenuButtonProps> = ({
   iconSrc,
