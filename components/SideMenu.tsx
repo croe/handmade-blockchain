@@ -2,8 +2,8 @@
 
 import {useAtom} from 'jotai'
 import {sideMenuState} from '@/stores/ui'
-import IconMenuButton from '@/components/IconMenuButton'
-import BasicButton from '@/components/BasicButton'
+import IconMenuButton from '@/components/Button/IconMenuButton'
+import BasicButton from '@/components/Button/BasicButton'
 import Link from 'next/link'
 
 const menuItems = [
@@ -74,10 +74,10 @@ const SideMenu = () => {
         </div>
         {/* アクションボタン */}
         <div className="px-4 mt-3 mb-5 flex flex-col gap-2">
-          <button className="w-full py-3 rounded-xl bg-cyan-400 text-white font-bold text-[15px] shadow flex items-center justify-center gap-2">
-            手動で更新を開始する
-            <img src="/images/icons/arrow_clockwise.svg" className="w-4 h-4" alt="reload" />
-          </button>
+          <BasicButton>
+            <span className="text-base">手動で更新を開始する</span>
+            <img src="/images/icons/double_arrow_white.svg" className="w-5 h-5" alt="reload" />
+          </BasicButton>
           <button className="w-full py-3 rounded-xl bg-[#888] text-white font-bold text-[15px] shadow flex items-center justify-center gap-2">
             本アプリのキャッシュの取扱
             <img src="/images/icons/info.svg" className="w-4 h-4" alt="info" />
