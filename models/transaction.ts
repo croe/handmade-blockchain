@@ -1,4 +1,5 @@
 import {DataSnapshot} from 'firebase/database'
+import { Block } from './block'
 
 interface TransactionFromDB {
   f: string;
@@ -19,6 +20,10 @@ export type Transaction = {
 
 export type TxWithValue = Transaction & {
   amount: number;
+}
+
+export type TxWithBlock = TxWithValue & {
+  block?: Block;
 }
 
 export const convertTxs = (

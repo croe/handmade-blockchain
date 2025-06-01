@@ -1,7 +1,6 @@
 'use client'
 
 import BasicModal from '@/components/BasicModal'
-import BasicButton from '@/components/Button/BasicButton'
 import {useAtom} from 'jotai'
 import {usersState} from '@/stores/users'
 import {generateReadableId, getAvatarForId} from '@/utils/id-to-readable-string'

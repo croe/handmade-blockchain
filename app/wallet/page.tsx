@@ -6,12 +6,11 @@ import MiniLayout from '@/components/MiniLayout'
 import { generateReadableId, getAvatarForId } from '@/utils/id-to-readable-string'
 import { useAtom } from 'jotai'
 import { currentUserState } from '@/stores/users'
-import { myBalanceState } from '@/stores/transactions'
+import {allMyTxsState, myBalanceState} from '@/stores/transactions'
+import TxViewer from '@/components/TxViewer'
 
 const WalletProfile = () => {
   const [currentUser] = useAtom(currentUserState)
-  const [myBalance] = useAtom(myBalanceState)
-  console.log(myBalance)
 
   return (
     <div className="flex gap-2.5">
@@ -42,6 +41,9 @@ const MyBalance = () => {
 }
 
 const WalletPage = () => {
+  const [allMyTxs] = useAtom(allMyTxsState)
+  console.log(allMyTxs)
+
   return (
     <main>
       <TitleHeader
@@ -57,8 +59,10 @@ const WalletPage = () => {
           <div>
             ここにフィルタやソート機能を追加する。
           </div>
-          <div>
-
+          <div className="flex flex-col gap-2.5 pb-10">
+            {allMyTxs.map((x, i) => (
+              <TxViewer key={i} tx={x} />
+            ))}
           </div>
         </div>
       </MiniLayout>

@@ -1,6 +1,6 @@
 import { atom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
-import { Transaction } from '@/models/transaction'
+import { Transaction, TxWithBlock } from '@/models/transaction'
 import { currentChainState } from '@/stores/chain'
 import { currentUserState } from '@/stores/users'
 
@@ -31,7 +31,36 @@ export const currentTxsState = atom<Transaction[]>(
 )
 
 /**
- * 現在のTxsから自分のウォレットに関連するTxsのみを取り出すストア
+ * すべてのTxから自分に関連するTxsのみを取り出すストア
+ */
+export const allMyTxsState = atom<TxWithBlock[]>((get) => {
+  const allTxs = get(txsState)
+  const currentUser = get(currentUserState)
+  const currentChain = get(currentChainState)
+
+  if (!currentUser) {
+    return [] // ユーザーがいない場合は空配列
+  }
+
+  return allTxs
+    .filter(tx => tx.from === currentUser.id || tx.to === currentUser.id)
+    .map(tx => {
+      // トランザクションの金額とブロック情報を探す
+      const block = currentChain.find(block => 
+        block.txs.some(txInBlock => txInBlock.i === tx.id)
+      )
+      const txInChain = block?.txs.find(txInBlock => txInBlock.i === tx.id)
+
+      return {
+        ...tx,
+        amount: txInChain?.m ?? 0,
+        block: block
+      }
+    })
+})
+
+/**
+ * 現在のChainで自分のウォレットに関連するTxsのみを取り出すストア
  */
 export const myTxsState = atom<Transaction[]>(
   (get) => {
@@ -42,7 +71,7 @@ export const myTxsState = atom<Transaction[]>(
       return [] // ユーザーがいない場合は空配列
     }
 
-    return currentTxs.filter(tx => 
+    return currentTxs.filter(tx =>
       tx.from === currentUser.id || tx.to === currentUser.id
     )
   }
