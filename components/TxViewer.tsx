@@ -38,6 +38,11 @@ const DecreaseBalance = ({amount}:{amount: number}) => (
   </p>
 )
 
+const getTxUser = (userId: string, meId: string) => {
+  if (userId === 'reward') return 'System'
+  return userId === meId ? 'Me' : generateReadableId(userId)
+}
+
 
 const TxViewer = ({tx}:Props) => {
   const [currentUser] = useAtom(currentUserState)
@@ -58,10 +63,14 @@ const TxViewer = ({tx}:Props) => {
           )}
           <img src="/images/icons/details_open.svg" alt="" className="absolute bottom-1 left-1/2 -translate-x-1/2 transform group-open:hidden"/>
         </summary>
-        <div className="flex flex-col gap-2 text-xs text-[#666] mt-2">
+        <div className="flex flex-col gap-2 text-xs text-[#666] mt-2 pb-2">
           <p className="flex gap-1 text-[#484848]">
             <span>from</span>
-            <span className="text-[#3842FF]">{tx.from === currentUser?.id ? 'Me' : generateReadableId(tx.from)}</span>
+            <span className="text-[#3842FF]">{currentUser && getTxUser(tx.from, currentUser.id)}</span>
+          </p>
+          <p className="flex gap-1 text-[#484848]">
+            <span>to</span>
+            <span className="text-[#3842FF]">{currentUser && getTxUser(tx.to, currentUser.id)}</span>
           </p>
           <p>{tx.from === 'reward' ? 'ブロック作成報酬' : '手動で作成された取引'}</p>
           <p className="flex gap-1">
