@@ -11,6 +11,14 @@ type Props = {
 }
 
 const BasicModal = ({open, requestClose, children, title, icon}:Props) => {
+
+  const handleClose = () => {
+    console.log('Modal closed')
+    if (requestClose) {
+      requestClose()
+    }
+  }
+
   return (
     <div className={`fixed top-0 right-0 h-full w-full flex flex-col bg-black bg-opacity-60
      items-center justify-center transform ${open ? '-translate-y-0' : 'translate-y-full'}
@@ -28,7 +36,7 @@ const BasicModal = ({open, requestClose, children, title, icon}:Props) => {
           </div>
         </div>
         <div className="flex justify-center">
-          <BasicButton variant="error" onClick={requestClose}>
+          <BasicButton variant="error" onClick={handleClose}>
             <span>閉じる</span>
             <img src="/images/icons/mini/white/close.svg" className="w-5 h-5" alt="close" />
           </BasicButton>

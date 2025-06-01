@@ -12,6 +12,7 @@ import {buildBlock, getBlock} from '@/api/block'
 import {currentUserState} from '@/stores/users'
 import {getTx, getTxs, makeTx} from '@/api/transaction'
 import {concat} from 'lodash'
+import TxValidationCard from '@/components/TxValidationCard'
 
 type FormValues = {
   tx: {
@@ -108,6 +109,7 @@ const TxsValidateAndBuildBlock = () => {
     <div className="flex flex-col gap-4">
       {selectedTxs.map((tx, index) => (
         <div key={tx.id}>
+          <TxValidationCard tx={tx} />
           <p>{tx.id}</p>
           <img src={getBucketImage(TX_AMOUNT_BUCKET, tx.id, 'png')} alt="" className="w-[200px]"/>
           <p>

@@ -2,7 +2,7 @@ import type React from "react"
 import "./globals.css"
 import type { Metadata } from "next"
 import { Poppins, Zen_Kaku_Gothic_New } from "next/font/google"
-import { Providers } from "@/components/providers"
+import { Providers } from "@/components/Provider/providers"
 import UserSignal from '@/components/UserSignal'
 import RenderMounted from '@/components/ClientRender'
 import { ToastContainer } from 'react-toastify';

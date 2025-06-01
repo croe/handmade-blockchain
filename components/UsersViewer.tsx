@@ -6,7 +6,6 @@ import { DataSnapshot, off, onValue, ref } from 'firebase/database'
 import { convertUsers } from '@/models/user'
 import { useAtom, useSetAtom } from 'jotai'
 import { usersState, currentUserState } from '@/stores/users'
-import { MonitorCheck } from 'lucide-react'
 import { getTxs, syncTxs } from '@/api/transaction'
 import { uniqBy, differenceBy } from 'lodash'
 import { txsState } from '@/stores/transactions'
@@ -14,10 +13,14 @@ import { getBlocks, syncBlocks } from '@/api/block'
 import { filterNonNullableTxs, filterNonNullableBlocks } from '@/utils/filterNonNullable'
 import { chainState } from '@/stores/chain'
 
+/**
+ * ユーザー、トランザクション、ブロックの同期を行うコンポーネント
+ */
+
 const SYNC_LIMIT = 3
 
 const UsersViewer = () => {
-  const [users, setUsers] = useAtom(usersState)
+  const [_, setUsers] = useAtom(usersState)
   const [currentUser] = useAtom(currentUserState)
   const setTxs = useSetAtom(txsState)
   const setBlocks = useSetAtom(chainState)
@@ -79,23 +82,7 @@ const UsersViewer = () => {
   }, [])
 
   return (
-    <div>
-      {/*<div className="px-4 py-2 text-black border-2">*/}
-      {/*  <p className="text-sm mb-2 font-bold">Users Viewer</p>*/}
-      {/*  <ul className="space-y-2 max-h-60 overflow-y-auto pr-2">*/}
-      {/*    {users.filter((user) => user.status).map((user) => (*/}
-      {/*      <li key={user.id} className="text-sm flex gap-2 items-center">*/}
-      {/*        <p>ID: {user.id}</p>*/}
-      {/*        <p>*/}
-      {/*        <span className="text-green-500">*/}
-      {/*            <MonitorCheck size={20}/>*/}
-      {/*          </span>*/}
-      {/*        </p>*/}
-      {/*      </li>*/}
-      {/*    ))}*/}
-      {/*  </ul>*/}
-      {/*</div>*/}
-    </div>
+    <></>
   )
 }
 

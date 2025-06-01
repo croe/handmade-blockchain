@@ -64,9 +64,6 @@ const Dashboard = () => {
           </div>
         </div>
       </BottomBar>
-      {/*<div>*/}
-        {/*<TxsViewer />*/}
-      {/*</div>*/}
       <div>
         <UsersViewer />
       </div>
