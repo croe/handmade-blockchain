@@ -27,7 +27,7 @@ const TxCreateCompletePage = () => {
         title="取引作成が完了しました。"
         help={<HelpButton />}
       />
-      <div className="mx-auto w-max px-5 max-w-[400px] flex flex-col gap-4">
+      <div className="mx-auto w-max px-5 max-w-[340px] flex flex-col gap-4">
         {txId && (
           <div className="bg-[#DEDEDE] rounded-2xl p-1 shadow w-full">
             <div className="rounded-xl border border-[#484848] px-4 py-8 w-full">
@@ -52,7 +52,7 @@ const TxCreateCompletePage = () => {
                   </p>
                   <div className="pl-8 mt-1.5">
                     <input
-                      className="w-full px-2 py-1 border rounded-xl border-[#E5E5E5] bg-[#EEE] text-[#484848]"
+                      className="w-full px-2 py-1 border rounded-xl border-[#E5E5E5] bg-[#EEE] text-[#484848] max-w-[300px]"
                       type="text"
                       disabled
                       value={tx ? generateReadableId(tx.from) : ""}
@@ -66,7 +66,7 @@ const TxCreateCompletePage = () => {
                   </p>
                   <div className="pl-8 mt-1.5">
                     <input
-                      className="w-full px-2 py-1 border rounded-xl border-[#E5E5E5] bg-[#EEE] text-[#484848]"
+                      className="w-full px-2 py-1 border rounded-xl border-[#E5E5E5] bg-[#EEE] text-[#484848] max-w-[300px]"
                       type="text"
                       disabled
                       value={tx ? generateReadableId(tx.to) : ""}

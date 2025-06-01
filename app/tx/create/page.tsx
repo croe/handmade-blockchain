@@ -93,7 +93,7 @@ const TxCreatePage = () => {
         title="取引の作成"
         help={<HelpButton/>}
       />
-      <div className="mx-auto w-max px-5 max-w-[400px] flex flex-col gap-4">
+      <div className="mx-auto w-max px-5 max-w-[340px] flex flex-col gap-4">
         <CheckSignMaker canvas={canvas} setCanvas={setCanvas}/>
         <div>
           <p className="flex gap-1 text-[#999] items-center text-xs mb-1.5">
@@ -101,7 +101,7 @@ const TxCreatePage = () => {
             <span>送金元（自動入力）</span>
           </p>
           <input
-            className="w-full px-2 py-1 border rounded-xl border-[#E5E5E5] bg-[#EEE] text-[#484848]"
+            className="w-full px-2 py-1 border rounded-xl border-[#E5E5E5] bg-[#EEE] text-[#484848] max-w-[300px]"
             type="text"
             disabled
             value={currentUser ? generateReadableId(currentUser.id) : ''}
@@ -113,7 +113,7 @@ const TxCreatePage = () => {
             <span>送金先</span>
           </p>
           <input
-            className="w-full px-2 py-1 border rounded-xl border-[#E5E5E5] bg-[#EEE] text-[#484848] mb-2"
+            className="w-full px-2 py-1 border rounded-xl border-[#E5E5E5] bg-[#EEE] text-[#484848] mb-2 max-w-[300px]"
             type="text"
             disabled
             value={receiverId ? generateReadableId(receiverId) : ''}
