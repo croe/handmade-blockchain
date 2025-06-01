@@ -46,7 +46,7 @@ export const allMyTxsState = atom<TxWithBlock[]>((get) => {
     .filter(tx => tx.from === currentUser.id || tx.to === currentUser.id)
     .map(tx => {
       // トランザクションの金額とブロック情報を探す
-      const block = currentChain.find(block => 
+      const block = currentChain.find(block =>
         block.txs.some(txInBlock => txInBlock.i === tx.id)
       )
       const txInChain = block?.txs.find(txInBlock => txInBlock.i === tx.id)
@@ -57,6 +57,7 @@ export const allMyTxsState = atom<TxWithBlock[]>((get) => {
         block: block
       }
     })
+    .reverse()
 })
 
 /**

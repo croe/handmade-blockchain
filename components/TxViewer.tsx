@@ -1,9 +1,10 @@
 'use client'
 
-import {type TxWithBlock} from '@/models/transaction'
-import {useAtom} from 'jotai'
-import {currentUserState} from '@/stores/users'
+import { type TxWithBlock } from '@/models/transaction'
+import { useAtom} from 'jotai'
+import { currentUserState } from '@/stores/users'
 import BasicButton from '@/components/Button/BasicButton'
+import { generateReadableId } from '@/utils/id-to-readable-string'
 
 type Props = {
   tx: TxWithBlock
@@ -57,11 +58,28 @@ const TxViewer = ({tx}:Props) => {
           )}
           <img src="/images/icons/details_open.svg" alt="" className="absolute bottom-1 left-1/2 -translate-x-1/2 transform group-open:hidden"/>
         </summary>
-        <div>
-          <p>from ~~~</p>
-          <p>作成日時</p>
-          <p>承認日時</p>
-          <BasicButton></BasicButton>
+        <div className="flex flex-col gap-2 text-xs text-[#666] mt-2">
+          <p className="flex gap-1 text-[#484848]">
+            <span>from</span>
+            <span className="text-[#3842FF]">{tx.from === currentUser?.id ? 'Me' : generateReadableId(tx.from)}</span>
+          </p>
+          <p>{tx.from === 'reward' ? 'ブロック作成報酬' : '手動で作成された取引'}</p>
+          <p className="flex gap-1">
+            <span>作成日時 :</span>
+            <span>{new Date(tx.timestamp).toLocaleString()}</span>
+          </p>
+          {tx.block && (
+            <p className="flex gap-1">
+              <span>承認日時 :</span>
+              <span>{new Date(tx.timestamp).toLocaleString()}</span>
+            </p>
+          )}
+          {tx.block && (
+            <BasicButton>
+              <span>取引のブロックを確認する</span>
+              <img src="/images/icons/double_arrow_white.svg" alt="" className="w-4 h-4"/>
+            </BasicButton>
+          )}
           <img src="/images/icons/details_close.svg" alt="" className="absolute bottom-1 left-1/2 -translate-x-1/2 transform"/>
         </div>
       </details>
