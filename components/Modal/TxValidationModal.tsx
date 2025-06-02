@@ -83,9 +83,9 @@ const TxValidationModal = ({open, requestClose, tx, setSelectedTxs, onWalletChec
             <img src="/images/icons/hand_arrow_up.svg" alt="pen" className="w-5 h-5"/>
             <span>送金元</span>
           </p>
-          <div className="pl-8 mt-1.5 flex gap-1 items-center">
+          <div className="pl-8 mt-1.5 flex flex-col gap-1 items-start">
             <input
-              className="flex-1 px-2 py-1 border rounded-xl border-[#E5E5E5] bg-[#EEE] text-[#484848] max-w-[250px]"
+              className="w-full px-2 py-1 border rounded-xl border-[#E5E5E5] bg-[#EEE] text-[#484848] max-w-[300px]"
               type="text"
               disabled
               value={tx ? generateReadableId(tx.from) : ""}
@@ -97,10 +97,10 @@ const TxValidationModal = ({open, requestClose, tx, setSelectedTxs, onWalletChec
                     onWalletCheck(tx.from)
                   }
                 }}
-                className="px-2 py-2 bg-[#4CAF50] text-white text-sm rounded-2xl flex items-center gap-0.5"
+                className="w-full px-2 py-2 bg-[#4CAF50] text-white text-sm rounded-xl flex items-center justify-center"
               >
                 <img src="/images/icons/mini/white/book.svg" alt="wallet" className="w-5 h-5"/>
-                <span>確認</span>
+                <span>ウォレットの内容を確認する</span>
               </button>
             )}
           </div>
