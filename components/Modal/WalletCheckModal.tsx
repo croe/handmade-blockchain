@@ -81,7 +81,7 @@ const WalletCheckModal = ({open, requestClose, userId}:Props) => {
           <h3 className="text-sm font-bold text-[#484848] mb-2">
             選択中のチェーンでの取引履歴
           </h3>
-          <div className="max-h-64 overflow-y-auto">
+          <div>
             {userTxs.length > 0 ? (
               <div className="flex flex-col gap-2">
                 {userTxs.map((tx, i) => (
