@@ -216,6 +216,7 @@ const ChainViewer = () => {
                         width={BLOCK_WIDTH}
                         height={BLOCK_HEIGHT}
                         onClick={() => handleSelectBlock(block)}
+                        onTouchEnd={() => handleSelectBlock(block)}
                       />
                     </Group>
                   )
@@ -260,6 +261,7 @@ const ChainViewer = () => {
                             width={BLOCK_WIDTH}
                             height={BLOCK_HEIGHT}
                             onClick={() => handleSelectBlock(block)}
+                            onTouchEnd={() => handleSelectBlock(block)}
                           />
                         </Group>
                       )
@@ -299,6 +301,7 @@ const ChainViewer = () => {
                             width={BLOCK_WIDTH}
                             height={BLOCK_HEIGHT}
                             onClick={() => handleSelectBlock(block)}
+                            onTouchEnd={() => handleSelectBlock(block)}
                           />
                         </Group>
                       )
@@ -332,6 +335,7 @@ const ChainViewer = () => {
                       width={BLOCK_WIDTH}
                       height={BLOCK_HEIGHT}
                       onClick={() => handleSelectBlock(block)}
+                      onTouchEnd={() => handleSelectBlock(block)}
                     />
                   </Group>
                 )
@@ -364,6 +368,7 @@ const ChainViewer = () => {
                   x={15.5 + BLOCK_SPACING_X / 2}
                   y={-10 + BLOCK_SPACING_Y / 2}
                   onClick={() => handleMakeNewBlock(chain.blocks[chain.blocks.length - 1])}
+                  onTouchEnd={() => handleMakeNewBlock(chain.blocks[chain.blocks.length - 1])}
                 >
                   <Image
                     image={unblockImage}

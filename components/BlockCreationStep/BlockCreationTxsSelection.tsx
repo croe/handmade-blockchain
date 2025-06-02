@@ -10,7 +10,7 @@ import { Block } from '@/models/block'
 import TxCard from '@/components/TxCard'
 import { toast } from 'react-toastify'
 
-const TxsSelector = () => {
+const BlockCreationTxsSelection = () => {
   const [confirmedTxs, setConfirmedTxs] = useState<Transaction[]>([])
   const [selectedTxs, setSelectedTxs] = useAtom(selectedTxsState)
   const [txs] = useAtom(syncedTxsState)
@@ -95,4 +95,4 @@ const TxsSelector = () => {
   )
 }
 
-export default TxsSelector
+export default BlockCreationTxsSelection

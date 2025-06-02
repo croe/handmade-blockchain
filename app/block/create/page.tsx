@@ -1,18 +1,25 @@
 'use client'
 
 import { useState } from 'react'
-import TxsSelector from '@/components/TxsSelector'
-import TxsValidateAndBuildBlock from '@/components/TxsValidateAndBuildBlock'
 import TitleHeader from '@/components/TitleHeader'
 import BottomBar from '@/components/BottomBar'
 import BasicButton from '@/components/Button/BasicButton'
 import HelpButton from '@/components/Button/HelpButton'
 import MiniLayout from '@/components/MiniLayout'
-import { useAtom } from 'jotai/index'
-import { selectedTxsState } from '@/stores/transactions'
+import { useAtom, useSetAtom } from 'jotai/index'
+import { txsState, selectedTxsState } from '@/stores/transactions'
+import { chainState, selectedBlockState } from '@/stores/chain'
+import { currentUserState } from '@/stores/users'
 import { toast } from 'react-toastify'
-import TxValidationCard from '@/components/TxValidationCard'
-import {selectedBlockState} from '@/stores/chain'
+import { TxInBlock } from '@/models/block'
+import { getTx, makeTx } from '@/api/transaction'
+import BlockCreationTxsSelection from '@/components/BlockCreationStep/BlockCreationTxsSelection'
+import BlockCreationTxsValidation from '@/components/BlockCreationStep/BlockCreationTxsValidation'
+import BlockCreationCheck from '@/components/BlockCreationStep/BlockCreationCheck'
+import BlockCreationComplete from '@/components/BlockCreationStep/BlockCreationComplete'
+import { concat } from 'lodash'
+import {buildBlock, getBlock} from '@/api/block'
+import { Loader } from 'lucide-react'
 
 type Step = 'chain-selected' | 'tx-selected' | 'tx-validated' | 'complete'
 
@@ -60,19 +67,14 @@ const STEP_INFO: Record<Step, StepInfo> = {
   }
 }
 
-const REWARD_TX = {
-  id: 'reward',
-  from: 'system',
-  to: 'me',
-  amount: 100, // 報酬の金額
-  timestamp: Date.now(),
-  status: 'completed', // 完了した取引
-}
-
 const BlockCreatePage = () => {
+  const [loading, setLoading] = useState<boolean>(false)
   const [step, setStep] = useState<Step>('chain-selected')
-  const [selectedTxs] = useAtom(selectedTxsState)
-  const [selectedBlock] = useAtom(selectedBlockState)
+  const setTxs = useSetAtom(txsState)
+  const setChain = useSetAtom(chainState)
+  const [selectedTxs, setSelectedTxs] = useAtom(selectedTxsState)
+  const [currentUser] = useAtom(currentUserState)
+  const [selectedBlock, setSelectedBlock] = useAtom(selectedBlockState)
 
   /**
    * どのブロックに繋げるか選ぶ
@@ -82,7 +84,62 @@ const BlockCreatePage = () => {
    * ブロックを追加する
    */
 
-  const handleNextStep = () => {
+  const handleCreateBlock = async () => {
+    try {
+      if (!currentUser) throw new Error('ユーザー情報が取得できません')
+      if (!selectedBlock) throw new Error('ブロックが選択されていません')
+      if (!selectedTxs) throw new Error('取引が選択されていません')
+      setLoading(true)
+      // ブロック作成のためのデータを準備
+      const txs = selectedTxs.map(tx => ({
+        i: tx.id,
+        m: tx.amount || 0, // amountが未設定の場合は0を使用
+      }))
+      // FIXME: 同期タイミングを考える必要がありそう
+      const txKey = await makeTx(currentUser.id, 'reward', currentUser.id);
+      if (!txKey?.key) throw new Error('報酬取引の作成に失敗しました')
+      const systemTx: TxInBlock = {
+        i: txKey.key,
+        m: 100,
+      }
+      const systemTxFromDB = await getTx(currentUser.id, txKey.key)
+      if (systemTxFromDB) {
+        setTxs(prev => concat(prev, [systemTxFromDB]).flatMap(e => e != null ? e : []))
+      }
+      const blockKey = await buildBlock(
+        currentUser.id,
+        selectedBlock.id,
+        concat(txs, [systemTx]),
+        selectedBlock.blockHeight + 1
+      )
+      if (!blockKey?.key) throw new Error('ブロックの作成に失敗しました')
+      // FIXME: ここがなんか変
+      const newBlockFromDB = await getBlock(currentUser.id, blockKey.key)
+      console.log(newBlockFromDB)
+      if (newBlockFromDB) {
+        setChain(prev => concat(prev, [newBlockFromDB]).flatMap(e => e != null ? e : []))
+      }
+
+      /**
+       * Reset
+       */
+      setSelectedBlock(null)
+      setSelectedTxs([])
+      setLoading(false)
+
+    } catch (error) {
+      console.error('Error in handleCreateBlock:', error)
+      toast.error('ブロックの作成に失敗しました')
+      setLoading(false)
+      return
+    }
+  }
+
+  const handleNextStep = async () => {
+    if (loading) {
+      toast.info('処理中です。しばらくお待ちください。')
+      return
+    }
     switch (step) {
       case 'chain-selected':
         if (selectedTxs.length === 0) {
@@ -100,6 +157,7 @@ const BlockCreatePage = () => {
         setStep('tx-validated')
         break
       case 'tx-validated':
+        await handleCreateBlock()
         setStep('complete')
         break
       default:
@@ -123,78 +181,17 @@ const BlockCreatePage = () => {
   const currentStepInfo = STEP_INFO[step]
 
   return (
-    <main className="w-full min-h-screen">
+    <main className="w-full min-h-screen pb-36">
       <TitleHeader
         title={currentStepInfo.title}
         subtitle={currentStepInfo.subtitle}
         help={<HelpButton />}
       />
       <MiniLayout>
-        {step === 'chain-selected' && (
-          <div className="pb-36">
-            <TxsSelector />
-          </div>
-        )}
-        {step === 'tx-selected' && (
-          <div>
-            <TxsValidateAndBuildBlock />
-          </div>
-        )}
-        {step === 'tx-validated' && (
-          <div>
-            <h2 className="text-[#999] font-bold flex items-center gap-1 pt-2 pb-2.5 text-xs border-t border-[#E5E5E5]">
-              <img src="/images/icons/mini/gray/transaction.svg" className="w-5" alt=""/>
-              <span>選択した取引一覧</span>
-            </h2>
-            <div className="flex flex-col gap-4">
-              {selectedTxs.map(tx => (
-                <TxValidationCard tx={tx} showValidation={false} />
-              ))}
-            </div>
-            <h2 className="mt-6 text-[#999] font-bold flex items-center gap-1 pt-2 pb-2.5 text-xs border-t border-[#E5E5E5]">
-              <img src="/images/icons/mini/gray/transaction.svg" className="w-5" alt=""/>
-              <span>ブロック作成報酬取引</span>
-            </h2>
-            <div className="flex flex-col gap-4">
-              <TxValidationCard tx={REWARD_TX} showValidation={false} />
-            </div>
-            <h2 className="mt-6 text-[#999] font-bold flex items-center gap-1 pt-2 pb-2.5 text-xs border-t border-[#E5E5E5]">
-              <img src="/images/icons/mini/gray/info.svg" className="w-5" alt=""/>
-              <span>接続ブロック情報</span>
-            </h2>
-            {selectedBlock && (
-              <div className="flex flex-col gap-2 px-1">
-                <p className="border-b border-[#E5E5E5] pt-1 pb-2 text-xs text-[#999] flex items-start gap-1">
-                  <span>ID :</span>
-                  <span>{selectedBlock?.id}</span>
-                </p>
-                <p className="border-b border-[#E5E5E5] pb-2 text-xs text-[#999] flex items-start gap-1">
-                  <span>作成日 :</span>
-                  <span>{new Date(selectedBlock?.timestamp).toLocaleString()}</span>
-                </p>
-                <p className="border-b border-[#E5E5E5] pt-1 pb-2 text-xs text-[#999] flex items-start gap-1">
-                  <span>ブロック高 :</span>
-                  <span>{selectedBlock?.blockHeight}</span>
-                </p>
-                <p className="border-b border-[#E5E5E5] pt-1 pb-2 text-xs text-[#999] flex items-start gap-1">
-                  <span>接続しているブロックID :</span>
-                  <span>{selectedBlock?.prevId}</span>
-                </p>
-                <p className="border-b border-[#E5E5E5] pt-1 pb-2 text-xs text-[#999] flex items-start gap-1">
-                  <span>格納されている取引数 :</span>
-                  <span>{selectedBlock?.txs.length}</span>
-                </p>
-              </div>
-            )}
-          </div>
-        )}
-        {step === 'complete' && (
-          <div className="flex flex-col items-center justify-center h-full">
-            <img src="/images/icons/block_complete.svg" alt="Block Complete" className="w-24 h-24 mb-4"/>
-            <h2 className="text-2xl font-bold">ブロックの作成が完了しました！</h2>
-            <p className="text-gray-600 mt-2">新しいブロックがチェーンに追加されました。</p>
-          </div>
-        )}
+        {step === 'chain-selected' && <BlockCreationTxsSelection />}
+        {step === 'tx-selected' && <BlockCreationTxsValidation />}
+        {step === 'tx-validated' && <BlockCreationCheck />}
+        {step === 'complete' && <BlockCreationComplete/>}
       </MiniLayout>
 
       <BottomBar>
@@ -210,13 +207,21 @@ const BlockCreatePage = () => {
           <div className="flex gap-2">
             {currentStepInfo.canGoBack && (
               <BasicButton onClick={handleBackStep} className="bg-gray-500 min-w-5">
-                <img src="/images/icons/double_arrow_white.svg" className="w-5 h-5 rotate-180" alt="back"/>
+                <img src="/images/icons/mini/white/menu_opened.svg" className="w-5 h-5" alt="back"/>
               </BasicButton>
             )}
             {step !== 'complete' && (
               <BasicButton onClick={handleNextStep}>
-                <span className="text-base">{currentStepInfo.buttonText}</span>
-                <img src="/images/icons/double_arrow_white.svg" className="w-5 h-5" alt="next"/>
+                {loading ? (
+                  <div className="animate-spin">
+                    <Loader />
+                  </div>
+                ):(
+                  <>
+                    <span className="text-base">{currentStepInfo.buttonText}</span>
+                    <img src="/images/icons/double_arrow_white.svg" className="w-5 h-5" alt="next"/>
+                  </>
+                )}
               </BasicButton>
             )}
           </div>
