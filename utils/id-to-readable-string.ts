@@ -194,6 +194,8 @@ export function generateReadableId(id: string): string {
   if (!id) {
     return "Unknown Being"; // IDが空の場合のデフォルト値なのだ
   }
+  if (id === "system") return "System"
+  if (id === "me") return "Me"
 
   const hash = createHash('sha256').update(id).digest('hex');
 

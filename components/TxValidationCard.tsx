@@ -6,11 +6,11 @@ import { TxWithValue } from '@/models/transaction'
 import { generateReadableId } from '@/utils/id-to-readable-string'
 
 type Props = {
-  tx: TxWithValue
-  setTxs?: (txs: TxWithValue[]) => void
+  tx: TxWithValue,
+  showValidation?: boolean,
 }
 
-const TxValidationCard = ({tx, setTxs}:Props) => {
+const TxValidationCard = ({ tx, showValidation = true }:Props) => {
   return (
     <div className="bg-[#DEDEDE] p-1 rounded-2xl shadow w-full text-[#484848]">
       <div className="flex gap-3 border border-[#8C8C8C] p-3 rounded-xl justify-between items-center">
@@ -29,19 +29,27 @@ const TxValidationCard = ({tx, setTxs}:Props) => {
             </p>
           </div>
         </div>
-        <div className="text-sm min-w-12 h-full">
-          {tx.amount ? (
-            <div className="flex flex-col items-center justify-center gap-1">
-              <img src="/images/icons/badge_success.svg" alt=""/>
-              <p className="text-[#00CFFF] whitespace-pre">完了</p>
-            </div>
-          ):(
-            <div className="flex flex-col items-center justify-center gap-1">
-              <img src="/images/icons/badge_error.svg" alt=""/>
-              <p className="text-[#FF6631] whitespace-pre">未検証</p>
-            </div>
-          )}
-        </div>
+        {showValidation && (
+          <div className="text-sm min-w-12 h-full">
+            {tx.amount ? (
+              <div className="flex flex-col items-center justify-center gap-1">
+                <img src="/images/icons/badge_success.svg" alt=""/>
+                <p className="text-[#00CFFF] whitespace-pre">完了</p>
+              </div>
+            ):(
+              <div className="flex flex-col items-center justify-center gap-1">
+                <img src="/images/icons/badge_error.svg" alt=""/>
+                <p className="text-[#FF6631] whitespace-pre">未検証</p>
+              </div>
+            )}
+          </div>
+        )}
+        {!showValidation && (
+          <p className="flex text-xs items-center gap-1">
+            <img src="/images/icons/coin.svg" alt="" className="w-4 h-4"/>
+            <span className="truncate">{tx.amount?.toLocaleString()}</span>
+          </p>
+        )}
       </div>
     </div>
   )

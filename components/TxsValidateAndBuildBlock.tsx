@@ -11,9 +11,9 @@ import {currentUserState} from '@/stores/users'
 import {getTx, makeTx} from '@/api/transaction'
 import {concat} from 'lodash'
 import TxValidationCard from '@/components/TxValidationCard'
-import {useState} from 'react'
-import TxValidationModal from '@/components/TxValidationModal'
-import {Transaction, TxWithValue} from '@/models/transaction'
+import {useEffect, useState} from 'react'
+import TxValidationModal from '@/components/Modal/TxValidationModal'
+import { TxWithValue } from '@/models/transaction'
 
 type FormValues = {
   tx: {
@@ -40,6 +40,11 @@ const TxsValidateAndBuildBlock = () => {
   const setTxs = useSetAtom(txsState)
   const setChain = useSetAtom(chainState)
   const router = useRouter()
+
+  useEffect(() => {
+    console.log(selectedTxs)
+  }, [selectedTxs])
+
   const onSubmit = async (data: FormValues) => {
     // デバッグ用に、data.tx と selectedTxs の状態を確認します
     console.log('selectedTxs at onSubmit start:', selectedTxs, 'data.tx:', data.tx);
@@ -120,21 +125,6 @@ const TxsValidateAndBuildBlock = () => {
           <div onClick={() => handleOpenValidation(tx)}>
             <TxValidationCard tx={tx} />
           </div>
-          <p>
-            <span>value: </span>
-            <Controller
-              name={`tx.${index}.amount`}
-              control={control}
-              render={({ field }) => (
-                <input
-                  type="number"
-                  {...field}
-                  className="px-2 py-1 border mt-2 rounded"
-                  placeholder="100"
-                />
-              )}
-            />
-          </p>
         </div>
       ))}
 
@@ -142,13 +132,8 @@ const TxsValidateAndBuildBlock = () => {
         open={openValidation}
         requestClose={() => setOpenValidation(false)}
         tx={selectedTx}
+        setSelectedTxs={setSelectedTxs}
       />
-
-      <button
-        type="submit"
-        className="mt-10 px-2 py-1 rounded bg-gray-200 w-max"
-        onClick={handleSubmit(onSubmit)}
-      >Validate</button>
     </div>
   )
 }

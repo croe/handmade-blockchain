@@ -8,9 +8,11 @@ import BottomBar from '@/components/BottomBar'
 import BasicButton from '@/components/Button/BasicButton'
 import HelpButton from '@/components/Button/HelpButton'
 import MiniLayout from '@/components/MiniLayout'
-import {useAtom} from 'jotai/index'
-import {selectedTxsState} from '@/stores/transactions'
-import {toast} from 'react-toastify'
+import { useAtom } from 'jotai/index'
+import { selectedTxsState } from '@/stores/transactions'
+import { toast } from 'react-toastify'
+import TxValidationCard from '@/components/TxValidationCard'
+import {selectedBlockState} from '@/stores/chain'
 
 type Step = 'chain-selected' | 'tx-selected' | 'tx-validated' | 'complete'
 
@@ -58,9 +60,19 @@ const STEP_INFO: Record<Step, StepInfo> = {
   }
 }
 
+const REWARD_TX = {
+  id: 'reward',
+  from: 'system',
+  to: 'me',
+  amount: 100, // 報酬の金額
+  timestamp: Date.now(),
+  status: 'completed', // 完了した取引
+}
+
 const BlockCreatePage = () => {
   const [step, setStep] = useState<Step>('chain-selected')
   const [selectedTxs] = useAtom(selectedTxsState)
+  const [selectedBlock] = useAtom(selectedBlockState)
 
   /**
    * どのブロックに繋げるか選ぶ
@@ -80,6 +92,11 @@ const BlockCreatePage = () => {
         setStep('tx-selected')
         break
       case 'tx-selected':
+        const hasAllAmounts = selectedTxs.every(tx => typeof tx.amount === 'number' && tx.amount > 0)
+        if (!hasAllAmounts) {
+          toast.error('すべての取引の検証を完了してください')
+          return
+        }
         setStep('tx-validated')
         break
       case 'tx-validated':
@@ -125,8 +142,57 @@ const BlockCreatePage = () => {
         )}
         {step === 'tx-validated' && (
           <div>
-            {/* TODO: ブロック作成完了コンポーネントを実装 */}
-            <p>ブロックの作成が完了しました</p>
+            <h2 className="text-[#999] font-bold flex items-center gap-1 pt-2 pb-2.5 text-xs border-t border-[#E5E5E5]">
+              <img src="/images/icons/mini/gray/transaction.svg" className="w-5" alt=""/>
+              <span>選択した取引一覧</span>
+            </h2>
+            <div className="flex flex-col gap-4">
+              {selectedTxs.map(tx => (
+                <TxValidationCard tx={tx} showValidation={false} />
+              ))}
+            </div>
+            <h2 className="mt-6 text-[#999] font-bold flex items-center gap-1 pt-2 pb-2.5 text-xs border-t border-[#E5E5E5]">
+              <img src="/images/icons/mini/gray/transaction.svg" className="w-5" alt=""/>
+              <span>ブロック作成報酬取引</span>
+            </h2>
+            <div className="flex flex-col gap-4">
+              <TxValidationCard tx={REWARD_TX} showValidation={false} />
+            </div>
+            <h2 className="mt-6 text-[#999] font-bold flex items-center gap-1 pt-2 pb-2.5 text-xs border-t border-[#E5E5E5]">
+              <img src="/images/icons/mini/gray/info.svg" className="w-5" alt=""/>
+              <span>接続ブロック情報</span>
+            </h2>
+            {selectedBlock && (
+              <div className="flex flex-col gap-2 px-1">
+                <p className="border-b border-[#E5E5E5] pt-1 pb-2 text-xs text-[#999] flex items-start gap-1">
+                  <span>ID :</span>
+                  <span>{selectedBlock?.id}</span>
+                </p>
+                <p className="border-b border-[#E5E5E5] pb-2 text-xs text-[#999] flex items-start gap-1">
+                  <span>作成日 :</span>
+                  <span>{new Date(selectedBlock?.timestamp).toLocaleString()}</span>
+                </p>
+                <p className="border-b border-[#E5E5E5] pt-1 pb-2 text-xs text-[#999] flex items-start gap-1">
+                  <span>ブロック高 :</span>
+                  <span>{selectedBlock?.blockHeight}</span>
+                </p>
+                <p className="border-b border-[#E5E5E5] pt-1 pb-2 text-xs text-[#999] flex items-start gap-1">
+                  <span>接続しているブロックID :</span>
+                  <span>{selectedBlock?.prevId}</span>
+                </p>
+                <p className="border-b border-[#E5E5E5] pt-1 pb-2 text-xs text-[#999] flex items-start gap-1">
+                  <span>格納されている取引数 :</span>
+                  <span>{selectedBlock?.txs.length}</span>
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+        {step === 'complete' && (
+          <div className="flex flex-col items-center justify-center h-full">
+            <img src="/images/icons/block_complete.svg" alt="Block Complete" className="w-24 h-24 mb-4"/>
+            <h2 className="text-2xl font-bold">ブロックの作成が完了しました！</h2>
+            <p className="text-gray-600 mt-2">新しいブロックがチェーンに追加されました。</p>
           </div>
         )}
       </MiniLayout>

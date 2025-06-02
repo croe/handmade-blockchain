@@ -17,7 +17,7 @@ import BasicButton from '@/components/Button/BasicButton'
 import TitleHeader from '@/components/TitleHeader'
 import HelpButton from '@/components/Button/HelpButton'
 import CheckSignMaker from '@/components/CheckSignMaker'
-import ReceiverSelectionModal from '@/components/ReceiverSelectionModal'
+import ReceiverSelectionModal from '@/components/Modal/ReceiverSelectionModal'
 
 const TxCreatePage = () => {
   // FIXME: 手数料を入れないと無限に作られてしまう問題？（ミスったら入れられないからいいか）

@@ -1,22 +1,39 @@
 'use client'
 
-import BasicModal from '@/components/BasicModal'
+import BasicModal from '@/components/Modal/BasicModal'
 import {getBucketImage} from '@/utils/getBucketImage'
 import {TX_AMOUNT_BUCKET} from '@/lib/firebase'
 import {generateReadableId} from '@/utils/id-to-readable-string'
 import {TxWithValue} from '@/models/transaction'
 import BasicButton from '@/components/Button/BasicButton'
+import { useState, useEffect } from 'react'
+import { WritableAtom } from 'jotai'
 
 type Props = {
   open?: boolean
   requestClose?: () => void
   tx: TxWithValue | null
+  setSelectedTxs: (update: TxWithValue[] | ((prev: TxWithValue[]) => TxWithValue[])) => void
 }
 
-const TxValidationModal = ({open, requestClose, tx}:Props) => {
-  // TODO: eは入力できないようにしないと
+const TxValidationModal = ({open, requestClose, tx, setSelectedTxs}:Props) => {
+  const [amount, setAmount] = useState<number>(0)
+
+  useEffect(() => {
+    // txが変更されたときにamountを更新
+    setAmount(tx?.amount || 0)
+  }, [tx])
 
   const handleCompleteValidation = () => {
+    if (tx) {
+      setSelectedTxs(prevTxs => 
+        prevTxs.map(prevTx => 
+          prevTx.id === tx.id 
+            ? { ...prevTx, amount } 
+            : prevTx
+        )
+      )
+    }
 
     if (requestClose) {
       requestClose()
@@ -51,6 +68,8 @@ const TxValidationModal = ({open, requestClose, tx}:Props) => {
             <input
               placeholder="ここに取引する数値を入力"
               type="number"
+              value={amount}
+              onChange={(e) => setAmount(Number(e.target.value))}
               className="w-full py-2 px-2.5 pr-10 border border-[#8C8C8C] rounded-2xl placeholder:text-xs"
             />
             <img
