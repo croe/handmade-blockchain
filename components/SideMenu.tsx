@@ -7,9 +7,9 @@ import BasicButton from '@/components/Button/BasicButton'
 import Link from 'next/link'
 
 const menuItems = [
-  { icon: '/images/icons/tip_block_make.svg', label: 'ブロック作成', href: '/block/create' },
+  { icon: '/images/icons/tip_block_make.svg', label: 'ブロック作成', href: '/dashboard' },
   { icon: '/images/icons/tip_tx_make.svg', label: '取引作成', href: '/tx/create' },
-  { icon: '/images/icons/tip_tx_pool.svg', label: '取引プール', href: '/tx' },
+  { icon: '/images/icons/tip_tx_pool.svg', label: '取引プール', href: '/tx/pool' },
   { icon: '/images/icons/tip_shop.svg', label: 'ショップ', href: '/shop' },
   { icon: '/images/icons/tip_wallet.svg', label: 'ウォレット詳細', href: '/wallet' },
   { icon: '/images/icons/tip_tutorial.svg', label: 'チュートリアル', href: '/tutorial' },

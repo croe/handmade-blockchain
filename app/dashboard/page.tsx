@@ -1,12 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect } from 'react'
+import {useEffect, useState} from 'react'
 import { useRouter } from 'next/navigation'
 import { useAtom } from 'jotai'
 import { sideMenuState } from '@/stores/ui'
 import { currentUserState } from '@/stores/users'
-import TxsViewer from '@/components/TxsViewer'
 import ChainViewer from '@/components/ChainViewer'
 import UsersViewer from '@/components/UsersViewer'
 import WalletViewer from '@/components/WalletViewer'
