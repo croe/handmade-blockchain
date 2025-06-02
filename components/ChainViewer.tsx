@@ -1,7 +1,7 @@
 'use client'
 
 import { useAtom} from 'jotai'
-import { chainsState, forkedPointsState, selectedBlockState } from '@/stores/chain'
+import {branchedChainsState, forkedPointsState, selectedBlockState} from '@/stores/chain'
 import { useState, useCallback } from 'react'
 import Konva from 'konva'
 import { Layer, Stage, Image, Group } from 'react-konva'
@@ -33,7 +33,7 @@ const TIP_HEIGHT = 40
 
 const ChainViewer = () => {
   const router = useRouter()
-  const [chains] = useAtom(chainsState)
+  const [chains] = useAtom(branchedChainsState)
   const [forkedPoints] = useAtom(forkedPointsState)
   const [_, setSelectedBlock] = useAtom(selectedBlockState)
 
