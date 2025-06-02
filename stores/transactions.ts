@@ -1,6 +1,6 @@
 import { atom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
-import { Transaction, TxWithBlock } from '@/models/transaction'
+import {Transaction, TxWithBlock, TxWithValue} from '@/models/transaction'
 import { currentChainState } from '@/stores/chain'
 import { currentUserState } from '@/stores/users'
 
@@ -130,4 +130,4 @@ export const myBalanceState = atom<number>((get) => {
 /**
  * ブロックに取り込むTxを選択するストア
  */
-export const selectedTxsState = atom<Transaction[]>([])
+export const selectedTxsState = atom<TxWithValue[]>([])

@@ -2,17 +2,18 @@
 
 import {useAtom, useSetAtom} from 'jotai'
 import {selectedTxsState, txsState} from '@/stores/transactions'
-import {getBucketImage} from '@/utils/getBucketImage'
-import {TX_AMOUNT_BUCKET} from '@/lib/firebase'
 import {Controller, useForm} from 'react-hook-form'
 import {TxInBlock} from '@/models/block'
 import {useRouter} from 'next/navigation'
 import {chainState, selectedBlockState} from '@/stores/chain'
 import {buildBlock, getBlock} from '@/api/block'
 import {currentUserState} from '@/stores/users'
-import {getTx, getTxs, makeTx} from '@/api/transaction'
+import {getTx, makeTx} from '@/api/transaction'
 import {concat} from 'lodash'
 import TxValidationCard from '@/components/TxValidationCard'
+import {useState} from 'react'
+import TxValidationModal from '@/components/TxValidationModal'
+import {Transaction, TxWithValue} from '@/models/transaction'
 
 type FormValues = {
   tx: {
@@ -21,6 +22,8 @@ type FormValues = {
 }
 
 const TxsValidateAndBuildBlock = () => {
+  const [openValidation, setOpenValidation] = useState<boolean>(false)
+  const [selectedTx, setSelectedTx] = useState<TxWithValue | null>(null)
   const {
     control,
     handleSubmit,
@@ -105,13 +108,18 @@ const TxsValidateAndBuildBlock = () => {
     router.push('/')
   }
 
+  const handleOpenValidation = (tx: TxWithValue) => {
+    setSelectedTx(tx);
+    setOpenValidation(true);
+  }
+
   return (
     <div className="flex flex-col gap-4">
       {selectedTxs.map((tx, index) => (
         <div key={tx.id}>
-          <TxValidationCard tx={tx} />
-          <p>{tx.id}</p>
-          <img src={getBucketImage(TX_AMOUNT_BUCKET, tx.id, 'png')} alt="" className="w-[200px]"/>
+          <div onClick={() => handleOpenValidation(tx)}>
+            <TxValidationCard tx={tx} />
+          </div>
           <p>
             <span>value: </span>
             <Controller
@@ -129,6 +137,13 @@ const TxsValidateAndBuildBlock = () => {
           </p>
         </div>
       ))}
+
+      <TxValidationModal
+        open={openValidation}
+        requestClose={() => setOpenValidation(false)}
+        tx={selectedTx}
+      />
+
       <button
         type="submit"
         className="mt-10 px-2 py-1 rounded bg-gray-200 w-max"

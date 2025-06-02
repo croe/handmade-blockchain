@@ -19,7 +19,7 @@ export type Transaction = {
 }
 
 export type TxWithValue = Transaction & {
-  amount: number;
+  amount?: number;
 }
 
 export type TxWithBlock = TxWithValue & {

@@ -17,7 +17,7 @@ import BasicButton from '@/components/Button/BasicButton'
 import TitleHeader from '@/components/TitleHeader'
 import HelpButton from '@/components/Button/HelpButton'
 import CheckSignMaker from '@/components/CheckSignMaker'
-import ReceiverSelector from '@/components/ReceiverSelector'
+import ReceiverSelectionModal from '@/components/ReceiverSelectionModal'
 
 const TxCreatePage = () => {
   // FIXME: 手数料を入れないと無限に作られてしまう問題？（ミスったら入れられないからいいか）
@@ -125,7 +125,7 @@ const TxCreatePage = () => {
         </div>
       </div>
 
-      <ReceiverSelector
+      <ReceiverSelectionModal
         open={openReceiverSelector}
         requestClose={() => setOpenReceiverSelector(false)}
         setReceiverId={setReceiverId}

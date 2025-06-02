@@ -119,7 +119,7 @@ const BlockCreatePage = () => {
           </div>
         )}
         {step === 'tx-selected' && (
-          <div className="max-w-screen-sm px-4 mx-auto">
+          <div>
             <TxsValidateAndBuildBlock />
           </div>
         )}

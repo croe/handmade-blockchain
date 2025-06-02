@@ -11,7 +11,7 @@ type Props = {
   setReceiverId?: (id: string) => void
 }
 
-const ReceiverSelector = ({open, requestClose, setReceiverId}:Props) => {
+const ReceiverSelectionModal = ({open, requestClose, setReceiverId}:Props) => {
   const [users] = useAtom(usersState)
 
   const handleSelectReceiver = (id: string) => {
@@ -42,4 +42,4 @@ const ReceiverSelector = ({open, requestClose, setReceiverId}:Props) => {
   )
 }
 
-export default ReceiverSelector
+export default ReceiverSelectionModal

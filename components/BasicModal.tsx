@@ -8,9 +8,12 @@ type Props = {
   children?: React.ReactNode
   title: string
   icon?: React.ReactNode
+  buttons?: React.ReactNode
 }
 
-const BasicModal = ({open, requestClose, children, title, icon}:Props) => {
+const BasicModal = ({
+  open, requestClose, children, title, icon, buttons
+}:Props) => {
 
   const handleClose = () => {
     console.log('Modal closed')
@@ -35,7 +38,8 @@ const BasicModal = ({open, requestClose, children, title, icon}:Props) => {
             </div>
           </div>
         </div>
-        <div className="flex justify-center">
+        <div className="flex flex-col justify-center items-center gap-2">
+          {buttons && buttons}
           <BasicButton variant="error" onClick={handleClose}>
             <span>閉じる</span>
             <img src="/images/icons/mini/white/close.svg" className="w-5 h-5" alt="close" />

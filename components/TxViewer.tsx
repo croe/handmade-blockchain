@@ -46,7 +46,7 @@ const getTxUser = (userId: string, meId: string) => {
 
 const TxViewer = ({tx}:Props) => {
   const [currentUser] = useAtom(currentUserState)
-  const isIncrease = (tx.block && tx.amount > 0) ? tx.to === currentUser?.id : false
+  const isIncrease = (tx.block && tx.amount && tx.amount > 0) ? tx.to === currentUser?.id : false
   const isApproved = !!tx.block
 
   return (
@@ -56,7 +56,7 @@ const TxViewer = ({tx}:Props) => {
           className="list-none flex items-center justify-between h-5"
         >
           {isApproved ? <SuccessTx /> : <WarnTx />}
-          {tx.amount > 0 && (
+          {tx.amount && tx.amount > 0 && (
             <>
               {isIncrease ? <IncreaseBalance amount={tx.amount} /> : <DecreaseBalance amount={tx.amount} />}
             </>
