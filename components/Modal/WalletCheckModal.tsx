@@ -22,17 +22,16 @@ const WalletCheckModal = ({open, requestClose, userId}:Props) => {
   const [userBalance] = useAtom(selectedChainUserBalanceState)
   const [userTxs] = useAtom(selectedChainUserTxsState)
 
-  // userIdが変更されたときにストアを更新
+  // モーダルの状態とuserIdに基づいてストアを更新
   useEffect(() => {
-    setWalletCheckUserId(userId || null)
-  }, [userId, setWalletCheckUserId])
-
-  // モーダルが閉じられるときにユーザーIDをクリア
-  useEffect(() => {
-    if (!open) {
+    if (open && userId) {
+      // モーダルが開いていて、userIdがある場合のみ設定
+      setWalletCheckUserId(userId)
+    } else {
+      // モーダルが閉じているか、userIdがない場合はクリア
       setWalletCheckUserId(null)
     }
-  }, [open, setWalletCheckUserId])
+  }, [open, userId, setWalletCheckUserId])
 
   if (!userId) {
     return (
