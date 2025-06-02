@@ -4,6 +4,7 @@ import { useState } from 'react'
 import TitleHeader from '@/components/TitleHeader'
 import BottomBar from '@/components/BottomBar'
 import BasicButton from '@/components/Button/BasicButton'
+import BackCircleButton from '@/components/Button/BackCircleButton'
 import HelpButton from '@/components/Button/HelpButton'
 import MiniLayout from '@/components/MiniLayout'
 import { useAtom, useSetAtom } from 'jotai/index'
@@ -205,11 +206,7 @@ const BlockCreatePage = () => {
             </div>
           )}
           <div className="flex gap-2">
-            {currentStepInfo.canGoBack && (
-              <BasicButton onClick={handleBackStep} className="bg-gray-500 min-w-5">
-                <img src="/images/icons/mini/white/menu_opened.svg" className="w-5 h-5" alt="back"/>
-              </BasicButton>
-            )}
+            {currentStepInfo.canGoBack && <BackCircleButton onClick={handleBackStep} />}
             {step !== 'complete' && (
               <BasicButton onClick={handleNextStep}>
                 {loading ? (

@@ -3,7 +3,7 @@
 import React from 'react'
 import { useRouter } from 'next/navigation'
 
-const MenuButton = () => {
+const BackButton = () => {
   const router = useRouter()
   const handleClick = () => {
     router.back()
@@ -19,4 +19,4 @@ const MenuButton = () => {
   )
 }
 
-export default MenuButton
+export default BackButton
