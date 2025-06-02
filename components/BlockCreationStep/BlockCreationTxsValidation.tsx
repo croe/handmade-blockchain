@@ -5,11 +5,14 @@ import { selectedTxsState } from '@/stores/transactions'
 import TxValidationCard from '@/components/TxValidationCard'
 import { useEffect, useState } from 'react'
 import TxValidationModal from '@/components/Modal/TxValidationModal'
+import WalletCheckModal from '@/components/Modal/WalletCheckModal'
 import { TxWithValue } from '@/models/transaction'
 
 const BlockCreationTxsValidation = () => {
   const [openValidation, setOpenValidation] = useState<boolean>(false)
+  const [openWalletCheck, setOpenWalletCheck] = useState<boolean>(false)
   const [selectedTx, setSelectedTx] = useState<TxWithValue | null>(null)
+  const [walletCheckUserId, setWalletCheckUserId] = useState<string | null>(null)
   const [selectedTxs, setSelectedTxs] = useAtom(selectedTxsState)
 
   useEffect(() => {
@@ -19,6 +22,11 @@ const BlockCreationTxsValidation = () => {
   const handleOpenValidation = (tx: TxWithValue) => {
     setSelectedTx(tx);
     setOpenValidation(true);
+  }
+
+  const handleWalletCheck = (userId: string) => {
+    setWalletCheckUserId(userId)
+    setOpenWalletCheck(true)
   }
 
   return (
@@ -36,6 +44,13 @@ const BlockCreationTxsValidation = () => {
         requestClose={() => setOpenValidation(false)}
         tx={selectedTx}
         setSelectedTxs={setSelectedTxs}
+        onWalletCheck={handleWalletCheck}
+      />
+
+      <WalletCheckModal
+        open={openWalletCheck}
+        requestClose={() => setOpenWalletCheck(false)}
+        userId={walletCheckUserId || undefined}
       />
     </div>
   )

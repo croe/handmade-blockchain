@@ -53,7 +53,7 @@ const Dashboard = () => {
               </div>
               <p className="text-[10px] text-[#763EC6] font-black mt-2">取引作成</p>
             </Link>
-            <Link href={`/tx`}>
+            <Link href={`/tx/pool`}>
               <div className="relative w-[35px] h-[77px]">
                 <img className="absolute top-0 left-0 w-[34px] h-[40px]" src="/images/icons/tip_tx_pool.svg" alt=""/>
                 <img className="absolute bottom-0 left-0 w-[35px] h-[40px]" src="/images/icons/box_pool.svg" alt=""/>

@@ -14,9 +14,10 @@ type Props = {
   requestClose?: () => void
   tx: TxWithValue | null
   setSelectedTxs: (update: TxWithValue[] | ((prev: TxWithValue[]) => TxWithValue[])) => void
+  onWalletCheck?: (userId: string) => void
 }
 
-const TxValidationModal = ({open, requestClose, tx, setSelectedTxs}:Props) => {
+const TxValidationModal = ({open, requestClose, tx, setSelectedTxs, onWalletCheck}:Props) => {
   const [amount, setAmount] = useState<number>(0)
 
   useEffect(() => {
@@ -26,10 +27,10 @@ const TxValidationModal = ({open, requestClose, tx, setSelectedTxs}:Props) => {
 
   const handleCompleteValidation = () => {
     if (tx) {
-      setSelectedTxs(prevTxs => 
-        prevTxs.map(prevTx => 
-          prevTx.id === tx.id 
-            ? { ...prevTx, amount } 
+      setSelectedTxs(prevTxs =>
+        prevTxs.map(prevTx =>
+          prevTx.id === tx.id
+            ? { ...prevTx, amount }
             : prevTx
         )
       )
@@ -82,13 +83,26 @@ const TxValidationModal = ({open, requestClose, tx, setSelectedTxs}:Props) => {
             <img src="/images/icons/hand_arrow_up.svg" alt="pen" className="w-5 h-5"/>
             <span>送金元</span>
           </p>
-          <div className="pl-8 mt-1.5">
+          <div className="pl-8 mt-1.5 flex gap-1 items-center">
             <input
-              className="w-full px-2 py-1 border rounded-xl border-[#E5E5E5] bg-[#EEE] text-[#484848] max-w-[300px]"
+              className="flex-1 px-2 py-1 border rounded-xl border-[#E5E5E5] bg-[#EEE] text-[#484848] max-w-[250px]"
               type="text"
               disabled
               value={tx ? generateReadableId(tx.from) : ""}
             />
+            {tx && (
+              <button
+                onClick={() => {
+                  if (onWalletCheck && tx.from) {
+                    onWalletCheck(tx.from)
+                  }
+                }}
+                className="px-2 py-2 bg-[#4CAF50] text-white text-sm rounded-2xl flex items-center gap-0.5"
+              >
+                <img src="/images/icons/mini/white/book.svg" alt="wallet" className="w-5 h-5"/>
+                <span>確認</span>
+              </button>
+            )}
           </div>
         </div>
         <div>
