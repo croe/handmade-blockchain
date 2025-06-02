@@ -37,6 +37,9 @@ const ChainViewer = () => {
   const [forkedPoints] = useAtom(forkedPointsState)
   const [_, setSelectedBlock] = useAtom(selectedBlockState)
 
+  // 選択されたブロックのIDを管理するステート
+  const [selectedBlockId, setSelectedBlockId] = useState<string | null>(null)
+
   const [stagePos, setStagePos] = useState<Pos>({x: 0, y: 0})
   const [stageScale, setStageScale] = useState<Pos>({x: 1, y: 1})
   const [lastCenter, setLastCenter] = useState<Pos | null>(null)
@@ -44,6 +47,7 @@ const ChainViewer = () => {
   const [dragStopped, setDragStopped] = useState(false)
 
   const [blockImage] = useImage('/images/icons/block_1.svg')
+  const [selectedBlockImage] = useImage('/images/icons/block_2.svg') // 選択時の画像
   const [unblockImage] = useImage('/images/icons/unblock.svg')
 
   const [beltLine1Image] = useImage('/images/icons/belt_l1.svg')
@@ -135,9 +139,16 @@ const ChainViewer = () => {
 
   const handleSelectBlock = useCallback((block: Block) => {
     console.log(`Selected block ID: ${block.id}`)
-    // ここでブロックの詳細情報を表示する
-    // 例えば、モーダルを開くなどの処理を追加できます
-  }, [])
+    
+    // 既に選択されているブロックをクリックした場合は選択解除、そうでなければ選択
+    if (selectedBlockId === block.id) {
+      setSelectedBlockId(null)
+      console.log('Block deselected')
+    } else {
+      setSelectedBlockId(block.id)
+      console.log('Block selected:', block.id.slice(0, 8))
+    }
+  }, [selectedBlockId])
 
   const handleMakeNewBlock = useCallback((block: Block) => {
     console.log(block)
@@ -210,7 +221,7 @@ const ChainViewer = () => {
                         height={BELT_HEIGHT}
                       />
                       <Image
-                        image={blockImage}
+                        image={selectedBlockId === block.id ? selectedBlockImage : blockImage}
                         x={15.5 + BLOCK_SPACING_X / 2}
                         y={-10 + BLOCK_SPACING_Y / 2}
                         width={BLOCK_WIDTH}
@@ -255,7 +266,7 @@ const ChainViewer = () => {
                             height={BELT_HEIGHT}
                           />
                           <Image
-                            image={blockImage}
+                            image={selectedBlockId === block.id ? selectedBlockImage : blockImage}
                             x={15.5 + BLOCK_SPACING_X / 2}
                             y={-10 + BLOCK_SPACING_Y / 2}
                             width={BLOCK_WIDTH}
@@ -295,7 +306,7 @@ const ChainViewer = () => {
                             height={BELT_HEIGHT}
                           />
                           <Image
-                            image={blockImage}
+                            image={selectedBlockId === block.id ? selectedBlockImage : blockImage}
                             x={15.5 + BLOCK_SPACING_X / 2}
                             y={-10 + BLOCK_SPACING_Y / 2}
                             width={BLOCK_WIDTH}
@@ -329,7 +340,7 @@ const ChainViewer = () => {
                       height={BELT_HEIGHT}
                     />
                     <Image
-                      image={blockImage}
+                      image={selectedBlockId === block.id ? selectedBlockImage : blockImage}
                       x={15.5 + BLOCK_SPACING_X / 2}
                       y={-10 + BLOCK_SPACING_Y / 2}
                       width={BLOCK_WIDTH}
