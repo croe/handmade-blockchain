@@ -19,11 +19,46 @@ type Props = {
 
 const TxValidationModal = ({open, requestClose, tx, setSelectedTxs, onWalletCheck}:Props) => {
   const [amount, setAmount] = useState<number>(0)
+  const [displayValue, setDisplayValue] = useState<string>('0')
 
   useEffect(() => {
-    // txが変更されたときにamountを更新
-    setAmount(tx?.amount || 0)
+    // txが変更されたときにamountとdisplayValueを更新
+    const newAmount = tx?.amount || 0
+    setAmount(newAmount)
+    setDisplayValue(newAmount.toString())
   }, [tx])
+
+  // 数値のみの入力を許可するバリデーション関数
+  const validateAndParseNumber = (value: string): { parsedValue: number; displayValue: string } => {
+    // 数値以外の文字を除去（空文字、数字のみ許可）
+    const numericOnly = value.replace(/[^0-9]/g, '')
+    
+    // 空文字の場合は0として扱う
+    if (numericOnly === '') {
+      return { parsedValue: 0, displayValue: '0' }
+    }
+    
+    // 先頭の0を除去（ただし'0'単体は除く）
+    const cleanedValue = numericOnly.replace(/^0+/, '') || '0'
+    
+    // 数値にパース
+    const parsedValue = parseInt(cleanedValue, 10)
+    
+    // NaNの場合は0として扱う（念のため）
+    if (isNaN(parsedValue)) {
+      return { parsedValue: 0, displayValue: '0' }
+    }
+    
+    return { parsedValue, displayValue: cleanedValue }
+  }
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value
+    const { parsedValue, displayValue } = validateAndParseNumber(inputValue)
+    
+    setAmount(parsedValue)
+    setDisplayValue(displayValue)
+  }
 
   const handleCompleteValidation = () => {
     if (tx) {
@@ -68,9 +103,9 @@ const TxValidationModal = ({open, requestClose, tx, setSelectedTxs, onWalletChec
           <div className="relative pl-8 mt-1.5">
             <input
               placeholder="ここに取引する数値を入力"
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(Number(e.target.value))}
+              type="text"
+              value={displayValue}
+              onChange={handleAmountChange}
               className="w-full py-2 px-2.5 pr-10 border border-[#8C8C8C] rounded-2xl placeholder:text-xs"
             />
             <img
