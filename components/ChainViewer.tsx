@@ -58,9 +58,13 @@ const ChainViewer = () => {
 
   const [beltLine1Image] = useImage('/images/icons/belt_l1.svg')
   const [beltLine2Image] = useImage('/images/icons/belt_l2.svg')
+  const [beltLine3Image] = useImage('/images/icons/belt_l3.svg')
   const [beltSplit1Image] = useImage('/images/icons/belt_s1.svg')
   const [beltSplit2Image] = useImage('/images/icons/belt_s2.svg')
+  const [beltSplit3Image] = useImage('/images/icons/belt_s3.svg')
+  const [beltSplit4Image] = useImage('/images/icons/belt_s4.svg')
   const [beltCorner1Image] = useImage('/images/icons/belt_c1.svg')
+  const [beltCorner2Image] = useImage('/images/icons/belt_c2.svg')
 
   const [tipMakeImage] = useImage('/images/icons/tip_block_make.svg')
 
@@ -186,17 +190,17 @@ const ChainViewer = () => {
         onTouchEnd={handleTouchEnd}
       >
         <Layer>
-          {chains.map((chain, chainIndex) => (
+          {forkedPoints.length > 0 && chains.map((chain, chainIndex) => (
             <Group key={`chain-${chainIndex}`}
                    x={chainIndex !== 0
                      ? chains[chainIndex - 1]?.blocks[0]?.blockHeight === chain.blocks[0].blockHeight
-                       ? (chain.blocks[0].blockHeight * BLOCK_SPACING_X) - BLOCK_SPACING_X
-                       : (chain.blocks[0].blockHeight * BLOCK_SPACING_X) - BLOCK_SPACING_X
+                       ? (chain.blocks[0].blockHeight * BLOCK_SPACING_X) - BLOCK_SPACING_X * ((forkedPoints.length + 1) - chainIndex)
+                       : (chain.blocks[0].blockHeight * BLOCK_SPACING_X) - BLOCK_SPACING_X * ((forkedPoints.length + 1) - chainIndex)
                      : 0}
                    y={chainIndex !== 0
                      ? chains[chainIndex - 1]?.blocks[0]?.blockHeight === chain.blocks[0].blockHeight
-                       ? (chain.blocks[0].blockHeight * BLOCK_SPACING_Y) + BLOCK_SPACING_Y
-                       : (chain.blocks[0].blockHeight * BLOCK_SPACING_Y) + BLOCK_SPACING_Y
+                       ? (chain.blocks[0].blockHeight * BLOCK_SPACING_Y) + BLOCK_SPACING_Y * ((forkedPoints.length + 1) - chainIndex)
+                       : (chain.blocks[0].blockHeight * BLOCK_SPACING_Y) + BLOCK_SPACING_Y * ((forkedPoints.length + 1) - chainIndex)
                      : 0}
             >
               {chain.blocks.map((block, blockIndex) => {
@@ -245,6 +249,16 @@ const ChainViewer = () => {
                             x={blockIndex * BLOCK_SPACING_X}
                             y={blockIndex * BLOCK_SPACING_Y}
                           >
+                            {/*{Array.from({ length: (forkedPoints.length + 1) - chainIndex }).map((_, i) => (*/}
+                            {/*  <Image*/}
+                            {/*    image={beltLine2Image}*/}
+                            {/*    x={BLOCK_SPACING_X / 2 * chainIndex}*/}
+                            {/*    y={BLOCK_SPACING_Y / -2 * chainIndex}*/}
+                            {/*    width={BELT_WIDTH}*/}
+                            {/*    height={BELT_HEIGHT}*/}
+                            {/*    key={`belt-line-${i}`}*/}
+                            {/*  />*/}
+                            {/*))}*/}
                             <Image
                               image={beltLine2Image}
                               x={BLOCK_SPACING_X / 2}
@@ -284,6 +298,7 @@ const ChainViewer = () => {
                             key={`${block.id}-${blockIndex}`}
                             x={blockIndex * BLOCK_SPACING_X}
                             y={blockIndex * BLOCK_SPACING_Y}
+                            z-index={blockIndex}
                           >
                             <Image
                               image={beltLine2Image}
