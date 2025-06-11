@@ -318,21 +318,26 @@ const ChainViewer = () => {
                           {forkedPoints[chainIndex - 1].branchIndex !== 0 && (() => {
                             const prevIdx = forkedPoints.find((fp) => fp.fromRoot === forkedPoints[chainIndex - 2].fromRoot)?.indexInArray ?? 0
                             const currIdx = forkedPoints.find((fp) => fp.fromRoot === forkedPoints[chainIndex - 1].fromRoot)?.indexInArray ?? 0
-                            const diff = Math.max(currIdx - prevIdx , 0)
+                            const diff = Math.max(Math.abs(currIdx - prevIdx) - 1 , 0)
                             return Array.from({ length: diff }).map((_, i) => {
                               return (
-                                <Group key={`branch-end-${chainIndex}-${i}`}>
+                                <Group key={`branch-end-${chainIndex}-${i}`}
+                                       // x={(BLOCK_SPACING_X / 2) * (blockIndex * BLOCK_SPACING_X * chains.length - i + 4)}
+                                       // y={(BLOCK_SPACING_Y / -2) * (blockIndex * BLOCK_SPACING_X * chains.length - i + 4)}
+                                       x={(BLOCK_SPACING_X / 2) * ((chains.length - i) * 2) - ((BLOCK_SPACING_X / 2) * (-2 * diff + chains.length * 2))}
+                                       y={(BLOCK_SPACING_Y / -2) * ((chains.length - i) * 2) - ((BLOCK_SPACING_Y / -2) * (-2 * diff + chains.length * 2))}
+                                >
                                   <Image
                                     image={beltLine2Image}
-                                    x={(BLOCK_SPACING_X / 2) * (blockIndex * BLOCK_SPACING_X * chains.length - i + 3)}
-                                    y={(BLOCK_SPACING_Y / -2) * (blockIndex * BLOCK_SPACING_X * chains.length - i + 3)}
+                                    x={BLOCK_SPACING_X / 2}
+                                    y={BLOCK_SPACING_Y / -2}
                                     width={BELT_WIDTH}
                                     height={BELT_HEIGHT}
                                   />
                                   <Image
                                     image={beltLine2Image}
-                                    x={(BLOCK_SPACING_X / 2) * (blockIndex * BLOCK_SPACING_X * chains.length - i + 2)}
-                                    y={(BLOCK_SPACING_Y / -2) * (blockIndex * BLOCK_SPACING_X * chains.length - i + 2)}
+                                    x={0}
+                                    y={0}
                                     width={BELT_WIDTH}
                                     height={BELT_HEIGHT}
                                   />
