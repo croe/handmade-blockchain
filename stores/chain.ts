@@ -2,6 +2,7 @@ import { atom } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
 import { Block } from '@/models/block'
 import { uniq } from 'lodash'
+import {formatTimeDelta} from 'react-countdown'
 
 export const chainState = atomWithStorage<Block[]>('chains', [])
 
@@ -15,7 +16,6 @@ export const syncedBlocksState = atom<Block[]>(
 // チェーンの型定義
 export type Chain = {
   blocks: Block[];
-  lastBlock: Block;
   length: number;
 }
 
@@ -41,7 +41,6 @@ const organizeChains = (blocks: Block[]): Chain[] => {
     if (chainBlocks.length > 0) {
       const chain: Chain = {
         blocks: chainBlocks,
-        lastBlock: chainBlocks[chainBlocks.length - 1],
         length: chainBlocks.length
       }
 
@@ -121,13 +120,86 @@ export const currentChainState = atom<Block[]>((get) => {
   return resultChain.reverse() // ジェネシスから最新の順にするのだ
 })
 
-export const forkedPointsState = atom<number[]>((get) => {
+type ForkedPoints = {
+  root: number,
+  fromRoot: number,
+  forkBlockHeight: number,
+  branchIndex: number // 同じ分岐点グループ内でのインデックス
+  hasNextBranch: boolean // さらに後続のブランチがあるか
+  indexInArray: number   // branchedChainsState 配列での位置（メインチェーンを含む）
+  chainLength: number    // そのチェーンの長さ
+}
+
+export const forkedPointsState = atom<ForkedPoints[]>((get) => {
   const chains = get(branchedChainsState)
-  return chains
-    .sort((a, b) => a.blocks[0].blockHeight - b.blocks[0].blockHeight)
-    .map((chain) => {
-      return chain.blocks[0].blockHeight
-    }).slice(1)
+  if (chains.length <= 1) return [] // 分岐がない場合は空配列を返す
+
+  const mainChain = chains[0] // メインチェーン
+  const branchChains = chains.slice(1) // 分岐チェーン
+
+  const initialForks: Omit<ForkedPoints, "branchIndex" | "hasNextBranch">[] = branchChains.map((branchChain, i) => {
+    // 分岐チェーンの最初のブロックの親IDを取得
+    const forkBlockId = branchChain.blocks[0].prevId
+
+    // メインチェーンで分岐点のブロックを探す
+    const forkBlockIndex = mainChain.blocks.findIndex(
+      (block) => block.id === forkBlockId
+    )
+
+    if (forkBlockIndex === -1) {
+      // 分岐点が見つからない場合は、他の分岐チェーンを探す
+      for (let j = 0; j < chains.length; j++) {
+        const chain = chains[j]
+        const index = chain.blocks.findIndex((block) => block.id === forkBlockId)
+        if (index !== -1) {
+          // 分岐チェーンの最初のブロックから見た相対位置を計算
+          const relativePosition = branchChain.blocks[0].blockHeight - chain.blocks[index].blockHeight
+          return {
+            root: j,
+            fromRoot: chain.blocks[index].blockHeight,
+            forkBlockHeight: chain.blocks[index].blockHeight,
+            indexInArray: i + 1,
+            chainLength: branchChain.length
+          }
+        }
+      }
+      // 分岐点が見つからない場合はデフォルト値を返す
+      return {
+        root: 0,
+        fromRoot: 0,
+        forkBlockHeight: 0,
+        indexInArray: i + 1,
+        chainLength: branchChain.length
+      }
+    }
+
+    return {
+      root: 0, // メインチェーンからの分岐
+      fromRoot: mainChain.blocks[forkBlockIndex].blockHeight,
+      forkBlockHeight: mainChain.blocks[forkBlockIndex].blockHeight,
+      indexInArray: i + 1,
+      chainLength: branchChain.length
+    }
+  })
+
+  // まずグループごとの総数をカウント
+  const totalMap = new Map<string, number>()
+  for (const f of initialForks) {
+    const key = `${f.root}-${f.fromRoot}`
+    totalMap.set(key, (totalMap.get(key) ?? 0) + 1)
+  }
+
+  // 同じグループ内でのインデックスと hasNextBranch を付与
+  const counterMap = new Map<string, number>()
+  const forksWithIndex: ForkedPoints[] = initialForks.map((f) => {
+    const key = `${f.root}-${f.fromRoot}`
+    const idx = counterMap.get(key) ?? 0
+    counterMap.set(key, idx + 1)
+    const total = totalMap.get(key) ?? 1
+    return { ...f, branchIndex: idx, hasNextBranch: idx < total - 1 }
+  })
+
+  return forksWithIndex
 })
 
 /**
@@ -189,9 +261,70 @@ const organizeBranchedChains = (blocks: Block[]): Chain[] => {
     }
   }
 
-  // 分岐チェーンを長さでソート（最長チェーンは最初のまま）
-  const branchChains = result.slice(1).sort((a, b) => b.length - a.length)
-  return [result[0], ...branchChains]
+  // ---- ここから順序付けを再構築 ----
+  // チェーン間の親子関係と分岐高さを計算する
+  type BranchMeta = {
+    chain: Chain
+    index: number            // result 配列内でのインデックス
+    parentIndex: number      // 親チェーンのインデックス（result 基準）
+    forkHeight: number       // 親チェーン上の分岐ブロック高さ
+  }
+
+  const metas: BranchMeta[] = result.map((chain, idx) => {
+    if (idx === 0) {
+      // 最長チェーン（ジェネシス）
+      return { chain, index: idx, parentIndex: -1, forkHeight: -1 }
+    }
+
+    const forkBlockId = chain.blocks[0].prevId
+
+    // 親チェーンを探す（現在までに result に入っているチェーンを対象）
+    for (let p = 0; p < result.length; p++) {
+      const parentCandidate = result[p]
+      const forkBlock = parentCandidate.blocks.find(b => b.id === forkBlockId)
+      if (forkBlock) {
+        return {
+          chain,
+          index: idx,
+          parentIndex: p,
+          forkHeight: forkBlock.blockHeight,
+        }
+      }
+    }
+
+    // 親が見つからない場合はメインチェーン直下扱い
+    return { chain, index: idx, parentIndex: 0, forkHeight: 0 }
+  })
+
+  // 親チェーン -> 子チェーン一覧のマップ
+  const childrenMap = new Map<number, BranchMeta[]>()
+  for (const meta of metas) {
+    if (meta.parentIndex === -1) continue // ルート
+    const arr = childrenMap.get(meta.parentIndex) ?? []
+    arr.push(meta)
+    childrenMap.set(meta.parentIndex, arr)
+  }
+
+  // 親ごとに子をフォーク高さで降順ソート
+  for (const [key, arr] of childrenMap.entries()) {
+    arr.sort((a, b) => b.forkHeight - a.forkHeight || b.chain.length - a.chain.length)
+  }
+
+  // 深さ優先でチェーンを並べ替える
+  const ordered: Chain[] = []
+  const visit = (idx: number) => {
+    const chain = metas[idx].chain
+    ordered.push(chain)
+    const children = childrenMap.get(idx) ?? []
+    for (const child of children) {
+      visit(child.index)
+    }
+  }
+
+  visit(0) // ルート（最長チェーン）から開始
+
+  return ordered
+  // ---- ここまで順序付けを再構築 ----
 }
 
 // 分岐点から始まるチェーンを構築するヘルパー関数
@@ -210,7 +343,7 @@ const buildBranchFromBlock = (startBlock: Block, allBlocks: Block[]): Chain => {
 
   return {
     blocks: chainBlocks,
-    lastBlock: currentBlock,
+    // lastBlock: currentBlock,
     length: chainBlocks.length
   }
 }

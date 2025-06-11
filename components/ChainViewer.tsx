@@ -1,13 +1,13 @@
 'use client'
 
-import { useAtom} from 'jotai'
+import {useAtom} from 'jotai'
 import {branchedChainsState, forkedPointsState, selectedBlockState} from '@/stores/chain'
-import { useState, useCallback } from 'react'
+import {useState, useCallback} from 'react'
 import Konva from 'konva'
-import { Layer, Stage, Image, Group } from 'react-konva'
+import {Layer, Stage, Image, Group} from 'react-konva'
 import useImage from 'use-image'
 import {Block, TxInBlock} from '@/models/block'
-import { useRouter } from 'next/navigation'
+import {useRouter} from 'next/navigation'
 import BlockCheckModal from '@/components/Modal/BlockCheckModal'
 import TxCheckModal from '@/components/Modal/TxCheckModal'
 import {Transaction} from '@/models/transaction'
@@ -190,21 +190,200 @@ const ChainViewer = () => {
         onTouchEnd={handleTouchEnd}
       >
         <Layer>
-          {forkedPoints.length > 0 && chains.map((chain, chainIndex) => (
-            <Group key={`chain-${chainIndex}`}
-                   x={chainIndex !== 0
-                     ? chains[chainIndex - 1]?.blocks[0]?.blockHeight === chain.blocks[0].blockHeight
-                       ? (chain.blocks[0].blockHeight * BLOCK_SPACING_X) - BLOCK_SPACING_X * ((forkedPoints.length + 1) - chainIndex)
-                       : (chain.blocks[0].blockHeight * BLOCK_SPACING_X) - BLOCK_SPACING_X * ((forkedPoints.length + 1) - chainIndex)
-                     : 0}
-                   y={chainIndex !== 0
-                     ? chains[chainIndex - 1]?.blocks[0]?.blockHeight === chain.blocks[0].blockHeight
-                       ? (chain.blocks[0].blockHeight * BLOCK_SPACING_Y) + BLOCK_SPACING_Y * ((forkedPoints.length + 1) - chainIndex)
-                       : (chain.blocks[0].blockHeight * BLOCK_SPACING_Y) + BLOCK_SPACING_Y * ((forkedPoints.length + 1) - chainIndex)
-                     : 0}
+          {/*最長チェーン*/}
+          {chains.length > 0 && chains[0].blocks.map((block, blockIndex) => (
+            <Group key={`chain-longest-${block.id}`}
+                   x={BLOCK_SPACING_X}
+                   y={BLOCK_SPACING_Y}
             >
-              {chain.blocks.map((block, blockIndex) => {
-                  if (chainIndex === 0) {
+              <Group
+                key={`${block.id}-${blockIndex}`}
+                x={blockIndex * BLOCK_SPACING_X}
+                y={blockIndex * BLOCK_SPACING_Y}
+              >
+                <Image
+                  image={forkedPoints.some((target) => target.root === 0 && target.fromRoot === blockIndex) ? beltSplit1Image : beltLine1Image}
+                  x={0}
+                  y={0}
+                  width={BELT_WIDTH}
+                  height={BELT_HEIGHT}
+                />
+                <Image
+                  image={beltLine1Image}
+                  x={BLOCK_SPACING_X / 2}
+                  y={BLOCK_SPACING_Y / 2}
+                  width={BELT_WIDTH}
+                  height={BELT_HEIGHT}
+                />
+                <Image
+                  image={selectedBlockId === block.id ? selectedBlockImage : blockImage}
+                  x={15.5 + BLOCK_SPACING_X / 2}
+                  y={-10 + BLOCK_SPACING_Y / 2}
+                  width={BLOCK_WIDTH}
+                  height={BLOCK_HEIGHT}
+                  onClick={() => handleSelectBlock(block)}
+                  onTouchEnd={() => handleSelectBlock(block)}
+                />
+              </Group>
+              {/* 最新ブロックの後に新しいブロックを追加 */}
+              {blockIndex + 1 === chains[0].blocks.length && (
+                <Group
+                  key={`longest-next-block-${0}`}
+                  x={(chains[0].blocks.length) * BLOCK_SPACING_X}
+                  y={(chains[0].blocks.length) * BLOCK_SPACING_Y}
+                >
+                  <Image
+                    image={beltLine1Image}
+                    x={0}
+                    y={0}
+                    width={BELT_WIDTH}
+                    height={BELT_HEIGHT}
+                    opacity={0.5}
+                  />
+                  <Image
+                    image={beltLine1Image}
+                    x={BLOCK_SPACING_X / 2}
+                    y={BLOCK_SPACING_Y / 2}
+                    width={BELT_WIDTH}
+                    height={BELT_HEIGHT}
+                    opacity={0.5}
+                  />
+                  <Group
+                    x={15.5 + BLOCK_SPACING_X / 2}
+                    y={-10 + BLOCK_SPACING_Y / 2}
+                    onClick={() => handleMakeNewBlock(chains[0].blocks[chains[0].blocks.length - 1])}
+                    onTouchEnd={() => handleMakeNewBlock(chains[0].blocks[chains[0].blocks.length - 1])}
+                  >
+                    <Image
+                      image={unblockImage}
+                      x={0}
+                      y={0}
+                      width={BLOCK_WIDTH}
+                      height={BLOCK_HEIGHT}
+                    />
+                    <Image
+                      image={tipMakeImage}
+                      x={0}
+                      y={-24}
+                      width={TIP_WIDTH}
+                      height={TIP_HEIGHT}
+                    />
+                  </Group>
+                </Group>
+              )}
+            </Group>
+          ))}
+          {forkedPoints.length > 0 && chains.map((chain, chainIndex) => {
+            if (chainIndex === 0) return null
+            return (
+              <Group key={`chain-${chainIndex}`}
+                     x={(chain.blocks[0].blockHeight * BLOCK_SPACING_X) - (BLOCK_SPACING_X * ((forkedPoints.length + 1) + chainIndex)) + (BLOCK_SPACING_X * chains.length)}
+                     y={(chain.blocks[0].blockHeight * BLOCK_SPACING_Y) + (BLOCK_SPACING_Y * ((forkedPoints.length + 1) + chainIndex)) - (BLOCK_SPACING_Y * chains.length)}
+              >
+                {chain.blocks.map((block, blockIndex) => {
+                    if (blockIndex === 0) {
+                      return (
+                        <Group
+                          key={`first-block-${block.id}-${blockIndex}`}
+                          x={blockIndex * BLOCK_SPACING_X}
+                          y={blockIndex * BLOCK_SPACING_Y}
+                        >
+                          {forkedPoints[chainIndex - 1].branchIndex === 0 && (() => {
+                            const prevRoot = forkedPoints[chainIndex - 1]?.root ?? 0
+                            const diff = Math.max((chainIndex - 1) - prevRoot , 0)
+                            return Array.from({ length: diff }).map((_, i) => {
+                              return (
+                                <Group key={`branch-root-${chainIndex}-${i}`}
+                                       x={(BLOCK_SPACING_X / 2) * ((chains.length - i) * 2) - ((BLOCK_SPACING_X / 2) * (-2 * diff + chains.length * 2))}
+                                       y={(BLOCK_SPACING_Y / -2) * ((chains.length - i) * 2) - ((BLOCK_SPACING_Y / -2) * (-2 * diff + chains.length * 2))}
+                                >
+                                  <Image
+                                    image={beltLine2Image}
+                                    x={BLOCK_SPACING_X / 2}
+                                    y={BLOCK_SPACING_Y / -2}
+                                    width={BELT_WIDTH}
+                                    height={BELT_HEIGHT}
+                                  />
+                                  <Image
+                                    image={beltLine2Image}
+                                    x={0}
+                                    y={0}
+                                    width={BELT_WIDTH}
+                                    height={BELT_HEIGHT}
+                                  />
+                                </Group>
+                              )
+                            })
+                          })()}
+                          {forkedPoints[chainIndex - 1].branchIndex !== 0 && (() => {
+                            const prevIdx = forkedPoints.find((fp) => fp.fromRoot === forkedPoints[chainIndex - 2].fromRoot)?.indexInArray ?? 0
+                            const currIdx = forkedPoints.find((fp) => fp.fromRoot === forkedPoints[chainIndex - 1].fromRoot)?.indexInArray ?? 0
+                            const diff = Math.max(currIdx - prevIdx , 0)
+                            return Array.from({ length: diff }).map((_, i) => {
+                              return (
+                                <Group key={`branch-end-${chainIndex}-${i}`}>
+                                  <Image
+                                    image={beltLine2Image}
+                                    x={(BLOCK_SPACING_X / 2) * (blockIndex * BLOCK_SPACING_X * chains.length - i + 3)}
+                                    y={(BLOCK_SPACING_Y / -2) * (blockIndex * BLOCK_SPACING_X * chains.length - i + 3)}
+                                    width={BELT_WIDTH}
+                                    height={BELT_HEIGHT}
+                                  />
+                                  <Image
+                                    image={beltLine2Image}
+                                    x={(BLOCK_SPACING_X / 2) * (blockIndex * BLOCK_SPACING_X * chains.length - i + 2)}
+                                    y={(BLOCK_SPACING_Y / -2) * (blockIndex * BLOCK_SPACING_X * chains.length - i + 2)}
+                                    width={BELT_WIDTH}
+                                    height={BELT_HEIGHT}
+                                  />
+                                </Group>
+                              )
+                            })
+                          })()}
+                          <Image
+                            image={beltLine2Image}
+                            x={BLOCK_SPACING_X / 2}
+                            y={BLOCK_SPACING_Y / -2}
+                            width={BELT_WIDTH}
+                            height={BELT_HEIGHT}
+                          />
+                          {/*最長チェーン以外で複数の分岐が同じブロックから起こる場合*/}
+                          {forkedPoints[chainIndex - 1].hasNextBranch ? (
+                            <Image
+                              image={beltSplit2Image}
+                              x={0}
+                              y={0}
+                              width={BELT_WIDTH}
+                              height={BELT_HEIGHT}
+                            />
+                          ) : (
+                            <Image
+                              image={beltCorner1Image}
+                              x={0}
+                              y={0}
+                              width={BELT_WIDTH}
+                              height={BELT_HEIGHT}
+                            />
+                          )}
+                          <Image
+                            image={beltLine1Image}
+                            x={BLOCK_SPACING_X / 2}
+                            y={BLOCK_SPACING_Y / 2}
+                            width={BELT_WIDTH}
+                            height={BELT_HEIGHT}
+                          />
+                          <Image
+                            image={selectedBlockId === block.id ? selectedBlockImage : blockImage}
+                            x={15.5 + BLOCK_SPACING_X / 2}
+                            y={-10 + BLOCK_SPACING_Y / 2}
+                            width={BLOCK_WIDTH}
+                            height={BLOCK_HEIGHT}
+                            onClick={() => handleSelectBlock(block)}
+                            onTouchEnd={() => handleSelectBlock(block)}
+                          />
+                        </Group>
+                      )
+                    }
                     return (
                       <Group
                         key={`${block.id}-${blockIndex}`}
@@ -212,7 +391,7 @@ const ChainViewer = () => {
                         y={blockIndex * BLOCK_SPACING_Y}
                       >
                         <Image
-                          image={forkedPoints.includes(blockIndex) ? beltSplit1Image : beltLine1Image}
+                          image={beltLine1Image}
                           x={0}
                           y={0}
                           width={BELT_WIDTH}
@@ -236,186 +415,57 @@ const ChainViewer = () => {
                         />
                       </Group>
                     )
-                  }
-                  if (chainIndex > 0) {
-                    if (blockIndex === 0) {
-                      // 最長チェーン以外で複数の分岐が同じブロックから起こる場合
-                      if (block.blockHeight === chains[chainIndex + 1]?.blocks[0]?.blockHeight) {
-                        console.log('同一ブロック複数分岐')
-                        // chains[chainIndex - 1]?.blocks[0]?.blockHeight === block.blockHeightがない場合、分岐の最初のチェーンなので、遠くする＆そこまでつなげる
-                        return (
-                          <Group
-                            key={`${block.id}-${blockIndex}`}
-                            x={blockIndex * BLOCK_SPACING_X}
-                            y={blockIndex * BLOCK_SPACING_Y}
-                          >
-                            {/*{Array.from({ length: (forkedPoints.length + 1) - chainIndex }).map((_, i) => (*/}
-                            {/*  <Image*/}
-                            {/*    image={beltLine2Image}*/}
-                            {/*    x={BLOCK_SPACING_X / 2 * chainIndex}*/}
-                            {/*    y={BLOCK_SPACING_Y / -2 * chainIndex}*/}
-                            {/*    width={BELT_WIDTH}*/}
-                            {/*    height={BELT_HEIGHT}*/}
-                            {/*    key={`belt-line-${i}`}*/}
-                            {/*  />*/}
-                            {/*))}*/}
-                            <Image
-                              image={beltLine2Image}
-                              x={BLOCK_SPACING_X / 2}
-                              y={BLOCK_SPACING_Y / -2}
-                              width={BELT_WIDTH}
-                              height={BELT_HEIGHT}
-                            />
-                            <Image
-                              image={beltSplit2Image}
-                              x={0}
-                              y={0}
-                              width={BELT_WIDTH}
-                              height={BELT_HEIGHT}
-                            />
-                            <Image
-                              image={beltLine1Image}
-                              x={BLOCK_SPACING_X / 2}
-                              y={BLOCK_SPACING_Y / 2}
-                              width={BELT_WIDTH}
-                              height={BELT_HEIGHT}
-                            />
-                            <Image
-                              image={selectedBlockId === block.id ? selectedBlockImage : blockImage}
-                              x={15.5 + BLOCK_SPACING_X / 2}
-                              y={-10 + BLOCK_SPACING_Y / 2}
-                              width={BLOCK_WIDTH}
-                              height={BLOCK_HEIGHT}
-                              onClick={() => handleSelectBlock(block)}
-                              onTouchEnd={() => handleSelectBlock(block)}
-                            />
-                          </Group>
-                        )
-                      } else {
-                        // 分岐する最初のブロック
-                        return (
-                          <Group
-                            key={`${block.id}-${blockIndex}`}
-                            x={blockIndex * BLOCK_SPACING_X}
-                            y={blockIndex * BLOCK_SPACING_Y}
-                            z-index={blockIndex}
-                          >
-                            <Image
-                              image={beltLine2Image}
-                              x={BLOCK_SPACING_X / 2}
-                              y={BLOCK_SPACING_Y / -2}
-                              width={BELT_WIDTH}
-                              height={BELT_HEIGHT}
-                            />
-                            <Image
-                              image={beltCorner1Image}
-                              x={0}
-                              y={0}
-                              width={BELT_WIDTH}
-                              height={BELT_HEIGHT}
-                            />
-                            <Image
-                              image={beltLine1Image}
-                              x={BLOCK_SPACING_X / 2}
-                              y={BLOCK_SPACING_Y / 2}
-                              width={BELT_WIDTH}
-                              height={BELT_HEIGHT}
-                            />
-                            <Image
-                              image={selectedBlockId === block.id ? selectedBlockImage : blockImage}
-                              x={15.5 + BLOCK_SPACING_X / 2}
-                              y={-10 + BLOCK_SPACING_Y / 2}
-                              width={BLOCK_WIDTH}
-                              height={BLOCK_HEIGHT}
-                              onClick={() => handleSelectBlock(block)}
-                              onTouchEnd={() => handleSelectBlock(block)}
-                            />
-                          </Group>
-                        )
-                      }
-                    }
-                  }
-                  return (
-                    <Group
-                      key={`${block.id}-${blockIndex}`}
-                      x={blockIndex * BLOCK_SPACING_X}
-                      y={blockIndex * BLOCK_SPACING_Y}
-                    >
-                      <Image
-                        image={beltLine1Image}
-                        x={0}
-                        y={0}
-                        width={BELT_WIDTH}
-                        height={BELT_HEIGHT}
-                      />
-                      <Image
-                        image={beltLine1Image}
-                        x={BLOCK_SPACING_X / 2}
-                        y={BLOCK_SPACING_Y / 2}
-                        width={BELT_WIDTH}
-                        height={BELT_HEIGHT}
-                      />
-                      <Image
-                        image={selectedBlockId === block.id ? selectedBlockImage : blockImage}
-                        x={15.5 + BLOCK_SPACING_X / 2}
-                        y={-10 + BLOCK_SPACING_Y / 2}
-                        width={BLOCK_WIDTH}
-                        height={BLOCK_HEIGHT}
-                        onClick={() => handleSelectBlock(block)}
-                        onTouchEnd={() => handleSelectBlock(block)}
-                      />
-                    </Group>
-                  )
-                },
-              )}
-              {/* 最新ブロックの後に新しいブロックを追加 */}
-              {chain.blocks.length > 0 && (
-                <Group
-                  key={`next-block-${chainIndex}`}
-                  x={(chain.blocks.length) * BLOCK_SPACING_X}
-                  y={(chain.blocks.length) * BLOCK_SPACING_Y}
-                >
-                  <Image
-                    image={beltLine1Image}
-                    x={0}
-                    y={0}
-                    width={BELT_WIDTH}
-                    height={BELT_HEIGHT}
-                    opacity={0.5}
-                  />
-                  <Image
-                    image={beltLine1Image}
-                    x={BLOCK_SPACING_X / 2}
-                    y={BLOCK_SPACING_Y / 2}
-                    width={BELT_WIDTH}
-                    height={BELT_HEIGHT}
-                    opacity={0.5}
-                  />
+                  },
+                )}
+                {/* 最新ブロックの後に新しいブロックを追加 */}
+                {chain.blocks.length > 0 && (
                   <Group
-                    x={15.5 + BLOCK_SPACING_X / 2}
-                    y={-10 + BLOCK_SPACING_Y / 2}
-                    onClick={() => handleMakeNewBlock(chain.blocks[chain.blocks.length - 1])}
-                    onTouchEnd={() => handleMakeNewBlock(chain.blocks[chain.blocks.length - 1])}
+                    key={`next-block-${chainIndex}`}
+                    x={(chain.blocks.length) * BLOCK_SPACING_X}
+                    y={(chain.blocks.length) * BLOCK_SPACING_Y}
                   >
                     <Image
-                      image={unblockImage}
+                      image={beltLine1Image}
                       x={0}
                       y={0}
-                      width={BLOCK_WIDTH}
-                      height={BLOCK_HEIGHT}
+                      width={BELT_WIDTH}
+                      height={BELT_HEIGHT}
+                      opacity={0.5}
                     />
                     <Image
-                      image={tipMakeImage}
-                      x={0}
-                      y={-24}
-                      width={TIP_WIDTH}
-                      height={TIP_HEIGHT}
+                      image={beltLine1Image}
+                      x={BLOCK_SPACING_X / 2}
+                      y={BLOCK_SPACING_Y / 2}
+                      width={BELT_WIDTH}
+                      height={BELT_HEIGHT}
+                      opacity={0.5}
                     />
+                    <Group
+                      x={15.5 + BLOCK_SPACING_X / 2}
+                      y={-10 + BLOCK_SPACING_Y / 2}
+                      onClick={() => handleMakeNewBlock(chain.blocks[chain.blocks.length - 1])}
+                      onTouchEnd={() => handleMakeNewBlock(chain.blocks[chain.blocks.length - 1])}
+                    >
+                      <Image
+                        image={unblockImage}
+                        x={0}
+                        y={0}
+                        width={BLOCK_WIDTH}
+                        height={BLOCK_HEIGHT}
+                      />
+                      <Image
+                        image={tipMakeImage}
+                        x={0}
+                        y={-24}
+                        width={TIP_WIDTH}
+                        height={TIP_HEIGHT}
+                      />
+                    </Group>
                   </Group>
-                </Group>
-              )}
-            </Group>
-          ))}
+                )}
+              </Group>
+            )
+          })}
         </Layer>
       </Stage>
 

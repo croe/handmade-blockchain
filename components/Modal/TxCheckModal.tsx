@@ -2,9 +2,8 @@
 
 import BasicModal from '@/components/Modal/BasicModal'
 import {useAtom} from 'jotai'
-import {usersState} from '@/stores/users'
-import {generateReadableId, getAvatarForId} from '@/utils/id-to-readable-string'
-import {Block, TxInBlock} from '@/models/block'
+import {generateReadableId} from '@/utils/id-to-readable-string'
+import {TxInBlock} from '@/models/block'
 import {getBucketImage} from '@/utils/getBucketImage'
 import {TX_AMOUNT_BUCKET} from '@/lib/firebase'
 import {txsState} from '@/stores/transactions'
