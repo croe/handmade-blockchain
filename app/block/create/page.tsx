@@ -18,11 +18,13 @@ import BlockCreationTxsSelection from '@/components/BlockCreationStep/BlockCreat
 import BlockCreationTxsValidation from '@/components/BlockCreationStep/BlockCreationTxsValidation'
 import BlockCreationCheck from '@/components/BlockCreationStep/BlockCreationCheck'
 import BlockCreationComplete from '@/components/BlockCreationStep/BlockCreationComplete'
+import BlockCreationError from '@/components/BlockCreationStep/BlockCreationError'
 import { concat } from 'lodash'
 import {buildBlock, getBlock} from '@/api/block'
 import { Loader } from 'lucide-react'
+import { useBlockCreation } from '@/hooks/useBlockCreation'
 
-type Step = 'chain-selected' | 'tx-selected' | 'tx-validated' | 'complete'
+type Step = 'chain-selected' | 'tx-selected' | 'tx-validated' | 'complete' | 'error'
 
 type StepInfo = {
   title: string
@@ -65,12 +67,22 @@ const STEP_INFO: Record<Step, StepInfo> = {
     totalSteps: 4,
     buttonText: 'トップに戻る',
     canGoBack: false
+  },
+  'error': {
+    title: 'エラーが発生しました',
+    subtitle: 'ブロックの作成',
+    stepNumber: 0,
+    totalSteps: 4,
+    buttonText: '最初からやり直す',
+    canGoBack: false
   }
 }
 
 const BlockCreatePage = () => {
+  const { saveBlockCreationTime,canCreateBlock } = useBlockCreation()
   const [loading, setLoading] = useState<boolean>(false)
   const [step, setStep] = useState<Step>('chain-selected')
+  const [errorMessage, setErrorMessage] = useState<string>('')
   const setTxs = useSetAtom(txsState)
   const setChain = useSetAtom(chainState)
   const [selectedTxs, setSelectedTxs] = useAtom(selectedTxsState)
@@ -90,6 +102,7 @@ const BlockCreatePage = () => {
       if (!currentUser) throw new Error('ユーザー情報が取得できません')
       if (!selectedBlock) throw new Error('ブロックが選択されていません')
       if (!selectedTxs) throw new Error('取引が選択されていません')
+      if (!canCreateBlock()) throw new Error('ブロック作成可能時間ではありません')
       setLoading(true)
       // ブロック作成のためのデータを準備
       const txs = selectedTxs.map(tx => ({
@@ -115,6 +128,7 @@ const BlockCreatePage = () => {
       )
       if (!blockKey?.key) throw new Error('ブロックの作成に失敗しました')
       // FIXME: ここがなんか変
+      saveBlockCreationTime()
       const newBlockFromDB = await getBlock(currentUser.id, blockKey.key)
       console.log(newBlockFromDB)
       if (newBlockFromDB) {
@@ -130,7 +144,8 @@ const BlockCreatePage = () => {
 
     } catch (error) {
       console.error('Error in handleCreateBlock:', error)
-      toast.error('ブロックの作成に失敗しました')
+      setErrorMessage(error instanceof Error ? error.message : 'ブロックの作成に失敗しました')
+      setStep('error')
       setLoading(false)
       return
     }
@@ -160,6 +175,10 @@ const BlockCreatePage = () => {
       case 'tx-validated':
         await handleCreateBlock()
         setStep('complete')
+        break
+      case 'error':
+        setStep('chain-selected')
+        setErrorMessage('')
         break
       default:
         break
@@ -193,6 +212,7 @@ const BlockCreatePage = () => {
         {step === 'tx-selected' && <BlockCreationTxsValidation />}
         {step === 'tx-validated' && <BlockCreationCheck />}
         {step === 'complete' && <BlockCreationComplete/>}
+        {step === 'error' && <BlockCreationError error={errorMessage} />}
       </MiniLayout>
 
       <BottomBar>

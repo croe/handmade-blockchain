@@ -1,6 +1,8 @@
 'use client'
 
 import Countdown, {zeroPad} from 'react-countdown'
+import { useEffect, useState } from 'react'
+import { useBlockCreation } from '@/hooks/useBlockCreation'
 
 interface CountdownRendererProps {
   minutes: number
@@ -30,9 +32,16 @@ const renderer = ({ minutes, seconds, completed }: CountdownRendererProps) => {
 }
 
 const CountDownTimer = () => {
+  const { getNextBlockTime } = useBlockCreation()
+  const [targetDate, setTargetDate] = useState<number>(getNextBlockTime())
+
+  useEffect(() => {
+    setTargetDate(getNextBlockTime())
+  }, [getNextBlockTime])
+
   return (
     <div className="min-w-32 text-[#3842FF] flex flex-col items-center justify-center">
-      <Countdown date={Date.now() + 10000} renderer={renderer} />
+      <Countdown date={targetDate} renderer={renderer} />
     </div>
   )
 }
