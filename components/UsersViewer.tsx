@@ -12,6 +12,7 @@ import { txsState } from '@/stores/transactions'
 import { getBlocks, syncBlocks } from '@/api/block'
 import { filterNonNullableTxs, filterNonNullableBlocks } from '@/utils/filterNonNullable'
 import { chainState } from '@/stores/chain'
+import { syncInfoState } from '@/stores/sync'
 
 /**
  * ユーザー、トランザクション、ブロックの同期を行うコンポーネント
@@ -24,6 +25,7 @@ const UsersViewer = () => {
   const [currentUser] = useAtom(currentUserState)
   const setTxs = useSetAtom(txsState)
   const setBlocks = useSetAtom(chainState)
+  const setSyncInfo = useSetAtom(syncInfoState)
 
   useEffect(() => {
     if (!db) return
@@ -33,10 +35,16 @@ const UsersViewer = () => {
       const users = convertUsers(snapshot)
       setUsers(users)
 
-      /**
-       * Sync Txs/Blocks
-       */
+      // オンラインユーザーを取得
       const onlineUsers = users.filter((user) => user.status && user.id !== currentUser.id)
+      
+      // 接続ユーザーリストを更新
+      setSyncInfo(prev => ({
+        ...prev,
+        connectedUsers: onlineUsers
+      }))
+
+      // オンラインユーザーがいない場合は同期処理をスキップ
       if (onlineUsers.length === 0) return
       const limitedOnlineUsers = onlineUsers.slice(0, SYNC_LIMIT)
 
@@ -70,6 +78,13 @@ const UsersViewer = () => {
         setBlocks(mergedChain)
         await syncBlocks(currentUser.id, targetSyncChain)
       }
+
+      // 同期完了時に最終更新時刻を更新
+      const syncCompletedTime = Date.now()
+      setSyncInfo(prev => ({
+        ...prev,
+        lastUpdate: syncCompletedTime
+      }))
     }
     const handleError = (err: Error) => {
       console.error('Firebase read error:', err)

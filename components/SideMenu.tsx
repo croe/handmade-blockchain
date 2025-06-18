@@ -5,6 +5,8 @@ import {sideMenuState} from '@/stores/ui'
 import IconMenuButton from '@/components/Button/IconMenuButton'
 import BasicButton from '@/components/Button/BasicButton'
 import Link from 'next/link'
+import { lastUpdateStringState, connectedUserNamesState } from '@/stores/sync'
+import {generateReadableId} from '@/utils/id-to-readable-string'
 
 const menuItems = [
   { icon: '/images/icons/tip_block_make.svg', label: 'ブロック作成', href: '/dashboard' },
@@ -17,12 +19,8 @@ const menuItems = [
 
 const SideMenu = () => {
   const [sideMenu, setSideMenu] = useAtom(sideMenuState)
-
-  // 仮データ
-  const cacheInfo = {
-    lastUpdate: '2025年05月05日13:33.17',
-    walletNames: ['walletname001', 'walletname001', 'walletname001', 'walletname001'],
-  }
+  const [lastUpdate] = useAtom(lastUpdateStringState)
+  const [connectedUserNames] = useAtom(connectedUserNamesState)
 
   return (
     <>
@@ -56,18 +54,22 @@ const SideMenu = () => {
           <div className="bg-white rounded-xl px-4 py-3 shadow border border-[#E0E0E0]">
             <div className="flex justify-between text-[#888] text-[12px]">
               <span>キャッシュの最終更新</span>
-              <span>{cacheInfo.lastUpdate}</span>
+              <span>{lastUpdate}</span>
             </div>
             <div className="flex gap-2 mt-1 text-[#888] text-[12px]">
-              <span>日時:</span>
-              <span>{cacheInfo.walletNames[0]}</span>
+              <span>接続ユーザー数:</span>
+              <span>{connectedUserNames.length}人</span>
             </div>
             <div className="flex gap-2 mt-1 text-[#888] text-[12px]">
-              <span>更新時期元:</span>
+              <span>更新元:</span>
               <div className="flex flex-col gap-0.5">
-                {cacheInfo.walletNames.map((w, i) => (
-                  <span key={i}>{w}</span>
-                ))}
+                {connectedUserNames.length > 0 ? (
+                  connectedUserNames.map((userName, i) => (
+                    <span key={i}>{generateReadableId(userName)}</span>
+                  ))
+                ) : (
+                  <span>接続中のユーザーなし</span>
+                )}
               </div>
             </div>
           </div>
