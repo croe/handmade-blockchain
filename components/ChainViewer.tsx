@@ -2,7 +2,7 @@
 
 import {useAtom} from 'jotai'
 import {branchedChainsState, forkedPointsState, selectedBlockState} from '@/stores/chain'
-import {useState, useCallback} from 'react'
+import {useState, useCallback, forwardRef, useImperativeHandle} from 'react'
 import Konva from 'konva'
 import {Layer, Stage, Image, Group} from 'react-konva'
 import useImage from 'use-image'
@@ -34,7 +34,7 @@ const BELT_HEIGHT = 48
 const TIP_WIDTH = 35
 const TIP_HEIGHT = 40
 
-const ChainViewer = () => {
+const ChainViewer = forwardRef((props, ref) => {
   const router = useRouter()
   const [blockCheckModalOpen, setBlockCheckModalOpen] = useState(false)
   const [txCheckModalOpen, setTxCheckModalOpen] = useState(false)
@@ -160,6 +160,21 @@ const ChainViewer = () => {
     router.push('/block/create')
   }, [])
 
+  const moveToLatestBlock = useCallback(() => {
+    if (!chains || chains.length === 0) return
+    const latestBlockIndex = chains[0].blocks.length - 1
+    const blockX = latestBlockIndex * BLOCK_SPACING_X + BLOCK_SPACING_X
+    const blockY = latestBlockIndex * BLOCK_SPACING_Y + BLOCK_SPACING_Y
+
+    // Stageの中心にブロックが来るように計算
+    const stageWidth = window.innerWidth
+    const stageHeight = window.innerHeight - 10
+    const x = -(blockX - stageWidth / 2)
+    const y = -(blockY - stageHeight / 2)
+
+    setStagePos({ x, y })
+  }, [chains])
+
   // Genesis blockを作成する一時的な関数
   // const handleTemporalMakeGenesisBlock = async () => {
   //     if (chain.length > 0) return
@@ -175,6 +190,12 @@ const ChainViewer = () => {
 
   console.log(chains)
   console.log(forkedPoints)
+
+  useImperativeHandle(ref, () => ({
+    handleMakeNewBlock,
+    getChains: () => chains,
+    moveToLatestBlock
+  }))
 
   return (
     <div>
@@ -489,6 +510,6 @@ const ChainViewer = () => {
       />
     </div>
   )
-}
+})
 
 export default ChainViewer

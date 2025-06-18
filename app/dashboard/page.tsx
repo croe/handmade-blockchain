@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import {useEffect, useState} from 'react'
+import {useEffect, useState, useRef} from 'react'
 import { useRouter } from 'next/navigation'
 import { useAtom } from 'jotai'
 import { sideMenuState } from '@/stores/ui'
@@ -13,13 +13,31 @@ import MenuButton from '@/components/Button/MenuButton'
 import SideMenu from '@/components/SideMenu'
 import BottomBar from '@/components/BottomBar'
 import CountDownTimer from '@/components/CountDownTimer'
+import { useBlockCreation } from '@/hooks/useBlockCreation'
 
 // Modal.setAppElement('#root')
 
 const Dashboard = () => {
+  const { canCreateBlock } = useBlockCreation()
   const [currentUser] = useAtom(currentUserState)
   const [sideMenu] = useAtom(sideMenuState)
   const router = useRouter()
+  const chainViewerRef = useRef<{
+    handleMakeNewBlock: (block: any) => void;
+    getChains: () => { blocks: any[] }[];
+    moveToLatestBlock: () => void;
+  }>(null)
+
+  const onClickCreateBlock = () => {
+    if (!canCreateBlock()) return
+    if (!chainViewerRef.current) return
+    const chains = chainViewerRef.current.getChains()
+    if (!chains || chains.length === 0) return
+    // 最長チェーンに新しいブロックを作成する
+    // chainViewerRef.current.handleMakeNewBlock(chains[0].blocks[chains[0].blocks.length - 1])
+    // 最長チェーンの最新ブロックに視点を移動する
+    chainViewerRef.current.moveToLatestBlock()
+  }
 
   useEffect(() => {
     if (!currentUser) {
@@ -34,10 +52,10 @@ const Dashboard = () => {
       <WalletViewer />
       <MenuButton />
       <SideMenu />
-      <ChainViewer />
+      <ChainViewer ref={chainViewerRef} />
       <BottomBar>
         <div className="flex items-center gap-8 justify-center">
-          <CountDownTimer />
+          <CountDownTimer onClickCreateBlock={onClickCreateBlock} />
           <div className="w-full flex justify-center gap-5 mb-8">
             <Link href={`/shop`}>
               <div className="relative w-[45px] h-[77px]">

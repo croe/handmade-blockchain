@@ -4,6 +4,10 @@ import Countdown, {zeroPad} from 'react-countdown'
 import { useEffect, useState } from 'react'
 import { useBlockCreation } from '@/hooks/useBlockCreation'
 
+type Props = {
+  onClickCreateBlock: () => void
+}
+
 interface CountdownRendererProps {
   minutes: number
   seconds: number
@@ -15,10 +19,11 @@ const renderer = ({ minutes, seconds, completed }: CountdownRendererProps) => {
   if (completed) {
     // Render a completed state
     return (
-      <>
+      <div className="relative">
+        <img className="absolute -top-10 h-10 -left-1" src="/images/icons/popup_block_creation.svg" alt=""/>
         <p className="text-xs font-black whitespace-nowrap">ブロック作成できます！</p>
         <p className="text-[29px] font-black">{zeroPad(minutes)}m{zeroPad(seconds)}s</p>
-      </>
+      </div>
     )
   } else {
     // Render a countdown
@@ -31,7 +36,7 @@ const renderer = ({ minutes, seconds, completed }: CountdownRendererProps) => {
   }
 }
 
-const CountDownTimer = () => {
+const CountDownTimer = ({ onClickCreateBlock }: Props) => {
   const { getNextBlockTime } = useBlockCreation()
   const [targetDate, setTargetDate] = useState<number>(getNextBlockTime())
 
@@ -40,7 +45,7 @@ const CountDownTimer = () => {
   }, [getNextBlockTime])
 
   return (
-    <div className="min-w-32 text-[#3842FF] flex flex-col items-center justify-center">
+    <div className="min-w-32 text-[#3842FF] flex flex-col items-center justify-center" onClick={onClickCreateBlock}>
       <Countdown date={targetDate} renderer={renderer} />
     </div>
   )
