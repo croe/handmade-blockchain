@@ -15,7 +15,7 @@ const TxPoolPage = () => {
   return (
     <main>
       <TitleHeader
-        title="未検証取引プール"
+        title="未承認取引一覧"
         subtitle="現在の最長チェーンの未検証取引を表示しています。"
         help={<HelpButton />}
       />

@@ -76,7 +76,7 @@ const Dashboard = () => {
                 <img className="absolute top-0 left-0 w-[34px] h-[40px]" src="/images/icons/tip_tx_pool.svg" alt=""/>
                 <img className="absolute bottom-0 left-0 w-[35px] h-[40px]" src="/images/icons/box_pool.svg" alt=""/>
               </div>
-              <p className="text-[10px] text-[#2AE864] font-black mt-2">取引プール</p>
+              <p className="text-[10px] text-[#2AE864] font-black mt-2">未承認取引一覧</p>
             </Link>
           </div>
         </div>

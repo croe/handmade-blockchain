@@ -9,7 +9,7 @@ import Link from 'next/link'
 const menuItems = [
   { icon: '/images/icons/tip_block_make.svg', label: 'ブロック作成', href: '/dashboard' },
   { icon: '/images/icons/tip_tx_make.svg', label: '取引作成', href: '/tx/create' },
-  { icon: '/images/icons/tip_tx_pool.svg', label: '取引プール', href: '/tx/pool' },
+  { icon: '/images/icons/tip_tx_pool.svg', label: '未承認取引一覧', href: '/tx/pool' },
   { icon: '/images/icons/tip_shop.svg', label: 'ショップ', href: '/shop' },
   { icon: '/images/icons/tip_wallet.svg', label: 'ウォレット詳細', href: '/wallet' },
   { icon: '/images/icons/tip_tutorial.svg', label: 'チュートリアル', href: '/tutorial' },
@@ -74,10 +74,10 @@ const SideMenu = () => {
         </div>
         {/* アクションボタン */}
         <div className="px-4 mt-3 mb-5 flex flex-col gap-2">
-          <BasicButton>
-            <span className="text-base">手動で更新を開始する</span>
-            <img src="/images/icons/double_arrow_white.svg" className="w-5 h-5" alt="reload" />
-          </BasicButton>
+          {/*<BasicButton>*/}
+          {/*  <span className="text-base">手動で更新を開始する</span>*/}
+          {/*  <img src="/images/icons/double_arrow_white.svg" className="w-5 h-5" alt="reload" />*/}
+          {/*</BasicButton>*/}
           <button className="w-full py-3 rounded-xl bg-[#888] text-white font-bold text-[15px] shadow flex items-center justify-center gap-2">
             本アプリのキャッシュの取扱
             <img src="/images/icons/info.svg" className="w-4 h-4" alt="info" />

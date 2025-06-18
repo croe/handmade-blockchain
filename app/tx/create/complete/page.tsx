@@ -81,7 +81,7 @@ const TxCreateCompletePage = () => {
         <div>
           <p className="text-xs text-[#484848] mb-1">作成した取引は現在ブロックへの格納を待機しています</p>
           <BasicButton onClick={handleCheckTxPool}>
-            <span className="pr-10">未検証取引プールを確認する</span>
+            <span className="pr-10">未承認取引一覧を確認する</span>
             <img src="/images/icons/double_arrow_white.svg" className="w-5 h-5" alt="reload" />
           </BasicButton>
         </div>

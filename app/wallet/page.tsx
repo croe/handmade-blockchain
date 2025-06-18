@@ -56,9 +56,6 @@ const WalletPage = () => {
           <MyBalance />
         </div>
         <div>
-          <div>
-            ここにフィルタやソート機能を追加する。
-          </div>
           <div className="flex flex-col gap-2.5 pb-10">
             {allMyTxs.map((x, i) => (
               <TxViewer key={i} tx={x} />
