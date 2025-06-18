@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react'
 import { Block } from '@/models/block'
 import TxCard from '@/components/TxCard'
 import { toast } from 'react-toastify'
+import SupportAgentBlock from '@/components/SupportAgentBlock'
 
 const BlockCreationTxsSelection = () => {
   const [confirmedTxs, setConfirmedTxs] = useState<Transaction[]>([])
@@ -69,6 +70,19 @@ const BlockCreationTxsSelection = () => {
 
   return (
     <div>
+
+      <SupportAgentBlock>
+        <div className="font-bold mb-1">サポートエージェント</div>
+        <div>
+          以下は、未承認の取引のリストです。<br/>
+          この中からあなたがブロックに格納する取引を選んでください。<br/>
+          ブロックに格納されることで取引は承認され送金が実行されます。<br/>
+          次のステップで選んだ取引の検証作業を行っていただきます。<br/>
+          健全なブロックチェーン運営のため、一人ひとりが意識を高く持ち、不正な取引を許さず、公正な取引のみを承認するように心がけましょう！
+        </div>
+      </SupportAgentBlock>
+
+      {/* 取引リスト */}
       <div className="grid grid-cols-2 gap-2.5">
         {pendingTxs.map((tx) => (
           <div className="relative" key={`tx-${tx.id}`}>
