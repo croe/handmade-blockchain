@@ -6,6 +6,8 @@ import { Providers } from "@/components/Provider/providers"
 import UserSignal from '@/components/UserSignal'
 import RenderMounted from '@/components/ClientRender'
 import { ToastContainer } from 'react-toastify';
+import ExhibitionModeInitializer from '@/components/ExhibitionModeInitializer'
+import ExhibitionModeToggle from '@/components/ExhibitionModeToggle'
 
 const poppins = Poppins({ weight: ["400", "900"], subsets: ['latin'] })
 const zenKakuGothicNew = Zen_Kaku_Gothic_New({ weight: ["400", "900"], subsets: ['latin'] })
@@ -30,6 +32,8 @@ export default function RootLayout({
       <body id="root" suppressHydrationWarning>
         <RenderMounted>
           <Providers>
+            <ExhibitionModeInitializer />
+            <ExhibitionModeToggle />
             <UserSignal />
             <ToastContainer />
             {children}

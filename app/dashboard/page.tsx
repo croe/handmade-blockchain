@@ -14,6 +14,7 @@ import SideMenu from '@/components/SideMenu'
 import BottomBar from '@/components/BottomBar'
 import CountDownTimer from '@/components/CountDownTimer'
 import { useBlockCreation } from '@/hooks/useBlockCreation'
+import { useExhibitionMode } from '@/hooks/useExhibitionMode'
 
 // Modal.setAppElement('#root')
 
@@ -21,6 +22,7 @@ const Dashboard = () => {
   const { canCreateBlock } = useBlockCreation()
   const [currentUser] = useAtom(currentUserState)
   const [sideMenu] = useAtom(sideMenuState)
+  const { exhibitionMode } = useExhibitionMode()
   const router = useRouter()
   const chainViewerRef = useRef<{
     handleMakeNewBlock: (block: any) => void;
@@ -84,6 +86,14 @@ const Dashboard = () => {
       <div>
         <UsersViewer />
       </div>
+      {exhibitionMode && (
+        <div className="fixed top-4 left-4 z-40 bg-yellow-100 border border-yellow-400 rounded-lg px-3 py-2">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
+            <span className="text-sm font-medium text-yellow-800">展示モード</span>
+          </div>
+        </div>
+      )}
     </main>
   )
 }

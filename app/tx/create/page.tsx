@@ -18,6 +18,7 @@ import TitleHeader from '@/components/TitleHeader'
 import HelpButton from '@/components/Button/HelpButton'
 import CheckSignMaker from '@/components/CheckSignMaker'
 import ReceiverSelectionModal from '@/components/Modal/ReceiverSelectionModal'
+import ExhibitionModeRestriction from '@/components/ExhibitionModeRestriction'
 
 const TxCreatePage = () => {
   // FIXME: 手数料を入れないと無限に作られてしまう問題？（ミスったら入れられないからいいか）
@@ -88,68 +89,70 @@ const TxCreatePage = () => {
   }
 
   return (
-    <main className="w-full h-screen text-black">
-      <TitleHeader
-        title="取引の作成"
-        help={<HelpButton/>}
-      />
-      <div className="mx-auto w-max px-5 max-w-[340px] flex flex-col gap-4">
-        <CheckSignMaker canvas={canvas} setCanvas={setCanvas}/>
-        <div>
-          <p className="flex gap-1 text-[#999] items-center text-xs mb-1.5">
-            <img src="/images/icons/mini/gray/send.svg" alt="pen" className="w-5 h-5"/>
-            <span>送金元（自動入力）</span>
-          </p>
-          <input
-            className="w-full px-2 py-1 border rounded-xl border-[#E5E5E5] bg-[#EEE] text-[#484848] max-w-[300px]"
-            type="text"
-            disabled
-            value={currentUser ? generateReadableId(currentUser.id) : ''}
-          />
-        </div>
-        <div>
-          <p className="flex gap-1 text-[#999] items-center text-xs mb-1.5">
-            <img src="/images/icons/mini/gray/receive.svg" alt="pen" className="w-5 h-5"/>
-            <span>送金先</span>
-          </p>
-          <input
-            className="w-full px-2 py-1 border rounded-xl border-[#E5E5E5] bg-[#EEE] text-[#484848] mb-2 max-w-[300px]"
-            type="text"
-            disabled
-            value={receiverId ? generateReadableId(receiverId) : ''}
-          />
-          <BasicButton onClick={handleOpenReceiverSelector}>
-            <span>送る相手を指定</span>
-            <img src="/images/icons/mini/white/profile.svg" className="w-5 h-5" alt="reload"/>
-          </BasicButton>
-        </div>
-      </div>
-
-      <ReceiverSelectionModal
-        open={openReceiverSelector}
-        requestClose={() => setOpenReceiverSelector(false)}
-        setReceiverId={setReceiverId}
-      />
-
-      <BottomBar>
-        <div className="flex items-center gap-8 justify-center">
-          <div className="w-full flex justify-center gap-5 mb-8">
-            <div className="relative w-[35px] h-[77px]">
-              <img className="absolute top-0 left-0 w-[34px] h-[40px]" src="/images/icons/tip_draft_tx.svg" alt=""/>
-              <img className="absolute bottom-0 left-0 w-[35px] h-[40px]" src="/images/icons/box_tx.svg" alt=""/>
-            </div>
+    <ExhibitionModeRestriction feature="transaction-creation">
+      <main className="w-full h-screen text-black">
+        <TitleHeader
+          title="取引の作成"
+          help={<HelpButton/>}
+        />
+        <div className="mx-auto w-max px-5 max-w-[340px] flex flex-col gap-4">
+          <CheckSignMaker canvas={canvas} setCanvas={setCanvas}/>
+          <div>
+            <p className="flex gap-1 text-[#999] items-center text-xs mb-1.5">
+              <img src="/images/icons/mini/gray/send.svg" alt="pen" className="w-5 h-5"/>
+              <span>送金元（自動入力）</span>
+            </p>
+            <input
+              className="w-full px-2 py-1 border rounded-xl border-[#E5E5E5] bg-[#EEE] text-[#484848] max-w-[300px]"
+              type="text"
+              disabled
+              value={currentUser ? generateReadableId(currentUser.id) : ''}
+            />
           </div>
-          <BasicButton onClick={handleSave}>
-            {loading ? (
-              <Loader className="animate-spin"/>
-            ) : (
-              <span className="text-base">取引を作成する</span>
-            )}
-            <img src="/images/icons/double_arrow_white.svg" className="w-5 h-5" alt="reload"/>
-          </BasicButton>
+          <div>
+            <p className="flex gap-1 text-[#999] items-center text-xs mb-1.5">
+              <img src="/images/icons/mini/gray/receive.svg" alt="pen" className="w-5 h-5"/>
+              <span>送金先</span>
+            </p>
+            <input
+              className="w-full px-2 py-1 border rounded-xl border-[#E5E5E5] bg-[#EEE] text-[#484848] mb-2 max-w-[300px]"
+              type="text"
+              disabled
+              value={receiverId ? generateReadableId(receiverId) : ''}
+            />
+            <BasicButton onClick={handleOpenReceiverSelector}>
+              <span>送る相手を指定</span>
+              <img src="/images/icons/mini/white/profile.svg" className="w-5 h-5" alt="reload"/>
+            </BasicButton>
+          </div>
         </div>
-      </BottomBar>
-    </main>
+
+        <ReceiverSelectionModal
+          open={openReceiverSelector}
+          requestClose={() => setOpenReceiverSelector(false)}
+          setReceiverId={setReceiverId}
+        />
+
+        <BottomBar>
+          <div className="flex items-center gap-8 justify-center">
+            <div className="w-full flex justify-center gap-5 mb-8">
+              <div className="relative w-[35px] h-[77px]">
+                <img className="absolute top-0 left-0 w-[34px] h-[40px]" src="/images/icons/tip_draft_tx.svg" alt=""/>
+                <img className="absolute bottom-0 left-0 w-[35px] h-[40px]" src="/images/icons/box_tx.svg" alt=""/>
+              </div>
+            </div>
+            <BasicButton onClick={handleSave}>
+              {loading ? (
+                <Loader className="animate-spin"/>
+              ) : (
+                <span className="text-base">取引を作成する</span>
+              )}
+              <img src="/images/icons/double_arrow_white.svg" className="w-5 h-5" alt="reload"/>
+            </BasicButton>
+          </div>
+        </BottomBar>
+      </main>
+    </ExhibitionModeRestriction>
   )
 }
 

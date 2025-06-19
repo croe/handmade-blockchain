@@ -1,7 +1,7 @@
 'use client'
 
 import {useAtom} from 'jotai'
-import {sideMenuState} from '@/stores/ui'
+import {sideMenuState, exhibitionModeState, persistExhibitionMode} from '@/stores/ui'
 import IconMenuButton from '@/components/Button/IconMenuButton'
 import BasicButton from '@/components/Button/BasicButton'
 import Link from 'next/link'
@@ -19,8 +19,15 @@ const menuItems = [
 
 const SideMenu = () => {
   const [sideMenu, setSideMenu] = useAtom(sideMenuState)
+  const [exhibitionMode, setExhibitionMode] = useAtom(exhibitionModeState)
   const [lastUpdate] = useAtom(lastUpdateStringState)
   const [connectedUserNames] = useAtom(connectedUserNamesState)
+
+  const handleToggleExhibitionMode = () => {
+    const newMode = !exhibitionMode
+    setExhibitionMode(newMode)
+    persistExhibitionMode(newMode)
+  }
 
   return (
     <>
@@ -37,6 +44,32 @@ const SideMenu = () => {
           <div className="flex flex-col font-black text-[22px] leading-5 text-[#3E3EFF]">
             <span>HANDMADE</span>
             <span className="tracking-wider">BLOCKCHAIN</span>
+          </div>
+        </div>
+        {/* 展示モード切り替え */}
+        <div className="px-4 mb-4">
+          <div className="bg-white rounded-xl px-4 py-3 shadow border border-[#E0E0E0]">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className={`w-3 h-3 rounded-full ${exhibitionMode ? 'bg-yellow-500' : 'bg-gray-300'}`}></div>
+                <span className="text-[13px] font-bold text-[#888]">展示モード</span>
+              </div>
+              <button
+                onClick={handleToggleExhibitionMode}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                  exhibitionMode ? 'bg-blue-600' : 'bg-gray-200'
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    exhibitionMode ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
+            <div className="mt-2 text-[11px] text-[#888]">
+              {exhibitionMode ? '制限機能が有効です' : '全ての機能が利用可能です'}
+            </div>
           </div>
         </div>
         {/* メニューグリッド */}

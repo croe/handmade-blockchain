@@ -8,6 +8,7 @@ import { useAtom } from 'jotai'
 import { currentUserState } from '@/stores/users'
 import {allMyTxsState, myBalanceState} from '@/stores/transactions'
 import TxViewer from '@/components/TxViewer'
+import ExhibitionModeRestriction from '@/components/ExhibitionModeRestriction'
 
 const WalletProfile = () => {
   const [currentUser] = useAtom(currentUserState)
@@ -45,25 +46,27 @@ const WalletPage = () => {
   console.log(allMyTxs)
 
   return (
-    <main>
-      <TitleHeader
-        title="ウォレットの詳細"
-        help={<HelpButton />}
-      />
-      <MiniLayout>
-        <div className="flex flex-col gap-2.5 pb-6 border-b border-[#E5E5E5]">
-          <WalletProfile />
-          <MyBalance />
-        </div>
-        <div>
-          <div className="flex flex-col gap-2.5 pb-10">
-            {allMyTxs.map((x, i) => (
-              <TxViewer key={i} tx={x} />
-            ))}
+    <ExhibitionModeRestriction feature="wallet-management">
+      <main>
+        <TitleHeader
+          title="ウォレットの詳細"
+          help={<HelpButton />}
+        />
+        <MiniLayout>
+          <div className="flex flex-col gap-2.5 pb-6 border-b border-[#E5E5E5]">
+            <WalletProfile />
+            <MyBalance />
           </div>
-        </div>
-      </MiniLayout>
-    </main>
+          <div>
+            <div className="flex flex-col gap-2.5 pb-10">
+              {allMyTxs.map((x, i) => (
+                <TxViewer key={i} tx={x} />
+              ))}
+            </div>
+          </div>
+        </MiniLayout>
+      </main>
+    </ExhibitionModeRestriction>
   )
 }
 

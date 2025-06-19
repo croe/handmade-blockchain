@@ -23,6 +23,7 @@ import { concat } from 'lodash'
 import {buildBlock, getBlock} from '@/api/block'
 import { Loader } from 'lucide-react'
 import { useBlockCreation } from '@/hooks/useBlockCreation'
+import ExhibitionModeRestriction from '@/components/ExhibitionModeRestriction'
 
 type Step = 'chain-selected' | 'tx-selected' | 'tx-validated' | 'complete' | 'error'
 
@@ -201,50 +202,52 @@ const BlockCreatePage = () => {
   const currentStepInfo = STEP_INFO[step]
 
   return (
-    <main className="w-full min-h-screen pb-36">
-      <TitleHeader
-        title={currentStepInfo.title}
-        subtitle={currentStepInfo.subtitle}
-        help={<HelpButton />}
-      />
-      <MiniLayout>
-        {step === 'chain-selected' && <BlockCreationTxsSelection />}
-        {step === 'tx-selected' && <BlockCreationTxsValidation />}
-        {step === 'tx-validated' && <BlockCreationCheck />}
-        {step === 'complete' && <BlockCreationComplete/>}
-        {step === 'error' && <BlockCreationError error={errorMessage} />}
-      </MiniLayout>
+    <ExhibitionModeRestriction feature="block-creation">
+      <main className="w-full min-h-screen pb-36">
+        <TitleHeader
+          title={currentStepInfo.title}
+          subtitle={currentStepInfo.subtitle}
+          help={<HelpButton />}
+        />
+        <MiniLayout>
+          {step === 'chain-selected' && <BlockCreationTxsSelection />}
+          {step === 'tx-selected' && <BlockCreationTxsValidation />}
+          {step === 'tx-validated' && <BlockCreationCheck />}
+          {step === 'complete' && <BlockCreationComplete/>}
+          {step === 'error' && <BlockCreationError error={errorMessage} />}
+        </MiniLayout>
 
-      <BottomBar>
-        <div className="flex items-center gap-8 justify-center">
-          {step === 'chain-selected' && (
-            <div className="w-full flex justify-center gap-5 mb-8">
-              <div className="relative w-[45px] h-[77px]">
-                <img className="absolute bottom-0 left-0 w-[45px]" src="/images/icons/openblock_1.svg" alt=""/>
-                <img className="absolute top-0 left-1.5 w-[34px] h-[40px]" src="/images/icons/tip_draft_block.svg" alt=""/>
+        <BottomBar>
+          <div className="flex items-center gap-8 justify-center">
+            {step === 'chain-selected' && (
+              <div className="w-full flex justify-center gap-5 mb-8">
+                <div className="relative w-[45px] h-[77px]">
+                  <img className="absolute bottom-0 left-0 w-[45px]" src="/images/icons/openblock_1.svg" alt=""/>
+                  <img className="absolute top-0 left-1.5 w-[34px] h-[40px]" src="/images/icons/tip_draft_block.svg" alt=""/>
+                </div>
               </div>
-            </div>
-          )}
-          <div className="flex gap-2">
-            {currentStepInfo.canGoBack && <BackCircleButton onClick={handleBackStep} />}
-            {step !== 'complete' && (
-              <BasicButton onClick={handleNextStep}>
-                {loading ? (
-                  <div className="animate-spin">
-                    <Loader />
-                  </div>
-                ):(
-                  <>
-                    <span className="text-base">{currentStepInfo.buttonText}</span>
-                    <img src="/images/icons/double_arrow_white.svg" className="w-5 h-5" alt="next"/>
-                  </>
-                )}
-              </BasicButton>
             )}
+            <div className="flex gap-2">
+              {currentStepInfo.canGoBack && <BackCircleButton onClick={handleBackStep} />}
+              {step !== 'complete' && (
+                <BasicButton onClick={handleNextStep}>
+                  {loading ? (
+                    <div className="animate-spin">
+                      <Loader />
+                    </div>
+                  ):(
+                    <>
+                      <span className="text-base">{currentStepInfo.buttonText}</span>
+                      <img src="/images/icons/double_arrow_white.svg" className="w-5 h-5" alt="next"/>
+                    </>
+                  )}
+                </BasicButton>
+              )}
+            </div>
           </div>
-        </div>
-      </BottomBar>
-    </main>
+        </BottomBar>
+      </main>
+    </ExhibitionModeRestriction>
   )
 }
 
