@@ -13,7 +13,8 @@ export const useExhibitionMode = () => {
       'block-creation',
       'transaction-creation',
       'wallet-management',
-      'admin-panel'
+      'admin-panel',
+      'shop'
     ]
 
     return restrictedFeatures.includes(feature)
@@ -25,7 +26,8 @@ export const useExhibitionMode = () => {
       'block-creation': '展示モードではブロック作成はできません',
       'transaction-creation': '展示モードではトランザクション作成はできません',
       'wallet-management': '展示モードではウォレット管理はできません',
-      'admin-panel': '展示モードでは管理画面にアクセスできません'
+      'admin-panel': '展示モードでは管理画面にアクセスできません',
+      'shop': '展示モードではショップは利用できません'
     }
 
     return messages[feature] || 'この機能は展示モードでは利用できません'
