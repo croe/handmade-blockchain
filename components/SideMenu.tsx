@@ -18,7 +18,7 @@ const menuItems = [
 ]
 
 const SideMenu = () => {
-  const [sideMenu, setSideMenu] = useAtom(sideMenuState)
+  const [sideMenu] = useAtom(sideMenuState)
   const [exhibitionMode, setExhibitionMode] = useAtom(exhibitionModeState)
   const [lastUpdate] = useAtom(lastUpdateStringState)
   const [connectedUserNames] = useAtom(connectedUserNamesState)
@@ -75,7 +75,12 @@ const SideMenu = () => {
         {/* メニューグリッド */}
         <div className="grid grid-cols-3 gap-3 px-4 mt-2 mb-4">
           {menuItems.map((item, i) => (
-            <IconMenuButton key={item.label} iconSrc={item.icon} label={item.label} href={item.href} />
+            <IconMenuButton
+              key={item.label}
+              iconSrc={item.icon}
+              label={item.label}
+              href={item.href}
+            />
           ))}
         </div>
         {/* キャッシュ情報 */}
@@ -108,16 +113,16 @@ const SideMenu = () => {
           </div>
         </div>
         {/* アクションボタン */}
-        <div className="px-4 mt-3 mb-5 flex flex-col gap-2">
-          {/*<BasicButton>*/}
-          {/*  <span className="text-base">手動で更新を開始する</span>*/}
-          {/*  <img src="/images/icons/double_arrow_white.svg" className="w-5 h-5" alt="reload" />*/}
-          {/*</BasicButton>*/}
-          <button className="w-full py-3 rounded-xl bg-[#888] text-white font-bold text-[15px] shadow flex items-center justify-center gap-2">
-            本アプリのキャッシュの取扱
-            <img src="/images/icons/info.svg" className="w-4 h-4" alt="info" />
-          </button>
-        </div>
+        {/*<div className="px-4 mt-3 mb-5 flex flex-col gap-2">*/}
+        {/*  /!*<BasicButton>*!/*/}
+        {/*  /!*  <span className="text-base">手動で更新を開始する</span>*!/*/}
+        {/*  /!*  <img src="/images/icons/double_arrow_white.svg" className="w-5 h-5" alt="reload" />*!/*/}
+        {/*  /!*</BasicButton>*!/*/}
+        {/*  <button className="w-full py-3 rounded-xl bg-[#888] text-white font-bold text-[15px] shadow flex items-center justify-center gap-2">*/}
+        {/*    本アプリのキャッシュの取扱*/}
+        {/*    <img src="/images/icons/info.svg" className="w-4 h-4" alt="info" />*/}
+        {/*  </button>*/}
+        {/*</div>*/}
         {/* 下部説明文 */}
         <div className="mt-auto px-4 pb-4 pt-6 text-[12px] text-[#888] leading-relaxed bg-[#F4F4F4]">
           <div className="flex items-center gap-1 mb-1">
