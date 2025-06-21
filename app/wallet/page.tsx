@@ -9,6 +9,9 @@ import { currentUserState } from '@/stores/users'
 import {allMyTxsState, myBalanceState} from '@/stores/transactions'
 import TxViewer from '@/components/TxViewer'
 import ExhibitionModeRestriction from '@/components/ExhibitionModeRestriction'
+import SupportAgentBlock from '@/components/SupportAgentBlock'
+import { WalletTutorialModal } from '@/components/Modal/Tutorial/WalletTutorialModal'
+import { useState } from 'react'
 
 const WalletProfile = () => {
   const [currentUser] = useAtom(currentUserState)
@@ -43,6 +46,7 @@ const MyBalance = () => {
 
 const WalletPage = () => {
   const [allMyTxs] = useAtom(allMyTxsState)
+  const [tutorialOpen, setTutorialOpen] = useState<boolean>(false)
   console.log(allMyTxs)
 
   return (
@@ -50,9 +54,24 @@ const WalletPage = () => {
       <main>
         <TitleHeader
           title="ウォレットの詳細"
-          help={<HelpButton />}
+          help={<HelpButton onClick={() => setTutorialOpen(true)} />}
         />
+        <WalletTutorialModal open={tutorialOpen} onClose={() => setTutorialOpen(false)} />
         <MiniLayout>
+          <SupportAgentBlock>
+            ここではあなたのウォレットの詳細を確認できます。<br />
+            ウォレットとはコインを入れておく場所であり、このウォレット同士でコインのやり取りが可能です。<br />
+            電子マネーサービスのアカウントをイメージするとわかりやすいでしょう。<br />
+            このページでは現在所持しているコイン総額や、取引の履歴が表示されます。<br />
+            <br />
+            取引は、<br />
+            <ul className="list-disc pl-5">
+              <li>成立している取引</li>
+              <li>承認された取引</li>
+              <li>未承認の取引</li>
+            </ul>
+            の３種類に分類され、この内成立している取引による送金内容を足し合わせたものがウォレット所持するコイン総額として表示されます。
+          </SupportAgentBlock>
           <div className="flex flex-col gap-2.5 pb-6 border-b border-[#E5E5E5]">
             <WalletProfile />
             <MyBalance />
