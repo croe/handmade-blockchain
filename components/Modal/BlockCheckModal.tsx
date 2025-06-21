@@ -9,6 +9,9 @@ import {txsState} from '@/stores/transactions'
 import {useAtom} from 'jotai'
 import {selectedBlockState} from '@/stores/chain'
 import { useRouter } from 'next/navigation'
+import { useBlockCreation } from '@/hooks/useBlockCreation'
+import {differenceInSeconds} from 'date-fns'
+import {toast} from 'react-toastify'
 
 type Props = {
   open?: boolean
@@ -22,6 +25,7 @@ const BlockCheckModal = ({
   open, requestClose, block, setSelectedTx, requestTxCheckModalOpen
 }:Props) => {
   const router = useRouter()
+  const { getNextBlockTime, canCreateBlock } = useBlockCreation()
   const [txs] = useAtom(txsState)
   const [_, setSelectedBlock] = useAtom(selectedBlockState)
 
@@ -32,6 +36,15 @@ const BlockCheckModal = ({
 
   const handleSelectBlock = () => {
     if (!block) return;
+    if (!canCreateBlock()) {
+      const nextBlockTime = getNextBlockTime()
+      const seconds = differenceInSeconds(nextBlockTime, new Date())
+      const minutes = Math.floor(seconds / 60)
+      const remainingSeconds = seconds % 60
+      const timeDisplay = `${minutes}分${remainingSeconds}秒`
+      toast.error(`次のブロックを作れるまで${timeDisplay}お待ちください。`)
+      return
+    }
     setSelectedBlock(block);
     router.push(`/block/create/`);
     requestClose?.();
