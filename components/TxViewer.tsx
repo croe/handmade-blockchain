@@ -5,6 +5,8 @@ import { useAtom} from 'jotai'
 import { currentUserState } from '@/stores/users'
 import BasicButton from '@/components/Button/BasicButton'
 import { generateReadableId } from '@/utils/id-to-readable-string'
+import { getBucketImage } from '@/utils/getBucketImage'
+import { TX_AMOUNT_BUCKET } from '@/lib/firebase'
 
 type Props = {
   tx: TxWithBlock
@@ -64,6 +66,22 @@ const TxViewer = ({tx}:Props) => {
           <img src="/images/icons/details_open.svg" alt="" className="absolute bottom-1 left-1/2 -translate-x-1/2 transform group-open:hidden"/>
         </summary>
         <div className="flex flex-col gap-2 text-xs text-[#666] mt-2 pb-2">
+          <div>
+            <h3 className="flex gap-1.5 items-center text-xs text-[#484848] mb-1.5">
+              <img src="/images/icons/coin.svg" alt="" className="w-5 h-5"/>
+              <span>取引内容</span>
+            </h3>
+            <div className="pl-8 mt-1.5">
+              <img 
+                className="w-[300px] border border-[#8C8C8C] rounded-lg" 
+                src={tx.from === 'reward' 
+                  ? getBucketImage(TX_AMOUNT_BUCKET, 'reward', 'png')
+                  : getBucketImage(TX_AMOUNT_BUCKET, tx.id, 'png')
+                } 
+                alt=""
+              />
+            </div>
+          </div>
           <p className="flex gap-1 text-[#484848]">
             <span>from</span>
             <span className="text-[#3842FF]">{currentUser && getTxUser(tx.from, currentUser.id)}</span>
