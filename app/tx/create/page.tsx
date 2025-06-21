@@ -19,6 +19,8 @@ import HelpButton from '@/components/Button/HelpButton'
 import CheckSignMaker from '@/components/CheckSignMaker'
 import ReceiverSelectionModal from '@/components/Modal/ReceiverSelectionModal'
 import ExhibitionModeRestriction from '@/components/ExhibitionModeRestriction'
+import { TxCreateTutorialModal } from '@/components/Modal/Tutorial/TxCreateTutorialModal'
+import SupportAgentBlock from '@/components/SupportAgentBlock'
 
 const TxCreatePage = () => {
   // FIXME: 手数料を入れないと無限に作られてしまう問題？（ミスったら入れられないからいいか）
@@ -30,6 +32,7 @@ const TxCreatePage = () => {
   const [canvas, setCanvas] = useState<fabric.Canvas | null>(null)
   const currentUser = useAtomValue(currentUserState)
   const setTxs = useSetAtom(txsState)
+  const [tutorialOpen, setTutorialOpen] = useState<boolean>(false)
 
   const handleOpenReceiverSelector = () => setOpenReceiverSelector(true)
 
@@ -93,9 +96,25 @@ const TxCreatePage = () => {
       <main className="w-full h-screen text-black">
         <TitleHeader
           title="取引の作成"
-          help={<HelpButton/>}
+          help={<HelpButton onClick={() => setTutorialOpen(true)}/>}
         />
-        <div className="mx-auto w-max px-5 max-w-[340px] flex flex-col gap-4">
+        <TxCreateTutorialModal open={tutorialOpen} onClose={() => setTutorialOpen(false)} />
+        <div className="mx-auto w-max px-5 max-w-[340px] flex flex-col gap-4 pb-40">
+          <SupportAgentBlock>
+            これより取引の作成を行います。<br />
+            取引とは、ウォレット同士のお金のやり取りを記録した契約書のようなものです。<br />
+            他者のウォレットへの送金を行いたい場合はこの取引を作成します。<br />
+            <br />
+            今シーズンには、特殊なウォレットが用意されています。特殊ウォレットへ規定額を送金することでガチャを引く権利が獲得でき、その結果次第でランダムな額のコインを獲得できるチャンスがあります。有効に活用しましょう。<br />
+            <br />
+            取引を作成するには<br />
+            <ul className="list-decimal pl-5">
+              <li>以下の手書きエリアに送金金額を手書き文字で記入(読みやすい字を心がけましょう)</li>
+              <li>送金先ウォレットを指定</li>
+            </ul>
+            を行ってください。<br />
+            「取引を作成」ボタンを押すと作成が完了します。
+          </SupportAgentBlock>
           <CheckSignMaker canvas={canvas} setCanvas={setCanvas}/>
           <div>
             <p className="flex gap-1 text-[#999] items-center text-xs mb-1.5">

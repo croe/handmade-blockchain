@@ -10,6 +10,9 @@ import TitleHeader from '@/components/TitleHeader'
 import HelpButton from '@/components/Button/HelpButton'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { getBucketImage } from '@/utils/getBucketImage'
+import { TxCreateCompleteTutorialModal } from '@/components/Modal/Tutorial/TxCreateCompleteTutorialModal'
+import { useState } from 'react'
+import SupportAgentBlock from '@/components/SupportAgentBlock'
 
 const TxCreateCompletePage = () => {
   const router = useRouter()
@@ -22,13 +25,22 @@ const TxCreateCompletePage = () => {
   const handleBackToDashboard = () => router.push('/dashboard')
   const handleCheckTxPool = () => router.push('/tx/pool')
 
+  const [tutorialOpen, setTutorialOpen] = useState<boolean>(false)
+
   return (
     <main className="w-full h-screen text-black">
       <TitleHeader
         title="取引作成が完了しました。"
-        help={<HelpButton />}
+        help={<HelpButton onClick={() => setTutorialOpen(true)} />}
       />
-      <div className="mx-auto w-max px-5 max-w-[340px] flex flex-col gap-4">
+      <TxCreateCompleteTutorialModal open={tutorialOpen} onClose={() => setTutorialOpen(false)} />
+      <div className="mx-auto w-max px-5 max-w-[340px] flex flex-col gap-4 pb-40">
+        <SupportAgentBlock>
+          取引が作成され「未検証取引一覧」へ自動的に保存されました。<br />
+          しかし現段階では送金は成立していません。<br />
+          取引内容の送金を成立させるためには、該当取引がブロックに格納される必要があります。<br />
+          送金成立を達成するあために他プレイヤーによるブロック格納を待つ他に、自身でブロック作成を行い該当取引をブロックに格納することも可能です。
+        </SupportAgentBlock>
         {txId && (
           <div className="bg-[#DEDEDE] rounded-2xl p-1 shadow w-full">
             <div className="rounded-xl border border-[#8C8C8C] px-4 py-8 w-full">
