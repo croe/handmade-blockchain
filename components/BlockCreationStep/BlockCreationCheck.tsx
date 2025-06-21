@@ -4,6 +4,7 @@ import TxValidationCard from '@/components/TxValidationCard'
 import {useAtom} from 'jotai/index'
 import {selectedBlockState} from '@/stores/chain'
 import {selectedTxsState} from '@/stores/transactions'
+import SupportAgentBlock from '@/components/SupportAgentBlock'
 
 const REWARD_TX = {
   id: 'reward',
@@ -14,12 +15,17 @@ const REWARD_TX = {
   status: 'completed', // 完了した取引
 }
 
-const BlockCreationCheck = () => {
+export const BlockCreationCheck = () => {
   const [selectedTxs] = useAtom(selectedTxsState)
   const [selectedBlock] = useAtom(selectedBlockState)
 
   return (
     <div>
+      <SupportAgentBlock>
+        ここではブロック作成の確定と、取引検証を行っていただいた報酬の受取確認を行います。<br />
+        報酬の受取は、以下の自動作成された「ブロック作成報酬取引」が本ブロックに格納されることによって成立します。<br />
+        内容に問題なければ「ブロックを作成する」ボタンを押してください。
+      </SupportAgentBlock>
       <h2 className="text-[#999] font-bold flex items-center gap-1 pt-2 pb-2.5 text-xs border-t border-[#E5E5E5]">
         <img src="/images/icons/mini/gray/transaction.svg" className="w-5" alt=""/>
         <span>選択した取引一覧</span>
@@ -68,4 +74,4 @@ const BlockCreationCheck = () => {
   )
 }
 
-export default BlockCreationCheck
+

@@ -14,9 +14,11 @@ import { currentUserState } from '@/stores/users'
 import { toast } from 'react-toastify'
 import { TxInBlock } from '@/models/block'
 import { getTx, makeTx } from '@/api/transaction'
-import BlockCreationTxsSelection from '@/components/BlockCreationStep/BlockCreationTxsSelection'
+import {
+  BlockCreationTxsSelection,
+} from '@/components/BlockCreationStep/BlockCreationTxsSelection'
 import BlockCreationTxsValidation from '@/components/BlockCreationStep/BlockCreationTxsValidation'
-import BlockCreationCheck from '@/components/BlockCreationStep/BlockCreationCheck'
+import {BlockCreationCheck} from '@/components/BlockCreationStep/BlockCreationCheck'
 import BlockCreationComplete from '@/components/BlockCreationStep/BlockCreationComplete'
 import BlockCreationError from '@/components/BlockCreationStep/BlockCreationError'
 import { concat } from 'lodash'

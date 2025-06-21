@@ -13,8 +13,11 @@ const SupportAgentBlock = ({children}: Props) => {
       <div className="min-w-[38px] mr-3">
         <Image src="/images/icons/support_agent.png" alt="サポートエージェント" width={48} height={65}/>
       </div>
-      <div className="bg-white border border-gray-300 rounded-xl p-4 text-gray-700 text-sm shadow-sm">
-        {children}
+      <div>
+        <h3 className="font-bold mb-1 text-xs">サポートエージェント</h3>
+        <div className="bg-white border border-[#8C8C8C] rounded-xl p-4 text-gray-700 text-sm shadow-sm rounded-tl-none">
+          {children}
+        </div>
       </div>
     </div>
 
