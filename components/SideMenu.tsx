@@ -9,7 +9,7 @@ import { lastUpdateStringState, connectedUserNamesState } from '@/stores/sync'
 import {generateReadableId} from '@/utils/id-to-readable-string'
 
 const menuItems = [
-  { icon: '/images/icons/tip_block_make.svg', label: 'ブロック作成', href: '/dashboard' },
+  // { icon: '/images/icons/tip_block_make.svg', label: 'ブロック作成', href: '/dashboard' },
   { icon: '/images/icons/tip_tx_make.svg', label: '取引作成', href: '/tx/create' },
   { icon: '/images/icons/tip_tx_pool.svg', label: '未承認取引一覧', href: '/tx/pool' },
   { icon: '/images/icons/tip_shop.svg', label: 'ショップ', href: '/shop' },

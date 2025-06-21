@@ -26,6 +26,18 @@ import {buildBlock, getBlock} from '@/api/block'
 import { Loader } from 'lucide-react'
 import { useBlockCreation } from '@/hooks/useBlockCreation'
 import ExhibitionModeRestriction from '@/components/ExhibitionModeRestriction'
+import {
+  BlockCreateStep1TutorialModal,
+} from '@/components/Modal/Tutorial/BlockCreateStep1TutorialModal'
+import {
+  BlockCreateStep2TutorialModal,
+} from '@/components/Modal/Tutorial/BlockCreateStep2TutorialModal'
+import {
+  BlockCreateStep3TutorialModal,
+} from '@/components/Modal/Tutorial/BlockCreateStep3TutorialModal'
+import {
+  BlockCreateCompleteTutorialModal,
+} from '@/components/Modal/Tutorial/BlockCreateCompleteTutorialModal'
 
 type Step = 'chain-selected' | 'tx-selected' | 'tx-validated' | 'complete' | 'error'
 
@@ -91,6 +103,7 @@ const BlockCreatePage = () => {
   const [selectedTxs, setSelectedTxs] = useAtom(selectedTxsState)
   const [currentUser] = useAtom(currentUserState)
   const [selectedBlock, setSelectedBlock] = useAtom(selectedBlockState)
+  const [tutorialOpen, setTutorialOpen] = useState(false)
 
   /**
    * どのブロックに繋げるか選ぶ
@@ -209,8 +222,20 @@ const BlockCreatePage = () => {
         <TitleHeader
           title={currentStepInfo.title}
           subtitle={currentStepInfo.subtitle}
-          help={<HelpButton />}
+          help={<HelpButton onClick={() => setTutorialOpen(true)} />}
         />
+        {step === 'chain-selected' && (
+          <BlockCreateStep1TutorialModal open={tutorialOpen} onClose={() => setTutorialOpen(false)} />
+        )}
+        {step === 'tx-selected' && (
+          <BlockCreateStep2TutorialModal open={tutorialOpen} onClose={() => setTutorialOpen(false)} />
+        )}
+        {step === 'tx-validated' && (
+          <BlockCreateStep3TutorialModal open={tutorialOpen} onClose={() => setTutorialOpen(false)} />
+        )}
+        {step === 'complete' && (
+          <BlockCreateCompleteTutorialModal open={tutorialOpen} onClose={() => setTutorialOpen(false)} />
+        )}
         <MiniLayout>
           {step === 'chain-selected' && <BlockCreationTxsSelection />}
           {step === 'tx-selected' && <BlockCreationTxsValidation />}

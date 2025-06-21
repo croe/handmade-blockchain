@@ -10,7 +10,9 @@ import {Block, TxInBlock} from '@/models/block'
 import {useRouter} from 'next/navigation'
 import BlockCheckModal from '@/components/Modal/BlockCheckModal'
 import TxCheckModal from '@/components/Modal/TxCheckModal'
-import {Transaction} from '@/models/transaction'
+import {differenceInSeconds, format} from 'date-fns'
+import {useBlockCreation} from '@/hooks/useBlockCreation'
+import {toast} from 'react-toastify'
 
 declare global {
   interface Window {
@@ -36,6 +38,7 @@ const TIP_HEIGHT = 40
 
 const ChainViewer = forwardRef((props, ref) => {
   const router = useRouter()
+  const { getNextBlockTime, canCreateBlock } = useBlockCreation()
   const [blockCheckModalOpen, setBlockCheckModalOpen] = useState(false)
   const [txCheckModalOpen, setTxCheckModalOpen] = useState(false)
   const [selectedTx, setSelectedTx] = useState<TxInBlock | null>(null)
@@ -58,13 +61,9 @@ const ChainViewer = forwardRef((props, ref) => {
 
   const [beltLine1Image] = useImage('/images/icons/belt_l1.svg')
   const [beltLine2Image] = useImage('/images/icons/belt_l2.svg')
-  const [beltLine3Image] = useImage('/images/icons/belt_l3.svg')
   const [beltSplit1Image] = useImage('/images/icons/belt_s1.svg')
   const [beltSplit2Image] = useImage('/images/icons/belt_s2.svg')
-  const [beltSplit3Image] = useImage('/images/icons/belt_s3.svg')
-  const [beltSplit4Image] = useImage('/images/icons/belt_s4.svg')
   const [beltCorner1Image] = useImage('/images/icons/belt_c1.svg')
-  const [beltCorner2Image] = useImage('/images/icons/belt_c2.svg')
 
   const [tipMakeImage] = useImage('/images/icons/tip_block_make.svg')
 
@@ -155,7 +154,15 @@ const ChainViewer = forwardRef((props, ref) => {
   }, [selectedBlockId])
 
   const handleMakeNewBlock = useCallback((block: Block) => {
-    console.log(block)
+    if (!canCreateBlock()) {
+      const nextBlockTime = getNextBlockTime()
+      const seconds = differenceInSeconds(nextBlockTime, new Date())
+      const minutes = Math.floor(seconds / 60)
+      const remainingSeconds = seconds % 60
+      const timeDisplay = `${minutes}分${remainingSeconds}秒`
+      toast.error(`次のブロックを作れるまで${timeDisplay}お待ちください。`)
+      return
+    }
     setSelectedBlock(block)
     router.push('/block/create')
   }, [])
