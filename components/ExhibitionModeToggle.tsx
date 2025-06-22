@@ -3,13 +3,20 @@
 import { useAtom } from 'jotai'
 import { exhibitionModeState, persistExhibitionMode } from '@/stores/ui'
 import { useState, useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 
 export default function ExhibitionModeToggle() {
   const [exhibitionMode, setExhibitionMode] = useAtom(exhibitionModeState)
   const [isVisible, setIsVisible] = useState(false)
+  const pathname = usePathname()
 
-  // 管理者モードの表示制御（Ctrl + Shift + E で表示）
+  // adminページでのみ表示
+  const isAdminPage = pathname === '/admin'
+
+  // 管理者モードの表示制御（adminページでのみ Ctrl + Shift + E で表示）
   useEffect(() => {
+    if (!isAdminPage) return
+
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.ctrlKey && event.shiftKey && event.key === 'E') {
         setIsVisible(prev => !prev)
@@ -18,7 +25,7 @@ export default function ExhibitionModeToggle() {
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [])
+  }, [isAdminPage])
 
   const handleToggle = () => {
     const newMode = !exhibitionMode
@@ -26,7 +33,8 @@ export default function ExhibitionModeToggle() {
     persistExhibitionMode(newMode)
   }
 
-  if (!isVisible) return null
+  // adminページ以外では表示しない
+  if (!isAdminPage || !isVisible) return null
 
   return (
     <div className="fixed top-4 right-4 z-50 bg-white rounded-lg shadow-lg p-4 border border-gray-200">

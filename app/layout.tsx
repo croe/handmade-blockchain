@@ -15,6 +15,18 @@ const zenKakuGothicNew = Zen_Kaku_Gothic_New({ weight: ["400", "900"], subsets: 
 export const metadata: Metadata = {
   title: "HANDMADE BLOCKCHAIN",
   description: "手作りでブロックチェーンを作る",
+  icons: {
+    icon: [
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/icon.png', sizes: '512x512', type: 'image/png' },
+      { url: '/icon512_rounded.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/icon.png', sizes: '512x512', type: 'image/png' },
+    ],
+    shortcut: '/favicon.ico',
+  },
 }
 
 export default function RootLayout({
@@ -27,7 +39,10 @@ export default function RootLayout({
     <head>
       <title>HANDMADE BLOCKCHAIN</title>
       <link rel="manifest" href="/manifest.json" />
-      <link rel="apple-touch-icon" href="/icon.png"></link>
+      <link rel="apple-touch-icon" href="/icon.png" />
+      <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+      <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+      <link rel="shortcut icon" href="/favicon.ico" />
     </head>
       <body id="root" suppressHydrationWarning>
         <RenderMounted>
