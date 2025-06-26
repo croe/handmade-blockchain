@@ -182,7 +182,10 @@ const ChainViewer = forwardRef((props, ref) => {
     setStagePos({ x, y })
   }, [chains])
 
-  // Genesis blockを作成する一時的な関数
+  /** Genesis blockを作成する一時的な関数
+   * 特定のウォレットに100万コインを付与しておく
+   * ウォレットが作成されるとここから100コインが与えられるようにする？
+   */
   // const handleTemporalMakeGenesisBlock = async () => {
   //     if (chain.length > 0) return
   //     if (!currentUser) return

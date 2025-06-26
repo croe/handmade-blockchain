@@ -14,7 +14,7 @@ const ProductCard = ({ product, isSelected, onSelect }: {
   onSelect: () => void;
 }) => {
   return (
-    <div 
+    <div
       className={`relative bg-white p-1 rounded-2xl shadow cursor-pointer transition-all ${
         isSelected ? 'ring-2 ring-blue-500' : 'hover:shadow-lg'
       }`}
@@ -69,9 +69,9 @@ const ShopProductSelection = () => {
         <div className="font-bold mb-1">サポートエージェント</div>
         <div>
           あなたのコイン残高: <span className="font-bold">{myBalance.toLocaleString()}</span> CNC<br/>
-          下記の商品から購入したい商品を選択してください。<br/>
-          商品を選択すると、次のステップで送付先情報を入力していただきます。<br/>
-          デジタル商品は即座に配信され、物理商品は後日配送されます。
+          {/*下記の商品から購入したい商品を選択してください。<br/>*/}
+          {/*商品を選択すると、次のステップで送付先情報を入力していただきます。<br/>*/}
+          {/*デジタル商品は即座に配信され、物理商品は後日配送されます。*/}
         </div>
       </SupportAgentBlock>
 
@@ -85,8 +85,9 @@ const ShopProductSelection = () => {
           />
         ))}
       </div>
+      <p>近日中に商品を追加予定です！</p>
     </div>
   )
 }
 
-export default ShopProductSelection 
+export default ShopProductSelection

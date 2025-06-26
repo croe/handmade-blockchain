@@ -27,7 +27,7 @@ export default function Home() {
           status: true,
         })
       }
-      router.push('/dashboard')
+      router.push('/tutorial')
     }
   }
 

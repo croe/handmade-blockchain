@@ -7,7 +7,7 @@ import BasicButton from '@/components/Button/BasicButton'
 import BackCircleButton from '@/components/Button/BackCircleButton'
 import HelpButton from '@/components/Button/HelpButton'
 import MiniLayout from '@/components/MiniLayout'
-import { useAtom, useSetAtom } from 'jotai/index'
+import { useAtom } from 'jotai/index'
 import { currentUserState } from '@/stores/users'
 import { myBalanceState } from '@/stores/transactions'
 import { selectedProductState, orderFormState } from '@/stores/shop'
@@ -221,4 +221,4 @@ const ShopPage = () => {
   )
 }
 
-export default ShopPage 
+export default ShopPage

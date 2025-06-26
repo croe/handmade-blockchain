@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { currentUserState } from '@/stores/users'
 import { storage } from '@/lib/firebase'
@@ -8,7 +8,7 @@ import { ref, uploadString } from 'firebase/storage'
 import { getTxs, makeTx } from '@/api/transaction'
 import { txsState } from '@/stores/transactions'
 import { generateReadableId } from '@/utils/id-to-readable-string'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'react-toastify'
 import { Loader } from 'lucide-react'
 import * as fabric from 'fabric'
@@ -26,6 +26,7 @@ const TxCreatePage = () => {
   // FIXME: 手数料を入れないと無限に作られてしまう問題？（ミスったら入れられないからいいか）
   // 意外と👆の問題が根深そう、っていうか作るもの多いな...
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [loading, setLoading] = useState<boolean>(false)
   const [openReceiverSelector, setOpenReceiverSelector] = useState<boolean>(false)
   const [receiverId, setReceiverId] = useState<string>('')
@@ -33,6 +34,18 @@ const TxCreatePage = () => {
   const currentUser = useAtomValue(currentUserState)
   const setTxs = useSetAtom(txsState)
   const [tutorialOpen, setTutorialOpen] = useState<boolean>(false)
+
+  // Check if this is a gacha transaction
+  const isGachaMode = searchParams.get('gacha') === 'true'
+
+  // Fixed gacha wallet ID
+  const GACHA_WALLET_ID = 'gacha_wallet_special_2024'
+
+  useEffect(() => {
+    if (isGachaMode) {
+      setReceiverId(GACHA_WALLET_ID)
+    }
+  }, [isGachaMode])
 
   const handleOpenReceiverSelector = () => setOpenReceiverSelector(true)
 
@@ -95,25 +108,47 @@ const TxCreatePage = () => {
     <ExhibitionModeRestriction feature="transaction-creation">
       <main className="w-full h-screen text-black">
         <TitleHeader
-          title="取引の作成"
+          title={isGachaMode ? "ガチャ取引の作成" : "取引の作成"}
           help={<HelpButton onClick={() => setTutorialOpen(true)}/>}
         />
         <TxCreateTutorialModal open={tutorialOpen} onClose={() => setTutorialOpen(false)} />
         <div className="mx-auto w-max px-5 max-w-[340px] flex flex-col gap-4 pb-40">
           <SupportAgentBlock>
-            これより取引の作成を行います。<br />
-            取引とは、ウォレット同士のお金のやり取りを記録した契約書のようなものです。<br />
-            他者のウォレットへの送金を行いたい場合はこの取引を作成します。<br />
-            <br />
-            今シーズンには、特殊なウォレットが用意されています。特殊ウォレットへ規定額を送金することでガチャを引く権利が獲得でき、その結果次第でランダムな額のコインを獲得できるチャンスがあります。有効に活用しましょう。<br />
-            <br />
-            取引を作成するには<br />
-            <ul className="list-decimal pl-5">
-              <li>以下の手書きエリアに送金金額を手書き文字で記入(読みやすい字を心がけましょう)</li>
-              <li>送金先ウォレットを指定</li>
-            </ul>
-            を行ってください。<br />
-            「取引を作成」ボタンを押すと作成が完了します。
+            {isGachaMode ? (
+              <>
+                🎲 ガチャ取引の作成を行います！<br />
+                送金先は特殊ガチャウォレットに自動設定されています。<br />
+                <br />
+                ガチャシステムの説明：<br />
+                • 送金の取引を作成するとガチャが実行されます（何コインでも可）<br />
+                • ガチャシステムからの取引が発行されるまでには<b>最大1時間程度</b>かかります<br />
+                • 送金額に応じてガチャの当選確率が変動します<br />
+                • 当選すると送金額の<b>2～10倍のコイン取引</b>がランダムで返ってきます<br />
+                <br />
+                ガチャを実行するには：<br />
+                <ul className="list-decimal pl-5">
+                  <li>以下の手書きエリアに送金したい金額を記入</li>
+                  <li>「取引を作成」ボタンを押してガチャを実行</li>
+                </ul>
+                運試しをお楽しみください！🍀
+              </>
+            ) : (
+              <>
+                これより取引の作成を行います。<br />
+                取引とは、ウォレット同士のお金のやり取りを記録した契約書のようなものです。<br />
+                他者のウォレットへの送金を行いたい場合はこの取引を作成します。<br />
+                <br />
+                今シーズンには、特殊なウォレットが用意されています。特殊ウォレットへ規定額を送金することでガチャを引く権利が獲得でき、その結果次第でランダムな額のコインを獲得できるチャンスがあります。有効に活用しましょう。<br />
+                <br />
+                取引を作成するには<br />
+                <ul className="list-decimal pl-5">
+                  <li>以下の手書きエリアに送金金額を手書き文字で記入(読みやすい字を心がけましょう)</li>
+                  <li>送金先ウォレットを指定</li>
+                </ul>
+                を行ってください。<br />
+                「取引を作成」ボタンを押すと作成が完了します。
+              </>
+            )}
           </SupportAgentBlock>
           <CheckSignMaker canvas={canvas} setCanvas={setCanvas}/>
           <div>
@@ -139,10 +174,17 @@ const TxCreatePage = () => {
               disabled
               value={receiverId ? generateReadableId(receiverId) : ''}
             />
-            <BasicButton onClick={handleOpenReceiverSelector}>
-              <span>送る相手を指定</span>
-              <img src="/images/icons/mini/white/profile.svg" className="w-5 h-5" alt="reload"/>
-            </BasicButton>
+            {!isGachaMode && (
+              <BasicButton onClick={handleOpenReceiverSelector}>
+                <span>送る相手を指定</span>
+                <img src="/images/icons/mini/white/profile.svg" className="w-5 h-5" alt="reload"/>
+              </BasicButton>
+            )}
+            {isGachaMode && (
+              <div className="text-xs text-[#999] mt-1">
+                ガチャモードでは送金先が自動設定されています
+              </div>
+            )}
           </div>
         </div>
 
@@ -164,7 +206,9 @@ const TxCreatePage = () => {
               {loading ? (
                 <Loader className="animate-spin"/>
               ) : (
-                <span className="text-base">取引を作成する</span>
+                <span className="text-base">
+                  {isGachaMode ? "ガチャを実行する" : "取引を作成する"}
+                </span>
               )}
               <img src="/images/icons/double_arrow_white.svg" className="w-5 h-5" alt="reload"/>
             </BasicButton>

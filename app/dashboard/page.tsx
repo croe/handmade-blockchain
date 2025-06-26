@@ -10,6 +10,7 @@ import ChainViewer from '@/components/ChainViewer'
 import UsersViewer from '@/components/UsersViewer'
 import WalletViewer from '@/components/WalletViewer'
 import MenuButton from '@/components/Button/MenuButton'
+import GachaButton from '@/components/Button/GachaButton'
 import SideMenu from '@/components/SideMenu'
 import BottomBar from '@/components/BottomBar'
 import CountDownTimer from '@/components/CountDownTimer'
@@ -53,6 +54,7 @@ const Dashboard = () => {
     }`}>
       <WalletViewer />
       <MenuButton />
+      <GachaButton />
       <SideMenu />
       <ChainViewer ref={chainViewerRef} />
       <BottomBar>
