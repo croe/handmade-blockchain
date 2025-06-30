@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { currentUserState } from '@/stores/users'
 import { storage } from '@/lib/firebase'
+import { GACHA_WALLET_ID } from '@/lib/const'
 import { ref, uploadString } from 'firebase/storage'
 import { getTxs, makeTx } from '@/api/transaction'
 import { txsState } from '@/stores/transactions'
@@ -37,9 +38,6 @@ const TxCreatePage = () => {
 
   // Check if this is a gacha transaction
   const isGachaMode = searchParams.get('gacha') === 'true'
-
-  // Fixed gacha wallet ID
-  const GACHA_WALLET_ID = 'gacha_wallet_special_2025_07'
 
   useEffect(() => {
     if (isGachaMode) {

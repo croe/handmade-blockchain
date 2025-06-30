@@ -4,11 +4,18 @@ import { useState, useEffect } from "react";
 import { useAtom } from "jotai";
 import { AdminAuth } from "../../components/AdminAuth";
 import { exhibitionModeState, persistExhibitionMode } from "../../stores/ui";
+import { currentUserState } from "../../stores/users";
+import { chainState } from "../../stores/chain";
+import { makeTx } from "../../api/transaction";
+import {buildBlock, getBlocks} from '@/api/block'
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [exhibitionMode, setExhibitionMode] = useAtom(exhibitionModeState);
+  const [currentUser] = useAtom(currentUserState);
+  const [chain] = useAtom(chainState);
+  const [isCreatingGenesis, setIsCreatingGenesis] = useState(false);
 
   useEffect(() => {
     // ページロード時に認証状態をチェック
@@ -30,6 +37,45 @@ export default function AdminPage() {
     const newMode = !exhibitionMode;
     setExhibitionMode(newMode);
     persistExhibitionMode(newMode);
+  };
+
+  const handleCreateGenesisBlock = async () => {
+    if (chain.length > 0) {
+      alert('ジェネシスブロックは既に存在します');
+      return;
+    }
+    if (!currentUser) {
+      alert('ユーザーが設定されていません');
+      return;
+    }
+
+    setIsCreatingGenesis(true);
+    try {
+      const txKey = await makeTx(currentUser.id, 'genesis', currentUser.id);
+      if (txKey?.key) {
+        alert('ジェネシスブロック用のトランザクションが作成されました');
+      } else {
+        alert('トランザクションの作成に失敗しました');
+        return
+      }
+      // ここでジェネシスブロックを作成する処理を追加
+      const txs = [{
+        i: txKey!.key,
+        m: 1000000,
+      }]
+      await buildBlock(
+        currentUser.id,
+        'genesis',
+        txs,
+        0 // ジェネシスブロックはブロック高さ0
+      )
+
+    } catch (error) {
+      console.error('Error creating genesis transaction:', error);
+      alert('ジェネシスブロック作成中にエラーが発生しました');
+    } finally {
+      setIsCreatingGenesis(false);
+    }
   };
 
   if (isLoading) {
@@ -89,50 +135,35 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* ダッシュボードコンテンツ */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* 統計カード */}
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">総ユーザー数</h3>
-            <p className="text-3xl font-bold text-blue-600">1,234</p>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">総トランザクション数</h3>
-            <p className="text-3xl font-bold text-green-600">5,678</p>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">総ブロック数</h3>
-            <p className="text-3xl font-bold text-purple-600">89</p>
-          </div>
-        </div>
-
-        {/* 管理機能 */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">ユーザー管理</h3>
-            <div className="space-y-2">
-              <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded">
-                ユーザー一覧を表示
-              </button>
-              <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded">
-                ユーザーを検索
-              </button>
+        {/* ジェネシスブロック作成 */}
+        <div className="mb-8 bg-white p-6 rounded-lg shadow">
+          <h3 className="text-xl font-semibold text-gray-900 mb-4">ジェネシスブロック作成</h3>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-gray-600 mb-2">
+                ブロックチェーンの最初のブロック（ジェネシスブロック）を作成します
+              </p>
+              <p className="text-sm text-gray-500">
+                現在のブロック数: {chain.length}個
+              </p>
             </div>
+            <button
+              onClick={handleCreateGenesisBlock}
+              disabled={chain.length > 0 || !currentUser || isCreatingGenesis}
+              className={`px-6 py-3 rounded-md font-medium transition-colors ${
+                chain.length > 0 || !currentUser || isCreatingGenesis
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
+              }`}
+            >
+              {isCreatingGenesis ? '作成中...' : 'ジェネシスブロック作成'}
+            </button>
           </div>
-
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">トランザクション管理</h3>
-            <div className="space-y-2">
-              <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded">
-                トランザクション履歴
-              </button>
-              <button className="w-full text-left px-4 py-2 hover:bg-gray-100 rounded">
-                未承認トランザクション
-              </button>
-            </div>
-          </div>
+          {chain.length > 0 && (
+            <p className="mt-2 text-sm text-orange-600">
+              ※ ジェネシスブロックは既に作成済みです
+            </p>
+          )}
         </div>
 
         {/* システム情報 */}
@@ -142,18 +173,9 @@ export default function AdminPage() {
             <div>
               <span className="font-medium">システムバージョン:</span> 1.0.0
             </div>
-            <div>
-              <span className="font-medium">最終更新:</span> 2024-01-15
-            </div>
-            <div>
-              <span className="font-medium">データベース状態:</span> 正常
-            </div>
-            <div>
-              <span className="font-medium">メモリ使用量:</span> 64%
-            </div>
           </div>
         </div>
       </div>
     </div>
   );
-} 
+}

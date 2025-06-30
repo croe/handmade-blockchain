@@ -10,7 +10,7 @@ import {Block, TxInBlock} from '@/models/block'
 import {useRouter} from 'next/navigation'
 import BlockCheckModal from '@/components/Modal/BlockCheckModal'
 import TxCheckModal from '@/components/Modal/TxCheckModal'
-import {differenceInSeconds, format} from 'date-fns'
+import {differenceInSeconds} from 'date-fns'
 import {useBlockCreation} from '@/hooks/useBlockCreation'
 import {toast} from 'react-toastify'
 
@@ -181,25 +181,6 @@ const ChainViewer = forwardRef((props, ref) => {
 
     setStagePos({ x, y })
   }, [chains])
-
-  /** Genesis blockを作成する一時的な関数
-   * 特定のウォレットに100万コインを付与しておく
-   * ウォレットが作成されるとここから100コインが与えられるようにする？
-   */
-  // const handleTemporalMakeGenesisBlock = async () => {
-  //     if (chain.length > 0) return
-  //     if (!currentUser) return
-  //     const txKey = await makeTx(currentUser.id, 'reward', currentUser.id)
-  //     console.log(txKey, !txKey?.key)
-  //     if (!txKey?.key) return
-  //     // const systemTx: TxInBlock = {
-  //     //   i: txKey.key,
-  //     //   m: 100,
-  //     // }
-  //   }
-
-  console.log(chains)
-  console.log(forkedPoints)
 
   useImperativeHandle(ref, () => ({
     handleMakeNewBlock,
