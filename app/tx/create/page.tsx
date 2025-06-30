@@ -39,7 +39,7 @@ const TxCreatePage = () => {
   const isGachaMode = searchParams.get('gacha') === 'true'
 
   // Fixed gacha wallet ID
-  const GACHA_WALLET_ID = 'gacha_wallet_special_2024'
+  const GACHA_WALLET_ID = 'gacha_wallet_special_2025_07'
 
   useEffect(() => {
     if (isGachaMode) {

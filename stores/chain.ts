@@ -4,7 +4,7 @@ import { Block } from '@/models/block'
 import { uniq } from 'lodash'
 import {formatTimeDelta} from 'react-countdown'
 
-export const chainState = atomWithStorage<Block[]>('chains', [])
+export const chainState = atomWithStorage<Block[]>('chains_v2', [])
 
 export const syncedBlocksState = atom<Block[]>(
   (get) => {

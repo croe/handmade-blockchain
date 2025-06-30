@@ -5,7 +5,7 @@ import { currentChainState, selectedBlockState, chainState } from '@/stores/chai
 import { currentUserState } from '@/stores/users'
 import { differenceBy } from 'lodash'
 
-export const txsState = atomWithStorage<Transaction[]>('txs', [])
+export const txsState = atomWithStorage<Transaction[]>('txs_v2', [])
 
 export const syncedTxsState = atom<Transaction[]>((get) => {
   const txs = get(txsState)
@@ -140,7 +140,7 @@ export const selectedTxsState = atom<TxWithValue[]>([])
 export const pendingTxsState = atom<Transaction[]>((get) => {
   const allTxs = get(syncedTxsState)
   const currentTxs = get(currentTxsState)
-  
+
   // 全トランザクションから現在のチェーンに取り込まれているトランザクションを除外し、報酬トランザクションも除外
   return differenceBy(allTxs, currentTxs, 'id')
     .filter((tx) => tx.from !== 'reward')
@@ -176,7 +176,7 @@ export const selectedChainUserBalanceState = atom((get) => {
       }
     }
   }
-  
+
   getBlockChain(selectedBlock.id)
 
   // バランス計算
@@ -222,7 +222,7 @@ export const selectedChainUserTxsState = atom((get) => {
       }
     }
   }
-  
+
   getBlockChain(selectedBlock.id)
 
   // ユーザーに関連する取引を取得

@@ -4,9 +4,9 @@ import { initializeApp, getApp, getApps } from "firebase/app"
 import { getDatabase } from "firebase/database"
 import { getStorage } from 'firebase/storage'
 
-export const DB_USER = 'users'
-export const DB_TRANSACTION = 'tx'
-export const DB_BLOCK = 'block'
+export const DB_USER = 'users_v2'
+export const DB_TRANSACTION = 'tx_v2'
+export const DB_BLOCK = 'block_v2'
 
 export const getMyUserPath = (userId: string) => `${DB_USER}/${userId}`
 export const getUserTxPath = (userId: string) => `${userId}/${DB_TRANSACTION}`
