@@ -1,6 +1,7 @@
 import {db, DB_USER, getMyUserPath} from '@/lib/firebase'
 import { get, push, ref, serverTimestamp, update } from 'firebase/database'
 import { convertUser } from '@/models/user'
+import { makeTx } from './transaction'
 
 export const addNewUser = async () => {
   try {
@@ -8,9 +9,19 @@ export const addNewUser = async () => {
     // ここでユーザーを追加
     // ユーザー名はあるとテンション上がるけど、ない方がコンセプトに合うかも
     const usersRef = ref(db, DB_USER)
-    return await push(usersRef, {
+    const userRef = await push(usersRef, {
       t: serverTimestamp(),
     })
+
+    if (userRef?.key) {
+      try {
+        await makeTx(userRef.key, 'reward', userRef.key)
+      } catch (txError) {
+        console.error('Error creating welcome transaction:', txError)
+      }
+    }
+    
+    return userRef
   } catch (error) {
     console.error('Error adding new user:', error)
   }
