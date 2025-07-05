@@ -18,7 +18,7 @@ import { syncInfoState } from '@/stores/sync'
  * ユーザー、トランザクション、ブロックの同期を行うコンポーネント
  */
 
-const SYNC_LIMIT = 3
+const SYNC_LIMIT = 20
 
 const UsersViewer = () => {
   const [_, setUsers] = useAtom(usersState)
@@ -38,6 +38,7 @@ const UsersViewer = () => {
       // オンラインユーザーを取得
       const onlineUsers = users.filter((user) => user.status && user.id !== currentUser.id)
       
+      console.log('Online Users:', onlineUsers)
       // 接続ユーザーリストを更新
       setSyncInfo(prev => ({
         ...prev,
