@@ -18,7 +18,7 @@ import { syncInfoState } from '@/stores/sync'
  * ユーザー、トランザクション、ブロックの同期を行うコンポーネント
  */
 
-const SYNC_LIMIT = 20
+const SYNC_LIMIT = 50
 
 const UsersViewer = () => {
   const [_, setUsers] = useAtom(usersState)
